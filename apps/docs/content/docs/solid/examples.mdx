@@ -1,0 +1,168 @@
+---
+title: Examples
+description: Practical examples for Better Auth UI SolidJS
+icon: Code
+---
+
+import { Callout } from 'fumadocs-ui/components/callout'
+
+Here are practical examples showing how to use `@better-auth-ui/solid` in your SolidJS applications.
+
+## Sign-In Form
+
+A complete sign-in form with email and password:
+
+```tsx title="src/components/sign-in-form.tsx"
+import { createSignal } from "solid-js"
+import { createSignInEmail } from "@better-auth-ui/solid"
+
+export function SignInForm() {
+  const { signInEmail, isLoading, error } = createSignInEmail()
+  
+  const [email, setEmail] = createSignal("")
+  const [password, setPassword] = createSignal("")
+
+  const handleSubmit = async (e: Event) => {
+    e.preventDefault()
+    
+    try {
+      await signInEmail({
+        email: email(),
+        password: password(),
+        callbackURL: "/dashboard"
+      })
+      // Redirect happens automatically
+    } catch (err) {
+      // Error is already set in the error signal
+      console.error("Sign in failed:", err)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          value={email()}
+          onInput={(e) => setEmail(e.currentTarget.value)}
+          required
+        />
+      </div>
+      
+      <div>
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          value={password()}
+          onInput={(e) => setPassword(e.currentTarget.value)}
+          required
+        />
+      </div>
+
+      {error() && (
+        <div class="error">
+          {error()?.message}
+        </div>
+      )}
+
+      <button type="submit" disabled={isLoading()}>
+        {isLoading() ? "Signing in..." : "Sign In"}
+      </button>
+    </form>
+  )
+}
+```
+
+## User Button
+
+A dropdown button showing the current user with sign-out option:
+
+```tsx title="src/components/user-button.tsx"
+import { Show } from "solid-js"
+import { createAuth, createSignOut } from "@better-auth-ui/solid"
+
+export function UserButton() {
+  const { user, isLoading: authLoading } = createAuth()
+  const { signOut, isLoading: signOutLoading } = createSignOut()
+
+  const handleSignOut = async () => {
+    await signOut()
+    // Redirect to home or sign-in page
+    window.location.href = "/"
+  }
+
+  return (
+    <Show 
+      when={!authLoading()} 
+      fallback={<div>Loading...</div>}
+    >
+      <Show 
+        when={user()}
+        fallback={<a href="/sign-in">Sign In</a>}
+      >
+        <div class="user-menu">
+          <img 
+            src={user()?.image ?? ""} 
+            alt={user()?.name ?? "User"} 
+          />
+          <span>{user()?.name}</span>
+          
+          <button 
+            onClick={handleSignOut}
+            disabled={signOutLoading()}
+          >
+            {signOutLoading() ? "Signing out..." : "Sign Out"}
+          </button>
+        </div>
+      </Show>
+    </Show>
+  )
+}
+```
+
+## Protected Route
+
+Example of protecting a route based on authentication state:
+
+```tsx title="src/routes/dashboard.tsx"
+import { Show } from "solid-js"
+import { useNavigate } from "@solidjs/router"
+import { createAuth } from "@better-auth-ui/solid"
+
+export function Dashboard() {
+  const { user, isLoading } = createAuth()
+  const navigate = useNavigate()
+
+  // Redirect to sign-in if not authenticated
+  if (!isLoading() && !user()) {
+    navigate("/sign-in", { replace: true })
+    return null
+  }
+
+  return (
+    <Show when={!isLoading()} fallback={<div>Loading...</div>}>
+      <h1>Welcome, {user()?.name}!</h1>
+      <p>Your email: {user()?.email}</p>
+    </Show>
+  )
+}
+```
+
+<Callout type="warning">
+  The examples above use simple HTML elements. For a complete UI, use the [Zaidan components](/docs/zaidan/api) from `@better-auth-ui/zaidan`.
+</Callout>
+
+## Complete Example
+
+For a fully functional example with SolidStart, Zaidan UI components, and better-auth backend, check out the external example repository:
+
+👉 **[start-zaidan-example](https://github.com/better-auth-ui/start-zaidan-example)**
+
+This repository contains a complete SolidStart application with:
+- Better Auth server setup
+- Zaidan UI components for sign-in, sign-up, and user management
+- Protected routes
+- Database schema with Drizzle

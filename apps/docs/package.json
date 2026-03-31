@@ -16,6 +16,8 @@
     "@better-auth-ui/heroui": "*",
     "@better-auth-ui/react": "*",
     "@better-auth-ui/shadcn": "*",
+    "@better-auth-ui/solid": "workspace:*",
+    "@better-auth-ui/zaidan": "workspace:*",
     "@heroui/react": "^3.0.1",
     "@heroui/styles": "^3.0.1",
     "@orama/orama": "^3.1.18",

@@ -1,0 +1,6 @@
+{
+  "title": "SolidJS",
+  "description": "SolidJS hooks and integration",
+  "icon": "Code",
+  "pages": ["installation", "api", "examples"]
+}

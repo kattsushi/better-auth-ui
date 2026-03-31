@@ -1,0 +1,87 @@
+---
+title: Installation
+description: Getting Started with Zaidan UI Components
+icon: Rocket
+---
+
+import { Steps } from 'fumadocs-ui/components/steps'
+
+## Prerequisites
+
+Before you start, make sure you have:
+
+- A SolidJS project (SolidStart or plain Solid)
+- Node.js 18+
+- `@better-auth-ui/solid` installed (see [Solid Installation](/docs/solid/installation))
+
+## Installation
+
+<Steps>
+<Step>
+### Install Zaidan
+
+Install `@better-auth-ui/zaidan` and its peer dependencies:
+
+```bash
+npm install @better-auth-ui/zaidan @kobalte/core class-variance-authority clsx tailwind-merge
+```
+
+Or with pnpm:
+
+```bash
+pnpm add @better-auth-ui/zaidan @kobalte/core class-variance-authority clsx tailwind-merge
+```
+
+Or with yarn:
+
+```bash
+yarn add @better-auth-ui/zaidan @kobalte/core class-variance-authority clsx tailwind-merge
+```
+
+</Step>
+<Step>
+### Peer Dependencies
+
+Zaidan requires the following peer dependencies:
+
+| Package | Description |
+|---------|-------------|
+| `@kobalte/core` | Headless UI primitives for Solid |
+| `class-variance-authority` | Utility for creating component variants |
+| `clsx` | Utility for constructing className strings |
+| `tailwind-merge` | Utility for merging Tailwind CSS classes |
+
+</Step>
+<Step>
+### Configure Tailwind (if using Tailwind)
+
+If you're using Tailwind CSS, add the Zaidan styles to your global CSS:
+
+```css title="styles/globals.css"
+@import "@better-auth-ui/zaidan/styles";
+```
+
+</Step>
+</Steps>
+
+## Usage
+
+Import components from `@better-auth-ui/zaidan`:
+
+```tsx
+import { Button, Input, Card, SignIn } from "@better-auth-ui/zaidan"
+
+function MyComponent() {
+  return (
+    <Card>
+      <SignIn />
+    </Card>
+  )
+}
+```
+
+## Next Steps
+
+Check out the [API Reference](/docs/zaidan/api) to see all available components, or browse the [Solid Examples](/docs/solid/examples) for practical usage patterns.
+
+For a complete working example, check out the [start-zaidan-example](https://github.com/better-auth-ui/start-zaidan-example) repository.

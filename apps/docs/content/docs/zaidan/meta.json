@@ -1,0 +1,6 @@
+{
+  "title": "Zaidan",
+  "description": "Zaidan UI components for SolidJS",
+  "icon": "Zaidan",
+  "pages": ["installation", "api"]
+}

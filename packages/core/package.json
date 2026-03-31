@@ -17,6 +17,14 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./lib/base-paths": {
+      "import": "./dist/lib/base-paths.js",
+      "types": "./dist/lib/base-paths.d.ts"
+    },
+    "./lib/view-paths": {
+      "import": "./dist/lib/view-paths.js",
+      "types": "./dist/lib/view-paths.d.ts"
     }
   },
   "devDependencies": {

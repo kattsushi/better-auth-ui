@@ -1,0 +1,17 @@
+import { resolve } from "node:path"
+import solid from "vite-plugin-solid"
+import { defineConfig } from "vitest/config"
+
+export default defineConfig({
+  plugins: [solid()],
+  resolve: {
+    alias: {
+      "@better-auth-ui/solid": resolve(__dirname, "../solid/src")
+    }
+  },
+  test: {
+    globals: true,
+    environment: "jsdom",
+    include: ["tests/**/*.test.{ts,tsx}"]
+  }
+})

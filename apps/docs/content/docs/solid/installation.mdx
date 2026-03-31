@@ -1,0 +1,84 @@
+---
+title: Installation
+description: Getting Started with Better Auth UI for SolidJS
+icon: Rocket
+---
+
+import { Steps } from 'fumadocs-ui/components/steps'
+
+## Prerequisites
+
+Before you start, make sure you have:
+
+- [Better Auth](https://www.better-auth.com/docs/installation) installed in your project
+- A SolidJS project set up (SolidStart or plain Solid)
+- Node.js 18+
+
+## Installation
+
+<Steps>
+<Step>
+### Install the package
+
+Install `@better-auth-ui/solid` and its peer dependencies:
+
+```bash
+npm install @better-auth-ui/solid @better-auth-ui/core better-auth
+```
+
+Or with pnpm:
+
+```bash
+pnpm add @better-auth-ui/solid @better-auth-ui/core better-auth
+```
+
+Or with yarn:
+
+```bash
+yarn add @better-auth-ui/solid @better-auth-ui/core better-auth
+```
+
+</Step>
+<Step>
+### Create the auth client
+
+Create a client instance to communicate with your Better Auth backend:
+
+```tsx title="src/lib/auth-client.ts"
+import { createAuthClient } from "@better-auth-ui/solid"
+
+export const authClient = createAuthClient({
+  baseURL: "http://localhost:3000" // Your Better Auth server URL
+})
+```
+
+</Step>
+<Step>
+### Wrap your app with AuthProvider
+
+Wrap your application with the AuthProvider to provide authentication context:
+
+```tsx title="src/App.tsx"
+import { AuthProvider } from "@better-auth-ui/solid"
+import { authClient } from "./lib/auth-client"
+import { Router } from "@solidjs/router"
+
+export default function App() {
+  return (
+    <AuthProvider authClient={authClient}>
+      <Router>
+        <YourRoutes />
+      </Router>
+    </AuthProvider>
+  )
+}
+```
+
+</Step>
+</Steps>
+
+## Next Steps
+
+Now that you have Better Auth UI installed, check out the [API Reference](/docs/solid/api) to learn about all available hooks, or see [Examples](/docs/solid/examples) for practical usage patterns.
+
+For a complete working example, check out the [start-zaidan-example](https://github.com/better-auth-ui/start-zaidan-example) repository.

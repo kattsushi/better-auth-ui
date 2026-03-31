@@ -1,0 +1,343 @@
+---
+title: API Reference
+description: API Reference for Zaidan UI Components
+icon: BookOpen
+---
+
+This page documents all the components provided by `@better-auth-ui/zaidan`.
+
+## UI Primitives
+
+### Button
+
+A versatile button component with multiple variants.
+
+```tsx
+import { Button, buttonVariants } from "@better-auth-ui/zaidan"
+
+// Using the component
+<Button variant="default" size="default">Click me</Button>
+
+// Using variants directly
+<button class={buttonVariants({ variant: "default", size: "default" })}>
+  Click me
+</button>
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `"default" \| "destructive" \| "outline" \| "secondary" \| "ghost" \| "link"` | `"default"` | Visual style variant |
+| `size` | `"default" \| "sm" \| "lg" \| "icon"` | `"default"` | Size variant |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `loading` | `boolean` | `false` | Loading state with spinner |
+
+### Input
+
+Text input component.
+
+```tsx
+import { Input } from "@better-auth-ui/zaidan"
+
+<Input type="email" placeholder="Enter your email" />
+```
+
+### Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `type` | `string` | Input type (text, email, password, etc.) |
+| `placeholder` | `string` | Placeholder text |
+| `disabled` | `boolean` | Disabled state |
+
+### Card
+
+Container component for grouping content.
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@better-auth-ui/zaidan"
+
+<Card>
+  <CardHeader>
+    <CardTitle>Title</CardTitle>
+    <CardDescription>Description</CardDescription>
+  </CardHeader>
+  <CardContent>
+    Content goes here
+  </CardContent>
+  <CardFooter>
+    Footer content
+  </CardFooter>
+</Card>
+```
+
+### Checkbox
+
+Checkbox input component.
+
+```tsx
+import { Checkbox } from "@better-auth-ui/zaidan"
+
+<Checkbox checked={checked()} onChange={(checked) => setChecked(checked)} />
+```
+
+### Select
+
+Dropdown select component.
+
+```tsx
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@better-auth-ui/zaidan"
+
+<Select value={value()} onChange={setValue}>
+  <SelectTrigger>
+    <SelectValue placeholder="Select an option" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="option1">Option 1</SelectItem>
+    <SelectItem value="option2">Option 2</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+### Avatar
+
+User avatar component with fallback support.
+
+```tsx
+import { Avatar, AvatarImage, AvatarFallback } from "@better-auth-ui/zaidan"
+
+<Avatar>
+  <AvatarImage src={user.image} alt={user.name} />
+  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+</Avatar>
+```
+
+### Tabs
+
+Tabbed interface component.
+
+```tsx
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@better-auth-ui/zaidan"
+
+<Tabs value={activeTab()} onChange={setActiveTab}>
+  <TabsList>
+    <TabsTrigger value="tab1">Tab 1</TabsTrigger>
+    <TabsTrigger value="tab2">Tab 2</TabsTrigger>
+  </TabsList>
+  <TabsContent value="tab1">Content 1</TabsContent>
+  <TabsContent value="tab2">Content 2</TabsContent>
+</Tabs>
+```
+
+### Other UI Components
+
+| Component | Description |
+|-----------|-------------|
+| `Label` | Form label component |
+| `Textarea` | Multi-line text input |
+| `RadioGroup` | Radio button group |
+| `Separator` | Visual separator line |
+| `Skeleton` | Loading placeholder |
+| `Spinner` | Loading indicator |
+| `DropdownMenu` | Dropdown menu component |
+
+## Auth Components
+
+### Auth (Wrapper)
+
+Main wrapper component for auth pages.
+
+```tsx
+import { Auth, AuthProvider } from "@better-auth-ui/zaidan"
+
+// AuthProvider wraps your app
+<AuthProvider authClient={authClient}>
+  <YourApp />
+</AuthProvider>
+
+// Auth component for auth pages
+<Auth>
+  <SignIn />
+</Auth>
+```
+
+### SignIn
+
+Email/password sign-in component.
+
+```tsx
+import { SignIn } from "@better-auth-ui/zaidan"
+
+<SignIn 
+  callbackURL="/dashboard"
+  onSuccess={() => console.log("Signed in")}
+/>
+```
+
+### Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `callbackURL` | `string` | URL to redirect after sign-in |
+| `onSuccess` | `() => void` | Callback on successful sign-in |
+| `onError` | `(error: Error) => void` | Callback on error |
+
+### SignUp
+
+Email/password sign-up component.
+
+```tsx
+import { SignUp } from "@better-auth-ui/zaidan"
+
+<SignUp 
+  callbackURL="/dashboard"
+  requireEmailVerification={true}
+/>
+```
+
+### SignOut
+
+Sign-out button component.
+
+```tsx
+import { SignOut } from "@better-auth-ui/zaidan"
+
+<SignOut 
+  callbackURL="/"
+  showText={true}
+/>
+```
+
+### MagicLink
+
+Magic link email input component.
+
+```tsx
+import { MagicLink } from "@better-auth-ui/zaidan"
+
+<MagicLink 
+  callbackURL="/"
+  sendButtonText="Send Magic Link"
+/>
+```
+
+### ProviderButtons
+
+OAuth provider buttons for social sign-in.
+
+```tsx
+import { ProviderButtons } from "@better-auth-ui/zaidan"
+
+<ProviderButtons 
+  providers={["github", "google"]}
+  callbackURL="/dashboard"
+/>
+```
+
+### ForgotPassword
+
+Forgot password form component.
+
+```tsx
+import { ForgotPassword } from "@better-auth-ui/zaidan"
+
+<ForgotPassword 
+  callbackURL="/reset-password"
+/>
+```
+
+### ResetPassword
+
+Password reset form component.
+
+```tsx
+import { ResetPassword } from "@better-auth-ui/zaidan"
+
+<ResetPassword 
+  token={tokenFromURL}
+/>
+```
+
+## User Components
+
+### UserAvatar
+
+Avatar component with user data integration.
+
+```tsx
+import { UserAvatar } from "@better-auth-ui/zaidan"
+
+<UserAvatar user={user()} size="md" />
+```
+
+### UserButton
+
+Dropdown button showing current user.
+
+```tsx
+import { UserButton } from "@better-auth-ui/zaidan"
+
+<UserButton 
+  user={user()}
+  onSignOut={() => navigate("/")}
+/>
+```
+
+### UserView
+
+Component for displaying user profile information.
+
+```tsx
+import { UserView } from "@better-auth-ui/zaidan"
+
+<UserView 
+  user={user()}
+/>
+```
+
+### SwitchAccountMenu
+
+Menu for switching between accounts (for multi-account setups).
+
+```tsx
+import { SwitchAccountMenu, SwitchAccountItem } from "@better-auth-ui/zaidan"
+
+<SwitchAccountMenu>
+  <SwitchAccountItem 
+    user={account1} 
+    isActive={true}
+  />
+  <SwitchAccountItem 
+    user={account2} 
+    isActive={false}
+  />
+</SwitchAccountMenu>
+```
+
+## Settings Component
+
+### Settings
+
+Complete settings interface with tabs for account, security, and appearance.
+
+```tsx
+import { Settings } from "@better-auth-ui/zaidan"
+
+<Settings 
+  user={user()}
+  tabs={["account", "security", "appearance"]}
+  onUpdateUser={handleUpdate}
+/>
+```
+
+### Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `user` | `User` | Current user data |
+| `tabs` | `SettingsTab[]` | Tabs to display |
+| `onUpdateUser` | `(data) => Promise<void>` | Callback for updating user |
+| `onChangePassword` | `(data) => Promise<void>` | Callback for changing password |
+| `onEnable2FA` | `(code) => Promise<void>` | Callback for enabling 2FA |
+| `onDisable2FA` | `(code) => Promise<void>` | Callback for disabling 2FA |

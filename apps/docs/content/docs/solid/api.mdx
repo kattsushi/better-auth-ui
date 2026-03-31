@@ -1,0 +1,299 @@
+---
+title: API Reference
+description: API Reference for Better Auth UI SolidJS hooks
+icon: BookOpen
+---
+
+This page documents all the SolidJS hooks provided by `@better-auth-ui/solid`.
+
+## AuthProvider
+
+The AuthProvider component wraps your application and provides authentication context.
+
+```tsx
+import { AuthProvider } from "@better-auth-ui/solid"
+import { authClient } from "./lib/auth-client"
+
+function App() {
+  return (
+    <AuthProvider authClient={authClient}>
+      <YourApp />
+    </AuthProvider>
+  )
+}
+```
+
+### Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `authClient` | `SolidAuthClient` | The authentication client instance |
+| `children` | `JSX.Element` | Child components |
+
+## createAuth
+
+Main hook for accessing authentication state and actions.
+
+```tsx
+import { createAuth } from "@better-auth-ui/solid"
+
+const { user, session, isLoading, signOut, refresh } = createAuth()
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `user` | `Accessor<User \| null>` | Reactive accessor for the current user |
+| `session` | `Accessor<Session \| null>` | Reactive accessor for the current session |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `signOut` | `() => Promise<void>` | Function to sign out the user |
+| `refresh` | `() => Promise<void>` | Function to refresh session data |
+
+## createSignInEmail
+
+Hook for email/password sign-in.
+
+```tsx
+import { createSignInEmail } from "@better-auth-ui/solid"
+
+const { signInEmail, isLoading, error } = createSignInEmail()
+
+// Usage
+await signInEmail({
+  email: "user@example.com",
+  password: "password123",
+  callbackURL: "/dashboard"
+})
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `signInEmail` | `(options) => Promise<void>` | Function to sign in with email |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+
+### Options
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `email` | `string` | Yes | User's email address |
+| `password` | `string` | Yes | User's password |
+| `callbackURL` | `string` | No | URL to redirect after sign-in |
+| `fetchOptions` | `object` | No | Fetch configuration options |
+
+## createSignUpEmail
+
+Hook for email/password sign-up.
+
+```tsx
+import { createSignUpEmail } from "@better-auth-ui/solid"
+
+const { signUpEmail, isLoading, error } = createSignUpEmail()
+
+// Usage
+await signUpEmail({
+  email: "user@example.com",
+  password: "password123",
+  name: "John Doe",
+  callbackURL: "/dashboard"
+})
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `signUpEmail` | `(options) => Promise<void>` | Function to sign up with email |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+
+### Options
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `email` | `string` | Yes | User's email address |
+| `password` | `string` | Yes | User's password |
+| `name` | `string` | No | User's display name |
+| `callbackURL` | `string` | No | URL to redirect after sign-up |
+| `fetchOptions` | `object` | No | Fetch configuration options |
+
+## createSignOut
+
+Hook for signing out the current user.
+
+```tsx
+import { createSignOut } from "@better-auth-ui/solid"
+
+const { signOut, isLoading, error } = createSignOut()
+
+// Usage
+await signOut()
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `signOut` | `(options?) => Promise<void>` | Function to sign out |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+
+## createSession
+
+Hook for fetching the current session.
+
+```tsx
+import { createSession } from "@better-auth-ui/solid"
+
+const { session, isLoading, error, refetch } = createSession()
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `session` | `Accessor<Session \| null>` | Reactive accessor for the session |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+| `refetch` | `() => void` | Function to re-fetch the session |
+
+## createUser
+
+Hook for fetching the current authenticated user.
+
+```tsx
+import { createUser } from "@better-auth-ui/solid"
+
+const { user, isLoading, error, refetch } = createUser()
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `user` | `Accessor<User \| null>` | Reactive accessor for the user |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+| `refetch` | `() => void` | Function to re-fetch the user |
+
+## createSignInSocial
+
+Hook for OAuth/social sign-in.
+
+```tsx
+import { createSignInSocial } from "@better-auth-ui/solid"
+
+const { signInSocial, isLoading, error } = createSignInSocial()
+
+// Usage - redirects to OAuth provider
+await signInSocial({
+  provider: "github",
+  callbackURL: "/dashboard"
+})
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `signInSocial` | `(options) => Promise<void>` | Function to initiate OAuth flow |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+
+### Options
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `provider` | `string` | Yes | OAuth provider (e.g., "github", "google") |
+| `callbackURL` | `string` | No | URL to redirect after OAuth |
+| `fetchOptions` | `object` | No | Fetch configuration options |
+
+## createUserSettings
+
+Hook for managing user profile settings.
+
+```tsx
+import { createUserSettings } from "@better-auth-ui/solid"
+
+const { user, isLoading, error, updateUser, refetch } = createUserSettings()
+
+// Usage
+await updateUser({ name: "New Name", image: "https://..." })
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `user` | `Accessor<User \| null>` | Reactive accessor for the user |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+| `updateUser` | `(data) => Promise<void>` | Function to update user profile |
+| `refetch` | `() => void` | Function to re-fetch user data |
+
+## createPassword
+
+Hook for changing user password.
+
+```tsx
+import { createPassword } from "@better-auth-ui/solid"
+
+const { isLoading, error, changePassword } = createPassword()
+
+// Usage
+await changePassword({
+  newPassword: "newpassword123",
+  currentPassword: "oldpassword123"
+})
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `changePassword` | `(options) => Promise<void>` | Function to change password |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+
+### Options
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `newPassword` | `string` | Yes | The new password |
+| `currentPassword` | `string` | No | Current password (if required) |
+| `fetchOptions` | `object` | No | Fetch configuration options |
+
+## createTwoFactor
+
+Hook for managing two-factor authentication.
+
+```tsx
+import { createTwoFactor } from "@better-auth-ui/solid"
+
+const { isLoading, error, enable, disable } = createTwoFactor()
+
+// Enable 2FA
+await enable({ code: "123456" })
+
+// Disable 2FA
+await disable({ code: "123456" })
+```
+
+### Returns
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `enable` | `(options) => Promise<void>` | Function to enable 2FA |
+| `disable` | `(options) => Promise<void>` | Function to disable 2FA |
+| `isLoading` | `Accessor<boolean>` | Reactive accessor for loading state |
+| `error` | `Accessor<Error \| null>` | Reactive accessor for error state |
+
+### Options
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `code` | `string` | Yes | Verification code from authenticator app |
+| `fetchOptions` | `object` | No | Fetch configuration options |
