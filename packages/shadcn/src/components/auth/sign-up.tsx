@@ -105,8 +105,13 @@ export function SignUp({
     const formData = new FormData(e.currentTarget)
     const name = formData.get("name") as string
     const email = formData.get("email") as string
+    const password = formData.get("password") as string
+    const confirmPasswordValue = formData.get("confirmPassword") as string
 
-    if (emailAndPassword?.confirmPassword && password !== confirmPassword) {
+    if (
+      emailAndPassword?.confirmPassword &&
+      password !== confirmPasswordValue
+    ) {
       toast.error(localization.auth.passwordsDoNotMatch)
       setPassword("")
       setConfirmPassword("")

@@ -11,10 +11,12 @@ import {
   useSelectContext,
   Value
 } from "@kobalte/core/select"
-import { Check, ChevronsUpDown } from "lucide-solid"
-import type { ComponentProps, JSX, ValidComponent } from "solid-js"
+import { lazy, type ComponentProps, type JSX, type ValidComponent } from "solid-js"
 import { mergeProps, splitProps } from "solid-js"
 import { cn } from "@/lib/utils"
+
+const ChevronsUpDown = lazy(() => import("lucide-solid").then(m => ({ default: m.ChevronsUpDown })));
+const Check = lazy(() => import("lucide-solid").then(m => ({ default: m.Check })));
 
 type SelectProps<
   O,

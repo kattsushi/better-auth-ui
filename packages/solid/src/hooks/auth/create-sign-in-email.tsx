@@ -22,7 +22,7 @@ interface SignInEmailReturn {
  * @returns Object with isLoading, error signals and signInEmail function
  */
 export function createSignInEmail(): SignInEmailReturn {
-  const { authClient } = useAuthContext()
+  const { authClient, loadSession } = useAuthContext()
 
   const [isLoading, setIsLoading] = createSignal(false)
   const [error, setError] = createSignal<Error | null>(null)
@@ -38,6 +38,15 @@ export function createSignInEmail(): SignInEmailReturn {
         callbackURL: options.callbackURL,
         fetchOptions: options.fetchOptions ?? { throw: true }
       })
+
+      // Reload session after successful sign-in
+      await loadSession()
+
+      // Client-side redirect to callbackURL
+      const redirectTo = options.callbackURL ?? "/dashboard"
+      if (typeof window !== "undefined") {
+        window.location.href = redirectTo
+      }
     } catch (e) {
       const err = e instanceof Error ? e : new Error(String(e))
       setError(err)

@@ -1,7 +1,11 @@
 import * as CheckboxPrimitive from "@kobalte/core/checkbox"
 import type { PolymorphicProps } from "@kobalte/core/polymorphic"
-import { CheckIcon } from "lucide-solid"
+import { lazy } from "solid-js"
 import { type ComponentProps, splitProps, type ValidComponent } from "solid-js"
+
+
+const CheckIcon = lazy(() => import("lucide-solid").then(m => ({ default: m.CheckIcon})));
+
 
 import { cn } from "@/lib/utils"
 

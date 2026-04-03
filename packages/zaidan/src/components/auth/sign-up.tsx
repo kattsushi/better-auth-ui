@@ -1,7 +1,6 @@
 import { createSignUpEmail } from "@better-auth-ui/solid"
-import { createSignal, Show } from "solid-js"
+import { createEffect, createSignal } from "solid-js"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Field,
@@ -11,7 +10,6 @@ import {
   FieldLabel
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 import { MagicLinkButton } from "./magic-link-button"
 import type { SocialLayout } from "./provider-buttons"
@@ -22,19 +20,17 @@ export type SignUpProps = {
   socialPosition?: "top" | "bottom"
 }
 
-/**
- * Render a sign-up form with name, email, and password fields, optional social provider buttons, and submission handling.
- *
- * @param className - Additional CSS classes applied to the outer container
- * @param socialLayout - Social layout to apply to the component
- * @param socialPosition - Social position to apply to the component
- * @returns The sign-up form JSX element
- */
 export function SignUp(props: SignUpProps) {
   const [password, setPassword] = createSignal("")
   const [confirmPassword, setConfirmPassword] = createSignal("")
+  const [loading, setLoading] = createSignal(false)
+  const [debug, setDebug] = createSignal("init")
 
   const { signUpEmail, isLoading: signUpPending } = createSignUpEmail()
+
+  createEffect(() => {
+    setDebug("createEffect: signUpPending = " + signUpPending())
+  })
 
   const [fieldErrors, setFieldErrors] = createSignal<{
     name?: string
@@ -43,33 +39,101 @@ export function SignUp(props: SignUpProps) {
     confirmPassword?: string
   }>({})
 
-  const handleSubmit = async (e: Event) => {
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
-    const name = formData.get("name") as string
-    const email = formData.get("email") as string
+  // Native DOM event handler
+  const handleButtonClick = () => {
+    console.log("NATIVE: button clicked")
+    setDebug("NATIVE: button clicked at " + new Date().toISOString())
 
-    if (password() !== confirmPassword()) {
-      console.error("Passwords do not match")
+    const nameInput = document.getElementById("name") as HTMLInputElement
+    const emailInput = document.getElementById("email") as HTMLInputElement
+    const passwordInput = document.getElementById(
+      "password"
+    ) as HTMLInputElement
+    const confirmPasswordInput = document.getElementById(
+      "confirmPassword"
+    ) as HTMLInputElement
+
+    const name = nameInput?.value || ""
+    const email = emailInput?.value || ""
+    const passwordValue = passwordInput?.value || ""
+    const confirmPasswordValue = confirmPasswordInput?.value || ""
+
+    setDebug("values: " + name + ", " + email)
+
+    if (passwordValue !== confirmPasswordValue) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        confirmPassword: "Passwords do not match"
+      }))
       return
     }
 
-    try {
-      await signUpEmail({ name, email, password: password() })
-    } catch (error) {
-      console.error("Sign up error:", error)
+    if (!name || !email || !passwordValue) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        name: !name ? "Name is required" : undefined,
+        email: !email ? "Email is required" : undefined,
+        password: !passwordValue ? "Password is required" : undefined
+      }))
+      return
     }
+
+    setLoading(true)
+    setDebug("calling signUpEmail...")
+
+    signUpEmail({
+      name,
+      email,
+      password: passwordValue,
+      callbackURL: "/dashboard"
+    })
+      .then(() => {
+        setDebug("signUpEmail resolved!")
+        setLoading(false)
+      })
+      .catch((err) => {
+        setDebug("Error: " + err?.message)
+        setFieldErrors((prev) => ({
+          ...prev,
+          email: err?.message || "Signup failed"
+        }))
+        setLoading(false)
+      })
   }
 
   return (
-    <Card class={cn("w-full max-w-sm py-4 md:py-6 gap-4", props.className)}>
-      <CardHeader class="px-4 md:px-6 gap-0">
-        <CardTitle class="text-xl">Sign Up</CardTitle>
-      </CardHeader>
+    <>
+      {/* Debug div - always visible */}
+      <div
+        style={{
+          position: "fixed",
+          top: "10px",
+          right: "10px",
+          padding: "15px",
+          background: "#ff0",
+          "z-index": 9999,
+          "font-size": "14px",
+          border: "2px solid red"
+        }}
+      >
+        <div>
+          <strong>DEBUG:</strong> {debug()}
+        </div>
+        <div>
+          <strong>signUpPending:</strong> {String(signUpPending())}
+        </div>
+        <div>
+          <strong>loading:</strong> {String(loading())}
+        </div>
+      </div>
 
-      <CardContent class="px-4 md:px-6">
-        <FieldGroup class="gap-4">
-          <form onSubmit={handleSubmit}>
+      <Card class={cn("w-full max-w-sm py-4 md:py-6 gap-4", props.className)}>
+        <CardHeader class="px-4 md:px-6 gap-0">
+          <CardTitle class="text-xl">Sign Up</CardTitle>
+        </CardHeader>
+
+        <CardContent class="px-4 md:px-6">
+          <FieldGroup class="gap-4">
             <FieldGroup class="gap-4">
               <Field class="gap-1" data-invalid={!!fieldErrors().name}>
                 <FieldLabel for="name">Name</FieldLabel>
@@ -81,7 +145,6 @@ export function SignUp(props: SignUpProps) {
                   autocomplete="name"
                   placeholder="Your name"
                   required
-                  disabled={signUpPending()}
                 />
 
                 <FieldError>{fieldErrors().name}</FieldError>
@@ -97,7 +160,6 @@ export function SignUp(props: SignUpProps) {
                   autocomplete="email"
                   placeholder="email@example.com"
                   required
-                  disabled={signUpPending()}
                 />
 
                 <FieldError>{fieldErrors().email}</FieldError>
@@ -122,7 +184,6 @@ export function SignUp(props: SignUpProps) {
                   }}
                   placeholder="Create a password"
                   required
-                  disabled={signUpPending()}
                 />
 
                 <FieldError>{fieldErrors().password}</FieldError>
@@ -150,33 +211,46 @@ export function SignUp(props: SignUpProps) {
                   }}
                   placeholder="Confirm your password"
                   required
-                  disabled={signUpPending()}
                 />
 
                 <FieldError>{fieldErrors().confirmPassword}</FieldError>
               </Field>
 
               <Field class="mt-1">
-                <Button type="submit" disabled={signUpPending()}>
-                  <Show when={signUpPending()}>
-                    <Spinner />
-                  </Show>
-                  Sign Up
-                </Button>
+                <button
+                  type="button"
+                  onClick={handleButtonClick}
+                  disabled={loading()}
+                  style={{
+                    display: "inline-flex",
+                    "align-items": "center",
+                    "justify-content": "center",
+                    padding: "0.5rem 1rem",
+                    "border-radius": "0.375rem",
+                    width: "100%",
+                    "font-weight": "500",
+                    background: loading() ? "#ccc" : "#000",
+                    color: "#fff",
+                    border: "none",
+                    cursor: loading() ? "not-allowed" : "pointer"
+                  }}
+                >
+                  {loading() ? "Loading..." : "Sign Up"}
+                </button>
 
-                <MagicLinkButton view="signUp" isPending={signUpPending()} />
+                <MagicLinkButton view="signUp" isPending={loading()} />
               </Field>
             </FieldGroup>
-          </form>
 
-          <FieldDescription class="text-center">
-            Already have an account?{" "}
-            <a href="/auth/sign-in" class="underline underline-offset-4">
-              Sign In
-            </a>
-          </FieldDescription>
-        </FieldGroup>
-      </CardContent>
-    </Card>
+            <FieldDescription class="text-center">
+              Already have an account?{" "}
+              <a href="/auth/sign-in" class="underline underline-offset-4">
+                Sign In
+              </a>
+            </FieldDescription>
+          </FieldGroup>
+        </CardContent>
+      </Card>
+    </>
   )
 }

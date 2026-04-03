@@ -1,5 +1,3 @@
-import { createAuth } from "@better-auth-ui/solid"
-
 import { ForgotPassword } from "./forgot-password"
 import { MagicLink } from "./magic-link"
 import type { SocialLayout } from "./provider-buttons"
@@ -38,8 +36,6 @@ export type AuthProps = {
  * @throws Error if the resolved view is not a valid auth view
  */
 export function Auth(props: AuthProps) {
-  const auth = createAuth()
-
   const viewPaths = {
     auth: {
       signIn: "sign-in",
@@ -55,7 +51,12 @@ export function Auth(props: AuthProps) {
     throw new Error("[Better Auth UI] Either `view` or `path` must be provided")
   }
 
-  const currentView = props.view
+  // Resolve path to view if view is not explicitly provided
+  const currentView =
+    props.view ??
+    (Object.entries(viewPaths.auth).find(([, v]) => v === props.path)?.[0] as
+      | AuthView
+      | undefined)
 
   switch (currentView) {
     case "signIn":

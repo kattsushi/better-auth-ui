@@ -47,14 +47,14 @@ export function SignIn(props: SignInProps) {
     const formData = new FormData(e.target as HTMLFormElement)
     const email = formData.get("email") as string
 
-    try {
-      await signInEmail({
-        email,
-        password: password()
-      })
-    } catch (error) {
+    // Don't wait for signInEmail - it handles redirect internally
+    signInEmail({
+      email,
+      password: password(),
+      callbackURL: "/dashboard"
+    }).catch((error) => {
       console.error("Sign in error:", error)
-    }
+    })
   }
 
   return (

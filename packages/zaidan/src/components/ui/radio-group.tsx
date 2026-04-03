@@ -7,8 +7,9 @@ import {
   RadioGroup as RadioGroupRoot,
   type RadioGroupRootProps
 } from "@kobalte/core/radio-group"
-import { Circle } from "lucide-solid"
-import { type ComponentProps, splitProps, type ValidComponent } from "solid-js"
+import { type ComponentProps, lazy, splitProps, type ValidComponent } from "solid-js"
+
+const Circle = lazy(() => import("lucide-solid").then(m => ({ default: m.Circle })));
 
 import { cn } from "@/lib/utils"
 

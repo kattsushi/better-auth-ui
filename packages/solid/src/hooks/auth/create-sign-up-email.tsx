@@ -23,7 +23,7 @@ interface SignUpEmailReturn {
  * @returns Object with isLoading, error signals and signUpEmail function
  */
 export function createSignUpEmail(): SignUpEmailReturn {
-  const { authClient } = useAuthContext()
+  const { authClient, loadSession } = useAuthContext()
 
   const [isLoading, setIsLoading] = createSignal(false)
   const [error, setError] = createSignal<Error | null>(null)
@@ -33,13 +33,22 @@ export function createSignUpEmail(): SignUpEmailReturn {
     setError(null)
 
     try {
-      await authClient.signUp.email({
+      const result = await authClient.signUp.email({
         email: options.email,
         password: options.password,
         name: options.name,
         callbackURL: options.callbackURL,
         fetchOptions: options.fetchOptions ?? { throw: true }
       })
+
+      // Reload session after successful sign-up
+      await loadSession()
+
+      // Client-side redirect to callbackURL
+      const redirectTo = options.callbackURL ?? "/dashboard"
+      if (typeof window !== "undefined") {
+        window.location.href = redirectTo
+      }
     } catch (e) {
       const err = e instanceof Error ? e : new Error(String(e))
       setError(err)

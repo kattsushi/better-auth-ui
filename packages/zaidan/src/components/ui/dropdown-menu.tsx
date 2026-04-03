@@ -1,9 +1,20 @@
 import * as DropdownMenuPrimitive from "@kobalte/core/dropdown-menu"
 import type { PolymorphicProps } from "@kobalte/core/polymorphic"
-import { Check, ChevronRight } from "lucide-solid"
-import type { ComponentProps, ValidComponent } from "solid-js"
-import { mergeProps, splitProps } from "solid-js"
+import {
+  type ComponentProps,
+  lazy,
+  mergeProps,
+  splitProps,
+  type ValidComponent
+} from "solid-js"
 import { cn } from "@/lib/utils"
+
+const ChevronRight = lazy(() =>
+  import("lucide-solid").then((m) => ({ default: m.ChevronRight }))
+)
+const Check = lazy(() =>
+  import("lucide-solid").then((m) => ({ default: m.Check }))
+)
 
 type DropdownMenuProps = DropdownMenuPrimitive.DropdownMenuRootProps
 
@@ -56,7 +67,9 @@ const DropdownMenuContent = <T extends ValidComponent = "div">(
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
         class={cn(
-          "z-50 z-dropdown-menu-content z-menu-target max-h-(--kb-popper-available-height) min-w-32 origin-(--kb-menu-content-transform-origin) overflow-y-auto overflow-x-hidden outline-none data-closed:overflow-hidden",
+          "z-50 min-w-[8rem] rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           local.class
         )}
         {...others}
@@ -132,7 +145,12 @@ const DropdownMenuItem = <T extends ValidComponent = "div">(
       data-inset={local.inset}
       data-variant={local.variant}
       class={cn(
-        "group/dropdown-menu-item relative z-dropdown-menu-item flex cursor-default select-none items-center outline-hidden data-disabled:pointer-events-none data-inset:pl-8 data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none",
+        "focus:bg-accent focus:text-accent-foreground",
+        "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "data-[inset]:pl-8",
+        "data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         local.class
       )}
       {...others}
@@ -298,7 +316,7 @@ const DropdownMenuSeparator = <T extends ValidComponent = "hr">(
   return (
     <DropdownMenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
-      class={cn("z-dropdown-menu-separator", local.class)}
+      class={cn("-mx-1 my-1 h-px bg-muted", local.class)}
       {...others}
     />
   )

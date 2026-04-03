@@ -1,0 +1,48 @@
+{
+  "name": "start-zaidan-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --port 3000",
+    "build": "vite build",
+    "start": "node .output/server/index.mjs",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "format": "biome format",
+    "lint": "biome lint",
+    "check": "biome check"
+  },
+  "dependencies": {
+    "@better-auth-ui/solid": "*",
+    "@better-auth-ui/zaidan": "*",
+    "@tailwindcss/vite": "^4.1.18",
+    "@tanstack/router-plugin": "^1.133.21",
+    "@tanstack/solid-router": "latest",
+    "@tanstack/solid-router-devtools": "latest",
+    "@tanstack/solid-router-ssr-query": "latest",
+    "@tanstack/solid-start": "latest",
+    "better-auth": "^1.5.3",
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.20.0",
+    "solid-js": "^1.9.12",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.1.18",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.5",
+    "@tanstack/devtools-vite": "latest",
+    "@types/pg": "^8.20.0",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "^5.7.2",
+    "vite": "^8.0.3",
+    "vite-plugin-solid": "^2.11.10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lightningcss"
+    ]
+  }
+}

@@ -13,6 +13,9 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <AuthProvider
       authClient={authClient}
+      baseURL={
+        typeof window !== "undefined" ? window.location.origin : undefined
+      }
       magicLink
       multiSession
       socialProviders={["github", "google"]}

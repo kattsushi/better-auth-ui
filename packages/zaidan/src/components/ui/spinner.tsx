@@ -1,8 +1,9 @@
-import { LoaderCircle } from "lucide-solid"
-import type { ComponentProps } from "solid-js"
+import { lazy, type ComponentProps } from "solid-js"
 import { splitProps } from "solid-js"
 
 import { cn } from "@/lib/utils"
+
+const LoaderCircle = lazy(() => import("lucide-solid").then(m => ({ default: m.LoaderCircle })));
 
 type SpinnerProps = ComponentProps<"svg"> & {
   class?: string | undefined
