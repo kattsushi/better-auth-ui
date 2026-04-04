@@ -16,11 +16,12 @@ export const Route = createFileRoute("/settings/$path")({
 
 function SettingsPage() {
   const { user, isLoading } = createAuth()
+  const params = Route.useParams()
 
   return (
     <div class="w-full max-w-6xl mx-auto p-4 md:p-6">
       <Show when={!isLoading() && user()}>
-        {(u) => <Settings user={u()} />}
+        <Settings path={params().path} />
       </Show>
     </div>
   )

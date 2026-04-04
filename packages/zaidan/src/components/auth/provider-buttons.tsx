@@ -9,7 +9,7 @@ export type SocialProvider =
   | "linkedin"
   | "microsoft"
 
-import { createMemo, Show } from "solid-js"
+import { For, Show } from "solid-js"
 
 import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
@@ -18,29 +18,43 @@ import { cn } from "@/lib/utils"
 export type ProviderButtonsProps = {
   isPending: boolean
   socialLayout?: SocialLayout
+  socialProviders?: { id: string; name: string }[]
   signInSocial: (params: {
     provider: SocialProvider
     callbackURL: string
-  }) => void
+  }) => void | Promise<void>
 }
 
 export type SocialLayout = "auto" | "horizontal" | "vertical" | "grid"
 
+// Provider labels
+const providerLabels: Record<SocialProvider, string> = {
+  google: "Google",
+  github: "GitHub",
+  apple: "Apple",
+  discord: "Discord",
+  facebook: "Facebook",
+  twitter: "Twitter",
+  linkedin: "LinkedIn",
+  microsoft: "Microsoft"
+}
+
 /**
  * Render sign-in buttons for configured social providers.
- *
- * @param isPending - When true, disables all provider buttons.
- * @param socialLayout - Preferred layout for the provider buttons
- * @param signInSocial - Callback invoked with the provider and callbackURL when a button is clicked.
- * @returns A JSX element containing provider sign-in buttons.
  */
 export function ProviderButtons(props: ProviderButtonsProps) {
-  const resolvedSocialLayout = createMemo(() => {
+  const providers = () => props.socialProviders ?? []
+
+  const resolvedSocialLayout = () => {
     if (props.socialLayout === "auto") {
       return "vertical"
     }
     return props.socialLayout ?? "vertical"
-  })
+  }
+
+  const getProviderLabel = (providerId: string) => {
+    return providerLabels[providerId as SocialProvider] ?? providerId
+  }
 
   return (
     <Field
@@ -51,20 +65,27 @@ export function ProviderButtons(props: ProviderButtonsProps) {
         resolvedSocialLayout() === "horizontal" && "flex-row flex-wrap"
       )}
     >
-      <Show when={true}>
-        <Button
-          class={cn(
-            "flex-1",
-            resolvedSocialLayout() === "horizontal" && "flex-1"
+      <Show when={providers() && providers().length > 0}>
+        <For each={providers()}>
+          {(provider) => (
+            <Button
+              class={cn(
+                "flex-1",
+                resolvedSocialLayout() === "horizontal" && "flex-1"
+              )}
+              variant="outline"
+              disabled={props.isPending}
+              onClick={() => {
+                props.signInSocial({
+                  provider: provider.id as SocialProvider,
+                  callbackURL: "/"
+                })
+              }}
+            >
+              {provider.name || getProviderLabel(provider.id)}
+            </Button>
           )}
-          variant="outline"
-          disabled={props.isPending}
-          onClick={() =>
-            props.signInSocial({ provider: "google", callbackURL: "/" })
-          }
-        >
-          Google
-        </Button>
+        </For>
       </Show>
     </Field>
   )

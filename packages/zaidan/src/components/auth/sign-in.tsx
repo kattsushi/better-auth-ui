@@ -1,4 +1,8 @@
-import { createSignInEmail } from "@better-auth-ui/solid"
+import {
+  createSignInEmail,
+  createSignInSocial,
+  useAuthContext
+} from "@better-auth-ui/solid"
 import { createSignal, Show } from "solid-js"
 
 import { Button } from "@/components/ui/button"
@@ -9,14 +13,15 @@ import {
   FieldDescription,
   FieldError,
   FieldGroup,
-  FieldLabel
+  FieldLabel,
+  FieldSeparator
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 import { MagicLinkButton } from "./magic-link-button"
-import type { SocialLayout } from "./provider-buttons"
+import { ProviderButtons, type SocialLayout } from "./provider-buttons"
 
 export type SignInProps = {
   className?: string
@@ -36,6 +41,9 @@ export function SignIn(props: SignInProps) {
   const [password, setPassword] = createSignal("")
 
   const { signInEmail, isLoading: signInPending } = createSignInEmail()
+  const { signInSocial, isLoading: socialPending } = createSignInSocial()
+
+  const isPending = () => signInPending() || socialPending()
 
   const [fieldErrors, setFieldErrors] = createSignal<{
     email?: string
@@ -47,7 +55,6 @@ export function SignIn(props: SignInProps) {
     const formData = new FormData(e.target as HTMLFormElement)
     const email = formData.get("email") as string
 
-    // Don't wait for signInEmail - it handles redirect internally
     signInEmail({
       email,
       password: password(),
@@ -57,6 +64,9 @@ export function SignIn(props: SignInProps) {
     })
   }
 
+  const { socialProviders } = useAuthContext()
+  const showSeparator = !!socialProviders && socialProviders.length > 0
+
   return (
     <Card class={cn("w-full max-w-sm py-4 md:py-6 gap-4", props.className)}>
       <CardHeader class="px-4 md:px-6 gap-0">
@@ -65,6 +75,27 @@ export function SignIn(props: SignInProps) {
 
       <CardContent class="px-4 md:px-6">
         <FieldGroup class="gap-4">
+          {/* Social buttons at top if socialPosition === "top" */}
+          <Show
+            when={
+              props.socialPosition === "top" &&
+              !!socialProviders &&
+              socialProviders.length > 0
+            }
+          >
+            <ProviderButtons
+              socialLayout={props.socialLayout}
+              socialProviders={socialProviders}
+              signInSocial={signInSocial}
+              isPending={isPending()}
+            />
+            <Show when={showSeparator}>
+              <FieldSeparator class="*:data-[slot=field-separator-content]:bg-card m-0 text-xs flex items-center">
+                or
+              </FieldSeparator>
+            </Show>
+          </Show>
+
           <form onSubmit={handleSubmit}>
             <FieldGroup class="gap-4">
               <Field class="gap-1" data-invalid={!!fieldErrors().email}>
@@ -77,7 +108,7 @@ export function SignIn(props: SignInProps) {
                   autocomplete="email"
                   placeholder="email@example.com"
                   required
-                  disabled={signInPending()}
+                  disabled={isPending()}
                   onInput={() => {
                     setFieldErrors((prev) => ({
                       ...prev,
@@ -108,7 +139,7 @@ export function SignIn(props: SignInProps) {
                   }}
                   placeholder="Enter your password"
                   required
-                  disabled={signInPending()}
+                  disabled={isPending()}
                 />
 
                 <FieldError>{fieldErrors().password}</FieldError>
@@ -116,28 +147,60 @@ export function SignIn(props: SignInProps) {
 
               <Field class="my-1">
                 <div class="flex items-center gap-2">
-                  <Checkbox disabled={signInPending()} />
+                  <Checkbox id="rememberMe" disabled={isPending()} />
 
-                  <Label class="cursor-pointer text-sm font-normal">
+                  <Label
+                    for="rememberMe"
+                    class="cursor-pointer text-sm font-normal"
+                  >
                     Remember me
                   </Label>
                 </div>
               </Field>
 
               <Field class="mt-1">
-                <Button type="submit" disabled={signInPending()}>
-                  <Show when={signInPending()}>
+                <Button type="submit" disabled={isPending()}>
+                  <Show when={isPending()}>
                     <Spinner />
                   </Show>
                   Sign In
                 </Button>
 
-                <MagicLinkButton view="signIn" isPending={signInPending()} />
+                <MagicLinkButton view="signIn" isPending={isPending()} />
               </Field>
             </FieldGroup>
           </form>
 
+          {/* Social buttons at bottom if socialPosition === "bottom" */}
+          <Show
+            when={
+              props.socialPosition === "bottom" &&
+              !!socialProviders &&
+              socialProviders.length > 0
+            }
+          >
+            <Show when={showSeparator}>
+              <FieldSeparator class="*:data-[slot=field-separator-content]:bg-card m-0 text-xs flex items-center">
+                or
+              </FieldSeparator>
+            </Show>
+            <ProviderButtons
+              socialLayout={props.socialLayout}
+              socialProviders={socialProviders}
+              signInSocial={signInSocial}
+              isPending={isPending()}
+            />
+          </Show>
+
           <div class="flex flex-col gap-3">
+            {/* Forgot password link */}
+            <a
+              href="/auth/forgot-password"
+              class="self-center text-sm underline-offset-4 hover:underline"
+            >
+              Forgot password?
+            </a>
+
             <FieldDescription class="text-center">
               Don't have an account?{" "}
               <a href="/auth/sign-up" class="underline underline-offset-4">

@@ -1,31 +1,26 @@
-import { basePaths, viewPaths } from "@better-auth-ui/core"
-import type { User } from "better-auth/types"
+import { viewPaths } from "@better-auth-ui/core"
+import { createMemo } from "solid-js"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+import { AccountSettings } from "./account/account-settings"
+import { SecuritySettings } from "./security/security-settings"
 
 export type SettingsTab = "account" | "security"
 
 export type SettingsProps = {
-  user: User
   class?: string
   defaultTab?: SettingsTab
   path?: string
   view?: SettingsTab
   hideNav?: boolean
-  onProfileSave?: (data: { name: string; email: string }) => void
-  onPasswordChange?: () => void
-  onTwoFactorEnable?: () => void
-  onTwoFactorDisable?: () => void
-  onSessionRevoke?: (sessionId: string) => void
-  onLogoutAll?: () => void
 }
 
 /**
- * General settings component with tabs for account, security, etc.
- * Uses vertical layout on desktop like shadcn.
+ * Settings component with vertical tabs for account and security.
+ * Reusable - uses auth context internally for user data.
  */
 export function Settings(props: SettingsProps) {
-  // Get view from path or prop
-  const currentView = () => {
+  const getInitialTab = (): SettingsTab => {
     if (props.view) return props.view
     if (props.path) {
       const pathToView: Record<string, SettingsTab> = {
@@ -37,166 +32,80 @@ export function Settings(props: SettingsProps) {
     return props.defaultTab || "account"
   }
 
-  const navigateTo = (view: SettingsTab) => {
-    const path =
-      view === "account"
-        ? viewPaths.settings.account
-        : viewPaths.settings.security
-    if (typeof window !== "undefined") {
-      window.location.href = `${basePaths.settings}/${path}`
-    }
-  }
+  const currentView = createMemo(() => {
+    // If view prop is provided, use it (controlled mode)
+    if (props.view) return props.view
+    // Otherwise derive from path or default
+    return getInitialTab()
+  })
 
   return (
-    <Tabs value={currentView()} orientation="vertical">
-      <TabsList>
-        <TabsTrigger
-          value="account"
-          onSelect={(e) => {
-            e.preventDefault()
-            navigateTo("account")
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <circle cx="12" cy="10" r="3" />
-            <path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 1.71 3.85" />
-          </svg>
-          Account
-        </TabsTrigger>
-        <TabsTrigger
-          value="security"
-          onSelect={(e) => {
-            e.preventDefault()
-            navigateTo("security")
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-            <path d="m9 12 2 2 4-4" />
-          </svg>
-          Security
-        </TabsTrigger>
-      </TabsList>
+    <Tabs
+      value={currentView()}
+      defaultValue={!props.view ? getInitialTab() : undefined}
+      orientation="vertical"
+      class="flex flex-col md:flex-row gap-4 md:gap-6 w-full"
+    >
+      <div class="overflow-auto rounded-md">
+        <TabsList class="min-w-full md:w-64 lg:w-72 xl:w-80 md:flex-col md:h-fit md:items-stretch">
+          <TabsTrigger value="account">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 21a8 8 0 0 0-16 0" />
+              <circle cx="10" cy="8" r="5" />
+              <path d="M22 20c0-3-2-5-4-6" />
+              <path d="M22 16c0-3-2-5-5-5.5" />
+            </svg>
+            Account
+          </TabsTrigger>
 
-      <div class="rounded-lg border p-4">
-        <TabsContent value="account">
-          <SettingsAccount user={props.user} onSave={props.onProfileSave} />
-        </TabsContent>
-        <TabsContent value="security">
-          <SettingsSecurity
-            onPasswordChange={props.onPasswordChange}
-            onTwoFactorEnable={props.onTwoFactorEnable}
-            onTwoFactorDisable={props.onTwoFactorDisable}
-          />
-        </TabsContent>
+          <TabsTrigger value="security">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+            Security
+          </TabsTrigger>
+        </TabsList>
       </div>
+
+      <TabsContent value="account" tabIndex={-1}>
+        <AccountSettings />
+      </TabsContent>
+
+      <TabsContent value="security" tabIndex={-1}>
+        <SecuritySettings />
+      </TabsContent>
     </Tabs>
   )
 }
 
-function SettingsAccount(props: {
-  user: User
-  onSave?: (data: { name: string; email: string }) => void
-}) {
-  return (
-    <div class="space-y-6">
-      <div>
-        <h3 class="text-lg font-semibold">Account</h3>
-        <p class="text-sm text-muted-foreground">
-          Manage your account information
-        </p>
-      </div>
-      <div class="grid gap-4">
-        <div class="grid gap-2">
-          <label for="name" class="text-sm font-medium">
-            Name
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={props.user.name || ""}
-            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            readOnly
-          />
-        </div>
-        <div class="grid gap-2">
-          <label for="email" class="text-sm font-medium">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={props.user.email || ""}
-            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            readOnly
-          />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function SettingsSecurity(props: {
-  onPasswordChange?: () => void
-  onTwoFactorEnable?: () => void
-  onTwoFactorDisable?: () => void
-}) {
-  return (
-    <div class="space-y-6">
-      <div>
-        <h3 class="text-lg font-semibold">Security</h3>
-        <p class="text-sm text-muted-foreground">
-          Manage your account security
-        </p>
-      </div>
-      <div class="space-y-4">
-        <div class="grid gap-2">
-          <span class="text-sm font-medium">Password</span>
-          <button
-            type="button"
-            onClick={props.onPasswordChange}
-            class="text-sm text-primary hover:underline text-left"
-          >
-            Change Password
-          </button>
-        </div>
-        <div class="grid gap-2">
-          <span class="text-sm font-medium">Two-Factor Authentication</span>
-          <p class="text-xs text-muted-foreground">
-            Add an extra layer of security to your account
-          </p>
-          <button
-            type="button"
-            onClick={props.onTwoFactorEnable}
-            class="text-sm text-primary hover:underline text-left"
-          >
-            Enable 2FA
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+export {
+  AccountSettings,
+  type AccountSettingsProps
+} from "./account/account-settings"
+export {
+  SecuritySettings,
+  type SecuritySettingsProps
+} from "./security/security-settings"

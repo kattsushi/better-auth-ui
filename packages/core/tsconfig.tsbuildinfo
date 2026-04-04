@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/config/appearance-config.ts","./src/config/auth-config.ts","./src/config/avatar-config.ts","./src/config/email-and-password-config.ts","./src/config/index.ts","./src/config/settings-config.ts","./src/lib/base-paths.ts","./src/lib/localization.ts","./src/lib/provider-names.ts","./src/lib/utils.ts","./src/lib/view-paths.ts"],"version":"6.0.2"}

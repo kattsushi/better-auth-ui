@@ -167,8 +167,41 @@ export { UserView, type UserViewProps } from "@/components/user/user-view"
 // Settings Components
 // ============================================
 
+// Account Settings Components
+export {
+  Appearance,
+  type AppearanceProps,
+  ChangeEmail,
+  type ChangeEmailProps,
+  ManageAccount,
+  type ManageAccountProps,
+  ManageAccounts,
+  type ManageAccountsProps,
+  UserProfile,
+  type UserProfileProps
+} from "@/components/settings/account"
+// Theme Preview
+export {
+  ThemePreviewDark,
+  ThemePreviewLight,
+  ThemePreviewSystem
+} from "@/components/settings/account/theme-preview"
+
+// Security Settings Components
+export {
+  ActiveSessions,
+  type ActiveSessionsProps,
+  ChangePassword,
+  type ChangePasswordProps,
+  LinkedAccounts,
+  type LinkedAccountsProps
+} from "@/components/settings/security"
 // Settings
 export {
+  AccountSettings,
+  type AccountSettingsProps,
+  SecuritySettings,
+  type SecuritySettingsProps,
   Settings,
   type SettingsProps,
   type SettingsTab
