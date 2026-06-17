@@ -29,6 +29,16 @@ await prefetchListSessions(queryClient, authClient, userId)
 const sessions = await fetchListSessions(queryClient, authClient, userId)
 ```
 
+## Server-auth helpers
+
+When running on the server with your Better Auth instance, use the matching helpers from `@better-auth-ui/solid/server`:
+
+```ts
+import { ensureListSessions } from "@better-auth-ui/solid/server"
+
+await ensureListSessions(queryClient, auth, userId, { query: { userId } })
+```
+
 ## Invalidation
 
 ```ts

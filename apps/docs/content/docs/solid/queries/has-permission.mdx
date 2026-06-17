@@ -39,26 +39,32 @@ const query = createQuery(() =>
 
 ## Server-side prefetching
 
-For Solid route loaders, import the router-loader helpers from `@better-auth-ui/solid`. These helpers use the Solid client-shaped `authClient`/`userId` signature so they hydrate into the same cache keys as the component hook. True server-auth Organization helpers are not currently exported from `@better-auth-ui/solid/server`; use the session server helper first when your route needs request-header authentication.
+For Solid route loaders that use the browser client, import helpers from `@better-auth-ui/solid`. When running on the server with your Better Auth instance, use the matching server-auth helpers from `@better-auth-ui/solid/server`.
 
 ```ts
 import {
   ensureHasPermission,
   fetchHasPermission,
   prefetchHasPermission
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/server"
 
-await ensureHasPermission(queryClient, authClient, userId, {
-  organizationId: "org_123",
-  permissions: { organization: ["update"] }
+await ensureHasPermission(queryClient, auth, userId, {
+  body: {
+    organizationId: "org_123",
+    permissions: { organization: ["update"] }
+  }
 })
-await prefetchHasPermission(queryClient, authClient, userId, {
-  organizationId: "org_123",
-  permissions: { organization: ["update"] }
+await prefetchHasPermission(queryClient, auth, userId, {
+  body: {
+    organizationId: "org_123",
+    permissions: { organization: ["update"] }
+  }
 })
-const permission = await fetchHasPermission(queryClient, authClient, userId, {
-  organizationId: "org_123",
-  permissions: { organization: ["update"] }
+const permission = await fetchHasPermission(queryClient, auth, userId, {
+  body: {
+    organizationId: "org_123",
+    permissions: { organization: ["update"] }
+  }
 })
 ```
 

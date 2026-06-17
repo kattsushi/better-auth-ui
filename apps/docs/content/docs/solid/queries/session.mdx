@@ -54,7 +54,7 @@ const session = await ensureSession(queryClient, auth, {
 })
 ```
 
-Today the Solid server entrypoint provides true server-auth helpers for session. Other query families use client/router helpers from `@better-auth-ui/solid` unless explicitly exported from `@better-auth-ui/solid/server`.
+The Solid server entrypoint also provides matching server-auth helpers for settings, API-key, passkey, multi-session, and organization reads, so server-prefetched data hydrates into the same cache keys used by client hooks.
 
 ## Invalidation
 

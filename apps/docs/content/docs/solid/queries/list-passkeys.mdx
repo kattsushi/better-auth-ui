@@ -29,6 +29,16 @@ await prefetchListPasskeys(queryClient, authClient, userId)
 const passkeys = await fetchListPasskeys(queryClient, authClient, userId)
 ```
 
+## Server-auth helpers
+
+When running on the server with your Better Auth instance, use the matching helpers from `@better-auth-ui/solid/server`:
+
+```ts
+import { ensureListPasskeys } from "@better-auth-ui/solid/server"
+
+await ensureListPasskeys(queryClient, auth, userId, { query: { userId } })
+```
+
 ## Invalidation
 
 ```ts

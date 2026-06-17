@@ -1,43 +1,25 @@
-import { organizationQueryKeys } from "@better-auth-ui/core/plugins"
 import {
-  type DataTag,
-  type QueryClient,
-  queryOptions
-} from "@tanstack/react-query"
-import type { APIError } from "better-auth"
+  listOrganizationMembersOptions as coreListOrganizationMembersOptions,
+  type ListOrganizationMembersData,
+  type ListOrganizationMembersParams,
+  type OrganizationAuthServer
+} from "@better-auth-ui/core/server"
+import type { QueryClient } from "@tanstack/react-query"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery,
+  fetchServerQuery,
+  prefetchServerQuery
+} from "../../query-adapter"
 
-import type { OrganizationAuthServer } from "../../../lib/auth-server"
+export type { ListOrganizationMembersData, ListOrganizationMembersParams }
 
-export type ListOrganizationMembersData<
-  TAuth extends OrganizationAuthServer = OrganizationAuthServer
-> = Awaited<ReturnType<TAuth["api"]["listMembers"]>>
-
-export type ListOrganizationMembersParams<
-  TAuth extends OrganizationAuthServer = OrganizationAuthServer
-> = Parameters<TAuth["api"]["listMembers"]>[0]
-
-/**
- * Query options factory for members of an organization.
- *
- * @param auth - The Better Auth server instance.
- * @param userId - The signed-in user's ID. Used for cache partitioning so
- *   the key matches the client-side `listOrganizationMembersOptions` for SSR hydration.
- * @param params - Parameters forwarded to `auth.api.listMembers`.
- */
 export function listOrganizationMembersOptions<
   TAuth extends OrganizationAuthServer
 >(auth: TAuth, userId: string, params: ListOrganizationMembersParams<TAuth>) {
-  type TData = ListOrganizationMembersData<TAuth>
-  const queryKey = organizationQueryKeys.members.list(userId, params?.query)
-
-  const options = queryOptions<TData, APIError, TData, typeof queryKey>({
-    queryKey,
-    queryFn: () => auth.api.listMembers(params) as Promise<TData>
-  })
-
-  return options as typeof options & {
-    queryKey: DataTag<typeof queryKey, TData, APIError>
-  }
+  return adaptServerQueryOptions(
+    coreListOrganizationMembersOptions(auth, userId, params)
+  )
 }
 
 export const ensureListOrganizationMembers = <
@@ -48,7 +30,8 @@ export const ensureListOrganizationMembers = <
   userId: string,
   params: ListOrganizationMembersParams<TAuth>
 ) =>
-  queryClient.ensureQueryData(
+  ensureServerQuery<ListOrganizationMembersData<TAuth>>(
+    queryClient,
     listOrganizationMembersOptions(auth, userId, params)
   )
 
@@ -60,7 +43,8 @@ export const prefetchListOrganizationMembers = <
   userId: string,
   params: ListOrganizationMembersParams<TAuth>
 ) =>
-  queryClient.prefetchQuery(
+  prefetchServerQuery(
+    queryClient,
     listOrganizationMembersOptions(auth, userId, params)
   )
 
@@ -72,4 +56,7 @@ export const fetchListOrganizationMembers = <
   userId: string,
   params: ListOrganizationMembersParams<TAuth>
 ) =>
-  queryClient.fetchQuery(listOrganizationMembersOptions(auth, userId, params))
+  fetchServerQuery<ListOrganizationMembersData<TAuth>>(
+    queryClient,
+    listOrganizationMembersOptions(auth, userId, params)
+  )

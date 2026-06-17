@@ -241,10 +241,18 @@ describe("React/Solid docs parity", () => {
     for (const [page, helper] of solidOrganizationQueries) {
       const content = readDocsFile("solid", "queries", `${page}.mdx`)
 
+      expect(content).toContain("## Usage")
+      expect(content).toContain("## Options factory")
+      expect(content).toContain('from "@better-auth-ui/solid"')
       expect(content).toContain("## Server-side prefetching")
-      expect(content).toContain("@better-auth-ui/solid")
-      expect(content).toContain(`${helper}(queryClient, authClient, userId`)
-      expect(content).toContain("client-shaped `authClient`/`userId` signature")
+      expect(content).toContain("@better-auth-ui/solid/server")
+      expect(content).toContain(`${helper}(queryClient, auth, userId`)
+      expect(content).not.toMatch(
+        /import \{ (use|[a-zA-Z]+Options).*\} from "@better-auth-ui\/solid\/server"/
+      )
+      expect(content).not.toContain(
+        "client-shaped `authClient`/`userId` signature"
+      )
     }
   })
 
@@ -279,7 +287,7 @@ describe("React/Solid docs parity", () => {
     expect(solidSession).toContain("@better-auth-ui/solid/server")
     expect(solidSession).toContain("ensureSession(queryClient, auth")
     expect(solidSession).toContain("headers: request.headers")
-    expect(solidSession).toContain("server-auth helpers for session")
+    expect(solidSession).toContain("matching server-auth helpers for settings")
     expect(solidSession).toContain(
       "packages/solid/src/server/queries/auth/session-query.ts"
     )
@@ -316,7 +324,15 @@ describe("React/Solid docs parity", () => {
     expect(reactSsr).not.toContain("equivalents for `hasPermission`")
     expect(reactSsr).toContain("Better Auth server instance (`auth`)")
 
-    expect(solidSsr).toContain("server-auth API is provided for session")
-    expect(solidSsr).toContain("client-shaped `authClient`/`userId` signatures")
+    expect(solidSsr).toContain("ensureListApiKeys")
+    expect(solidSsr).toContain("ensureActiveOrganization")
+    expect(solidSsr).toContain("ensureHasPermission")
+    expect(solidSsr).toContain("ensureListPasskeys")
+    expect(solidSsr).toContain("ensureListSessions")
+    expect(solidSsr).toContain("OrganizationAuthServer")
+    expect(solidSsr).not.toContain("server-auth API is provided for session")
+    expect(solidSsr).not.toContain(
+      "client-shaped `authClient`/`userId` signatures"
+    )
   })
 })

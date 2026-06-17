@@ -1,29 +1,22 @@
-import { organizationQueryKeys } from "@better-auth-ui/core/plugins"
 import {
-  type DataTag,
-  type QueryClient,
-  queryOptions
-} from "@tanstack/react-query"
-import type { APIError } from "better-auth"
+  listOrganizationInvitationsOptions as coreListOrganizationInvitationsOptions,
+  type ListOrganizationInvitationsData,
+  type ListOrganizationInvitationsParams,
+  type OrganizationAuthServer
+} from "@better-auth-ui/core/server"
+import type { QueryClient } from "@tanstack/react-query"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery,
+  fetchServerQuery,
+  prefetchServerQuery
+} from "../../query-adapter"
 
-import type { OrganizationAuthServer } from "../../../lib/auth-server"
+export type {
+  ListOrganizationInvitationsData,
+  ListOrganizationInvitationsParams
+}
 
-export type ListOrganizationInvitationsData<
-  TAuth extends OrganizationAuthServer = OrganizationAuthServer
-> = Awaited<ReturnType<TAuth["api"]["listInvitations"]>>
-
-export type ListOrganizationInvitationsParams<
-  TAuth extends OrganizationAuthServer = OrganizationAuthServer
-> = Parameters<TAuth["api"]["listInvitations"]>[0]
-
-/**
- * Query options factory for invitations of an organization.
- *
- * @param auth - The Better Auth server instance.
- * @param userId - The signed-in user's ID. Used for cache partitioning so
- *   the key matches the client-side `listOrganizationInvitationsOptions` for SSR hydration.
- * @param params - Parameters forwarded to `auth.api.listInvitations`.
- */
 export function listOrganizationInvitationsOptions<
   TAuth extends OrganizationAuthServer
 >(
@@ -31,17 +24,9 @@ export function listOrganizationInvitationsOptions<
   userId: string,
   params: ListOrganizationInvitationsParams<TAuth>
 ) {
-  type TData = ListOrganizationInvitationsData<TAuth>
-  const queryKey = organizationQueryKeys.invitations.list(userId, params?.query)
-
-  const options = queryOptions<TData, APIError, TData, typeof queryKey>({
-    queryKey,
-    queryFn: () => auth.api.listInvitations(params) as Promise<TData>
-  })
-
-  return options as typeof options & {
-    queryKey: DataTag<typeof queryKey, TData, APIError>
-  }
+  return adaptServerQueryOptions(
+    coreListOrganizationInvitationsOptions(auth, userId, params)
+  )
 }
 
 export const ensureListOrganizationInvitations = <
@@ -52,7 +37,8 @@ export const ensureListOrganizationInvitations = <
   userId: string,
   params: ListOrganizationInvitationsParams<TAuth>
 ) =>
-  queryClient.ensureQueryData(
+  ensureServerQuery<ListOrganizationInvitationsData<TAuth>>(
+    queryClient,
     listOrganizationInvitationsOptions(auth, userId, params)
   )
 
@@ -64,7 +50,8 @@ export const prefetchListOrganizationInvitations = <
   userId: string,
   params: ListOrganizationInvitationsParams<TAuth>
 ) =>
-  queryClient.prefetchQuery(
+  prefetchServerQuery(
+    queryClient,
     listOrganizationInvitationsOptions(auth, userId, params)
   )
 
@@ -76,6 +63,7 @@ export const fetchListOrganizationInvitations = <
   userId: string,
   params: ListOrganizationInvitationsParams<TAuth>
 ) =>
-  queryClient.fetchQuery(
+  fetchServerQuery<ListOrganizationInvitationsData<TAuth>>(
+    queryClient,
     listOrganizationInvitationsOptions(auth, userId, params)
   )
