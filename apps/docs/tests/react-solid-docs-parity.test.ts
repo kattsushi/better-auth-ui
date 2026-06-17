@@ -227,29 +227,25 @@ describe("React/Solid docs parity", () => {
     }
   })
 
-  it("documents Solid organization query prefetch helpers", () => {
+  it("keeps Solid organization query docs aligned with React page-level scope", () => {
     const solidOrganizationQueries = [
-      ["active-organization", "ensureActiveOrganization"],
-      ["full-organization", "ensureFullOrganization"],
-      ["list-organizations", "ensureListOrganizations"],
-      ["list-members", "ensureListOrganizationMembers"],
-      ["list-invitations", "ensureListOrganizationInvitations"],
-      ["list-user-invitations", "ensureListUserInvitations"],
-      ["has-permission", "ensureHasPermission"]
+      "active-organization",
+      "full-organization",
+      "list-organizations",
+      "list-members",
+      "list-invitations",
+      "list-user-invitations",
+      "has-permission"
     ] as const
 
-    for (const [page, helper] of solidOrganizationQueries) {
+    for (const page of solidOrganizationQueries) {
       const content = readDocsFile("solid", "queries", `${page}.mdx`)
 
       expect(content).toContain("## Usage")
       expect(content).toContain("## Options factory")
       expect(content).toContain('from "@better-auth-ui/solid"')
-      expect(content).toContain("## Server-side prefetching")
-      expect(content).toContain("@better-auth-ui/solid/server")
-      expect(content).toContain(`${helper}(queryClient, auth, userId`)
-      expect(content).not.toMatch(
-        /import \{ (use|[a-zA-Z]+Options).*\} from "@better-auth-ui\/solid\/server"/
-      )
+      expect(content).not.toContain("## Server-side prefetching")
+      expect(content).not.toContain("@better-auth-ui/solid/server")
       expect(content).not.toContain(
         "client-shaped `authClient`/`userId` signature"
       )
@@ -287,7 +283,9 @@ describe("React/Solid docs parity", () => {
     expect(solidSession).toContain("@better-auth-ui/solid/server")
     expect(solidSession).toContain("ensureSession(queryClient, auth")
     expect(solidSession).toContain("headers: request.headers")
-    expect(solidSession).toContain("matching server-auth helpers for settings")
+    expect(solidSession).toContain(
+      "Both entrypoints share the same session query key"
+    )
     expect(solidSession).toContain(
       "packages/solid/src/server/queries/auth/session-query.ts"
     )

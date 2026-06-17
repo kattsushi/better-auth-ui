@@ -29,16 +29,6 @@ await prefetchListApiKeys(queryClient, authClient, userId)
 const keys = await fetchListApiKeys(queryClient, authClient, userId)
 ```
 
-## Server-auth helpers
-
-When running on the server with your Better Auth instance, use the matching helpers from `@better-auth-ui/solid/server`:
-
-```ts
-import { ensureListApiKeys } from "@better-auth-ui/solid/server"
-
-await ensureListApiKeys(queryClient, auth, userId, { query: { userId } })
-```
-
 ## Invalidation
 
 ```ts

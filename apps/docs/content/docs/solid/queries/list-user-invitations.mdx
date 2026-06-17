@@ -30,22 +30,6 @@ const query = createQuery(() =>
 - Member, invitation, and permission helpers follow upstream active-organization fallback behavior when an organization id is not provided.
 - `useHasPermission` preserves Better Auth's flat permission parameter shape.
 
-## Server-side prefetching
-
-For Solid route loaders that use the browser client, import helpers from `@better-auth-ui/solid`. When running on the server with your Better Auth instance, use the matching server-auth helpers from `@better-auth-ui/solid/server`.
-
-```ts
-import {
-  ensureListUserInvitations,
-  fetchListUserInvitations,
-  prefetchListUserInvitations
-} from "@better-auth-ui/solid/server"
-
-await ensureListUserInvitations(queryClient, auth, userId, {})
-await prefetchListUserInvitations(queryClient, auth, userId, {})
-const invitations = await fetchListUserInvitations(queryClient, auth, userId, {})
-```
-
 ## Params
 
 <auto-type-table path="../../../../../../packages/solid/src/queries/organization/list-user-invitations-query.ts" name="ListUserInvitationsParams" />

@@ -54,7 +54,7 @@ const session = await ensureSession(queryClient, auth, {
 })
 ```
 
-The Solid server entrypoint also provides matching server-auth helpers for settings, API-key, passkey, multi-session, and organization reads, so server-prefetched data hydrates into the same cache keys used by client hooks.
+Both entrypoints share the same session query key, so server-prefetched data hydrates into client-side `useSession`.
 
 ## Invalidation
 
