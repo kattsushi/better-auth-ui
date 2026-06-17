@@ -1,22 +1,18 @@
 import {
+  type AuthQueryFn,
+  type AuthQueryFnData,
+  type AuthQueryKey as CoreAuthQueryKey,
+  createAuthQueryDefinition
+} from "@better-auth-ui/core"
+import {
   type DataTag,
   type QueryKey,
   queryOptions,
   type UseQueryOptions
 } from "@tanstack/react-query"
-import type { BetterFetchError, BetterFetchOption } from "better-auth/client"
+import type { BetterFetchError } from "better-auth/client"
 
-/**
- * Read-style Better Auth client method (params shape `{ query?, fetchOptions? }`).
- * Mutation-style endpoints use `AuthMutationFn` / `useAuthMutation` instead.
- */
-export type AuthQueryFn<TData = unknown> = (params: {
-  query?: Record<string, unknown>
-  fetchOptions?: BetterFetchOption
-}) => Promise<{ data: TData }>
-
-export type AuthQueryFnData<TFn> =
-  TFn extends AuthQueryFn<infer TData> ? TData : never
+export type { AuthQueryFn, AuthQueryFnData }
 
 /**
  * Final query key produced by {@link authQueryOptions}: the caller's prefix
@@ -25,7 +21,7 @@ export type AuthQueryFnData<TFn> =
 export type AuthQueryKey<
   TFn extends AuthQueryFn = AuthQueryFn,
   TPrefix extends QueryKey = QueryKey
-> = readonly [...TPrefix, NonNullable<Parameters<TFn>[0]>["query"] | null]
+> = CoreAuthQueryKey<TFn, TPrefix>
 
 /**
  * Return type of {@link authQueryOptions}. Named so TypeScript emits
@@ -72,12 +68,7 @@ export function authQueryOptions<
   queryKey: TPrefix,
   params?: Parameters<TFn>[0]
 ): AuthQueryOptions<TFn, TPrefix> {
-  return queryOptions<AuthQueryFnData<TFn>, BetterFetchError>({
-    queryKey: [...queryKey, params?.query ?? null] as const,
-    queryFn: ({ signal }) =>
-      authFn({
-        ...params,
-        fetchOptions: { ...params?.fetchOptions, signal, throw: true }
-      }) as Promise<AuthQueryFnData<TFn>>
-  }) as AuthQueryOptions<TFn, TPrefix>
+  return queryOptions<AuthQueryFnData<TFn>, BetterFetchError>(
+    createAuthQueryDefinition(authFn, queryKey, params)
+  ) as AuthQueryOptions<TFn, TPrefix>
 }

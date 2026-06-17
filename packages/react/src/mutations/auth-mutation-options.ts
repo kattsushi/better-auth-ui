@@ -1,45 +1,17 @@
 import {
+  type AuthMutationFn,
+  type AuthMutationFnData,
+  type AuthMutationFnVariables,
+  createAuthMutationDefinition
+} from "@better-auth-ui/core"
+import {
   type MutationKey,
   mutationOptions,
   type UseMutationOptions
 } from "@tanstack/react-query"
-import type { BetterFetchError, BetterFetchOption } from "better-auth/client"
+import type { BetterFetchError } from "better-auth/client"
 
-/**
- * Write-style Better Auth client method. Variables are a single object that
- * may carry top-level params plus `fetchOptions` (e.g. `signIn.email` takes
- * `{ email, password, rememberMe?, fetchOptions? }`).
- *
- * Read-style endpoints use `AuthQueryFn` / `useAuthQuery` instead.
- */
-export type AuthMutationFn = (
-  // biome-ignore lint/suspicious/noExplicitAny: variance bridge for arbitrary Better Auth client methods
-  variables: any
-) => Promise<unknown>
-
-/**
- * Resolved data type returned by an {@link AuthMutationFn}.
- */
-export type AuthMutationFnData<TFn extends AuthMutationFn> = Awaited<
-  ReturnType<TFn>
->
-
-/**
- * Variables type accepted by `mutate` / `mutateAsync` for a given
- * {@link AuthMutationFn}.
- *
- * If the method's params are entirely optional (e.g. `authClient.signOut`),
- * this resolves to `Variables | void` so `mutate()` is callable without
- * arguments. Otherwise it resolves to the exact required shape so the type
- * checker rejects `mutate()` when the underlying call needs params.
- */
-export type AuthMutationFnVariables<TFn extends AuthMutationFn> =
-  Parameters<TFn>[0] extends infer P
-    ? undefined extends P
-      ? // biome-ignore lint/suspicious/noConfusingVoidType: void allows no-arg mutate
-        NonNullable<P> | void
-      : P
-    : never
+export type { AuthMutationFn, AuthMutationFnData, AuthMutationFnVariables }
 
 /**
  * Return type of {@link authMutationOptions}, matching the shape produced by
@@ -75,20 +47,12 @@ export function authMutationOptions<
   authFn: TFn,
   mutationKey: TMutationKey
 ): AuthMutationOptions<TFn, TMutationKey> {
-  const mutationFn = (variables: AuthMutationFnVariables<TFn>) => {
-    const vars = (variables ?? {}) as { fetchOptions?: BetterFetchOption }
-    return authFn({
-      ...vars,
-      fetchOptions: { ...vars.fetchOptions, throw: true }
-    }) as Promise<AuthMutationFnData<TFn>>
-  }
-
   return mutationOptions<
     AuthMutationFnData<TFn>,
     BetterFetchError,
     AuthMutationFnVariables<TFn>
-  >({
-    mutationKey,
-    mutationFn
-  }) as AuthMutationOptions<TFn, TMutationKey>
+  >(createAuthMutationDefinition(authFn, mutationKey)) as AuthMutationOptions<
+    TFn,
+    TMutationKey
+  >
 }

@@ -1,23 +1,23 @@
 import {
+  type AuthQueryFn,
+  type AuthQueryFnData,
+  type AuthQueryKey as CoreAuthQueryKey,
+  createAuthQueryDefinition
+} from "@better-auth-ui/core"
+import {
   type CreateQueryOptions,
   type DataTag,
   type QueryKey,
   queryOptions
 } from "@tanstack/solid-query"
-import type { BetterFetchError, BetterFetchOption } from "better-auth/client"
+import type { BetterFetchError } from "better-auth/client"
 
-export type AuthQueryFn<TData = unknown> = (params: {
-  query?: Record<string, unknown>
-  fetchOptions?: BetterFetchOption
-}) => Promise<{ data: TData }>
-
-export type AuthQueryFnData<TFn> =
-  TFn extends AuthQueryFn<infer TData> ? TData : never
+export type { AuthQueryFn, AuthQueryFnData }
 
 export type AuthQueryKey<
   TFn extends AuthQueryFn = AuthQueryFn,
   TPrefix extends QueryKey = QueryKey
-> = readonly [...TPrefix, NonNullable<Parameters<TFn>[0]>["query"] | null]
+> = CoreAuthQueryKey<TFn, TPrefix>
 
 export type AuthQueryOptions<
   TFn extends AuthQueryFn = AuthQueryFn,
@@ -46,12 +46,7 @@ export function authQueryOptions<
   queryKey: TPrefix,
   params?: Parameters<TFn>[0]
 ): AuthQueryOptions<TFn, TPrefix> {
-  return queryOptions<AuthQueryFnData<TFn>, BetterFetchError>({
-    queryKey: [...queryKey, params?.query ?? null] as const,
-    queryFn: ({ signal }) =>
-      authFn({
-        ...params,
-        fetchOptions: { ...params?.fetchOptions, signal, throw: true }
-      }) as Promise<AuthQueryFnData<TFn>>
-  }) as AuthQueryOptions<TFn, TPrefix>
+  return queryOptions<AuthQueryFnData<TFn>, BetterFetchError>(
+    createAuthQueryDefinition(authFn, queryKey, params)
+  ) as AuthQueryOptions<TFn, TPrefix>
 }

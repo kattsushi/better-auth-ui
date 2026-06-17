@@ -2,7 +2,11 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
-const serverRoot = join(process.cwd(), "src/server")
+const boundaryRoots = [
+  join(process.cwd(), "src/server"),
+  join(process.cwd(), "src/lib/auth-query-options.ts"),
+  join(process.cwd(), "src/lib/auth-mutation-options.ts")
+]
 const forbiddenImports = [
   "react",
   "solid-js",
@@ -10,22 +14,25 @@ const forbiddenImports = [
   "@tanstack/solid-query"
 ]
 
-function listTsFiles(dir: string): string[] {
-  if (!existsSync(dir)) return []
+function listTsFiles(path: string): string[] {
+  if (!existsSync(path)) return []
 
-  return readdirSync(dir).flatMap((entry) => {
-    const path = join(dir, entry)
-    const stat = statSync(path)
+  const stat = statSync(path)
+  if (stat.isFile()) return path.endsWith(".ts") ? [path] : []
 
-    if (stat.isDirectory()) return listTsFiles(path)
-    if (entry.endsWith(".ts")) return [path]
+  return readdirSync(path).flatMap((entry) => {
+    const childPath = join(path, entry)
+    const childStat = statSync(childPath)
+
+    if (childStat.isDirectory()) return listTsFiles(childPath)
+    if (entry.endsWith(".ts")) return [childPath]
     return []
   })
 }
 
-describe("core server import boundary", () => {
-  it("keeps core server modules free of framework imports", () => {
-    const files = listTsFiles(serverRoot)
+describe("core runtime import boundary", () => {
+  it("keeps core server and client primitive modules free of framework imports", () => {
+    const files = boundaryRoots.flatMap(listTsFiles)
 
     expect(files.length).toBeGreaterThan(0)
 
