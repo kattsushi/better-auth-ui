@@ -1,0 +1,15 @@
+{
+  "name": "@better-auth-ui/react",
+  "targets": {
+    "typecheck": {
+      "dependsOn": ["^build", "^typecheck"],
+      "cache": true,
+      "inputs": ["default", "^default", "{workspaceRoot}/tsconfig.json"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/react",
+        "command": "tsc --noEmit"
+      }
+    }
+  }
+}
