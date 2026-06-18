@@ -1,12 +1,8 @@
 import { authMutationKeys, authQueryKeys } from "@better-auth-ui/core"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 
 import type { AuthClient } from "../../lib/auth-client"
+import { authMutationOptions } from "../auth-mutation-options"
 
 export type SignInEmailParams<TAuthClient extends AuthClient> = Parameters<
   TAuthClient["signIn"]["email"]
@@ -29,22 +25,11 @@ export type SignInEmailOptions<TAuthClient extends AuthClient> = Omit<
 export function signInEmailOptions<TAuthClient extends AuthClient>(
   authClient: TAuthClient
 ) {
-  const mutationKey = authMutationKeys.signIn.email
-
-  const mutationFn = (params: SignInEmailParams<TAuthClient>) =>
-    authClient.signIn.email({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
+  return authMutationOptions(
+    authClient.signIn.email,
+    authMutationKeys.signIn.email,
+    { awaits: [authQueryKeys.session] }
+  )
 }
 
 /**

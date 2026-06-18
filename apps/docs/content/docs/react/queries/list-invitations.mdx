@@ -41,15 +41,24 @@ const invitations = await fetchListOrganizationInvitations(queryClient, authClie
 For server loaders, import from `@better-auth-ui/react/server`. Pass the Better Auth server instance, signed-in `userId`, and the request params for organization invitations.
 
 ```ts
-import { ensureListOrganizationInvitations } from "@better-auth-ui/react/server"
+import { listOrganizationInvitationsOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/react/server"
 import { getRequestHeaders } from "@tanstack/react-start/server"
 
 import { auth } from "@/lib/auth"
 
-await ensureListOrganizationInvitations(queryClient, auth, userId, {
-  headers: getRequestHeaders(),
-  query: { organizationId: "org_123" }
-})
+await ensureServerQuery(
+  queryClient,
+  adaptServerQueryOptions(
+    listOrganizationInvitationsOptions(auth, userId, {
+        headers: getRequestHeaders(),
+        query: { organizationId: "org_123" }
+      })
+  )
+)
 ```
 
 ## Params

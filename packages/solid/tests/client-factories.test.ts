@@ -11,7 +11,7 @@ import {
   authQueryOptions
 } from "../src"
 
-describe("React client auth option factories", () => {
+describe("Solid client auth option factories", () => {
   it("builds query options with shared key semantics and throwing fetch options", async () => {
     const authFn = vi.fn(async ({ query, fetchOptions }) => ({
       data: { query, fetchOptions }
@@ -35,7 +35,7 @@ describe("React client auth option factories", () => {
     })
   })
 
-  it("adapts core query definitions through the React TanStack boundary", async () => {
+  it("adapts core query definitions through the Solid TanStack boundary", async () => {
     const authFn = vi.fn(async ({ query, fetchOptions }) => ({
       data: { query, fetchOptions }
     }))
@@ -96,7 +96,7 @@ describe("React client auth option factories", () => {
     })
   })
 
-  it("adapts core mutation definitions through the React TanStack boundary", async () => {
+  it("adapts core mutation definitions through the Solid TanStack boundary", async () => {
     const authFn = vi.fn(async (variables) => ({ data: variables.email }))
     const meta: AuthMutationMeta = { awaits: [["auth", "session"]] }
     const definition = createAuthMutationDefinition(

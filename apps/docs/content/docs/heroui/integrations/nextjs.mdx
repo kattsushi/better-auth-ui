@@ -74,10 +74,14 @@ Better Auth UI supports two route protection patterns depending on whether your 
 
 ### Server-rendered routes (async server component)
 
-For SSR routes, check the session in an async server component so unauthenticated users are redirected before any HTML is streamed — no flash of unauthenticated UI. Call `ensureSession` from `@better-auth-ui/react/server` with a per-request `QueryClient` (direct `auth.api` call, no HTTP hop), and wrap the rendered children in `HydrationBoundary` so downstream `useSession` calls read from the hydrated cache under `authQueryKeys.session` on mount.
+For SSR routes, check the session in an async server component so unauthenticated users are redirected before any HTML is streamed — no flash of unauthenticated UI. Build the core `sessionOptions(auth, { headers })` descriptor, then cross the React Query boundary with `adaptServerQueryOptions` from `@better-auth-ui/react/server`. That adapter is intentionally framework-local: core owns the shared descriptor, while React owns `queryOptions`/`DataTag` typing. Call `ensureServerQuery` with a per-request `QueryClient` (direct `auth.api` call, no HTTP hop), and wrap the rendered children in `HydrationBoundary` so downstream `useSession` calls read from the hydrated cache under `authQueryKeys.session` on mount.
 
 ```tsx title="app/dashboard/page.tsx"
-import { ensureSession } from "@better-auth-ui/react/server"
+import { sessionOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/react/server"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import { headers } from "next/headers"
 import Link from "next/link"
@@ -89,9 +93,12 @@ import { getQueryClient } from "@/lib/query-client"
 export default async function Dashboard() {
   const queryClient = getQueryClient()
 
-  const session = await ensureSession(queryClient, auth, {
-    headers: await headers()
-  })
+  const session = await ensureServerQuery(
+    queryClient,
+    adaptServerQueryOptions(
+      sessionOptions(auth, { headers: await headers() })
+    )
+  )
 
   if (!session) {
     redirect("/auth/sign-in?redirectTo=/dashboard")
@@ -109,7 +116,7 @@ export default async function Dashboard() {
 }
 ```
 
-Because `ensureSession` populates the query cache during SSR and `HydrationBoundary` ships the dehydrated state to the client, child components calling `useSession` render synchronously without a loading state.
+Because `ensureServerQuery` populates the query cache during SSR and `HydrationBoundary` ships the dehydrated state to the client, child components calling `useSession` render synchronously without a loading state.
 
 If you have client components outside of any protected route that also read the session — typically a header or sidebar with a `UserButton` — prefetch the session in that subtree's server parent and wrap it in its own `HydrationBoundary`. Otherwise those components trigger a fresh client-side fetch on mount. See the [example header](https://github.com/better-auth-ui/better-auth-ui/blob/main/examples/next-heroui-example/src/components/header.tsx) for the full pattern.
 

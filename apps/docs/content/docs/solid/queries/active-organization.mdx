@@ -30,6 +30,30 @@ const query = createQuery(() =>
 - Member, invitation, and permission helpers follow upstream active-organization fallback behavior when an organization id is not provided.
 - `useHasPermission` preserves Better Auth's flat permission parameter shape.
 
+## Server-side prefetching
+
+Prefetch the active organization on the server with the core descriptor and Solid server adapter.
+
+```ts
+import { activeOrganizationOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
+
+import { auth } from "~/lib/auth"
+
+await ensureServerQuery(
+  queryClient,
+  adaptServerQueryOptions(
+    activeOrganizationOptions(auth, userId, {
+        headers: request.headers,
+        query: { organizationSlug: "acme" }
+      })
+  )
+)
+```
+
 ## Params
 
 <auto-type-table path="../../../../../../packages/solid/src/queries/organization/active-organization-query.ts" name="ActiveOrganizationParams" />

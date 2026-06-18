@@ -39,6 +39,29 @@ queryClient.invalidateQueries({
 })
 ```
 
+## Server-side prefetching
+
+List API keys on the server with the core descriptor and Solid server adapter.
+
+```ts
+import { listApiKeysOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
+
+import { auth } from "~/lib/auth"
+
+await ensureServerQuery(
+  queryClient,
+  adaptServerQueryOptions(
+    listApiKeysOptions(auth, userId, {
+        headers: request.headers
+      })
+  )
+)
+```
+
 ## Params
 
 <auto-type-table path="../../../../../../packages/solid/src/queries/api-key/list-api-keys-query.ts" name="ListApiKeysParams" />

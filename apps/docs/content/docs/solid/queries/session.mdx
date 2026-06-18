@@ -45,13 +45,18 @@ const session = await fetchSession(queryClient, authClient)
 For server loaders, import from `@better-auth-ui/solid/server`. These helpers call your Better Auth server instance directly and require the request params passed to `auth.api.getSession`, typically request headers.
 
 ```ts
-import { ensureSession } from "@better-auth-ui/solid/server"
+import { sessionOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
 
 import { auth } from "~/lib/auth"
 
-const session = await ensureSession(queryClient, auth, {
-  headers: request.headers
-})
+const session = await ensureServerQuery(
+  queryClient,
+  adaptServerQueryOptions(sessionOptions(auth, { headers: request.headers }))
+)
 ```
 
 Both entrypoints share the same session query key, so server-prefetched data hydrates into client-side `useSession`.
@@ -72,4 +77,4 @@ queryClient.invalidateQueries({
 
 ## Server params
 
-<auto-type-table path="../../../../../../packages/solid/src/server/queries/auth/session-query.ts" name="SessionParams" />
+<auto-type-table path="../../../../../../packages/core/src/server/queries/auth/session-query.ts" name="SessionParams" />

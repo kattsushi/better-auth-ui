@@ -40,6 +40,16 @@ export type AuthMutationDefinition<
   meta?: AuthMutationMeta
 }
 
+export type AuthMutationOptionsAdapter<
+  TFn extends AuthMutationFn,
+  TMutationKey extends MutationKey,
+  TFrameworkOptions
+> = Omit<TFrameworkOptions, "mutationFn" | "mutationKey"> & {
+  mutationFn: AuthMutationDefinition<TFn, TMutationKey>["mutationFn"]
+  mutationKey: TMutationKey
+  meta?: AuthMutationMeta
+}
+
 export function createAuthMutationDefinition<
   TFn extends AuthMutationFn,
   const TMutationKey extends MutationKey

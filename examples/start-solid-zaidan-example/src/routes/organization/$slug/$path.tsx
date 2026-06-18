@@ -1,5 +1,9 @@
+import { sessionOptions } from "@better-auth-ui/core/server"
 import { ensureSession as ensureSessionClient } from "@better-auth-ui/solid"
-import { ensureSession as ensureSessionServer } from "@better-auth-ui/solid/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
 import { createFileRoute, notFound, redirect } from "@tanstack/solid-router"
 import { createIsomorphicFn } from "@tanstack/solid-start"
 import { getRequestHeaders } from "@tanstack/solid-start/server"
@@ -20,7 +24,12 @@ export const Route = createFileRoute("/organization/$slug/$path")({
 
     const ensureSession = createIsomorphicFn()
       .server(() =>
-        ensureSessionServer(queryClient, auth, { headers: getRequestHeaders() })
+        ensureServerQuery(
+          queryClient,
+          adaptServerQueryOptions(
+            sessionOptions(auth, { headers: getRequestHeaders() })
+          )
+        )
       )
       .client(() => ensureSessionClient(queryClient, authClient))
 

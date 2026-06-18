@@ -41,15 +41,24 @@ const organization = await fetchActiveOrganization(queryClient, authClient, user
 For server loaders, import from `@better-auth-ui/react/server`. The server helper uses your Better Auth server instance and request params so the prefetched key hydrates into `useActiveOrganization`.
 
 ```ts
-import { ensureActiveOrganization } from "@better-auth-ui/react/server"
+import { activeOrganizationOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/react/server"
 import { getRequestHeaders } from "@tanstack/react-start/server"
 
 import { auth } from "@/lib/auth"
 
-await ensureActiveOrganization(queryClient, auth, userId, {
-  headers: getRequestHeaders(),
-  query: { organizationSlug: "acme" }
-})
+await ensureServerQuery(
+  queryClient,
+  adaptServerQueryOptions(
+    activeOrganizationOptions(auth, userId, {
+        headers: getRequestHeaders(),
+        query: { organizationSlug: "acme" }
+      })
+  )
+)
 ```
 
 ## Params

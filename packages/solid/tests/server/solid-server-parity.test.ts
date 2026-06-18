@@ -5,25 +5,21 @@ import {
   organizationQueryKeys,
   passkeyQueryKeys
 } from "@better-auth-ui/core/plugins"
-import { describe, expect, it, vi } from "vitest"
 import {
   activeOrganizationOptions,
-  ensureActiveOrganization,
-  ensureListApiKeys,
   listApiKeysOptions,
   listDeviceSessionsOptions,
   listPasskeysOptions,
+  type ServerQueryDescriptor,
   sessionOptions
-} from "../../src/server"
-
-const queryClient = () => ({
-  ensureQueryData: vi.fn((options) => options),
-  prefetchQuery: vi.fn((options) => options),
-  fetchQuery: vi.fn((options) => options)
-})
+} from "@better-auth-ui/core/server"
+import { QueryClient } from "@tanstack/solid-query"
+import { describe, expect, expectTypeOf, it, vi } from "vitest"
+import * as solidServer from "../../src/server"
+import { adaptServerQueryOptions, ensureServerQuery } from "../../src/server"
 
 describe("solid server parity", () => {
-  it("exports core-backed server query options for representative scopes", async () => {
+  it("uses core-backed server descriptors for representative scopes", async () => {
     const userId = "user-1"
     const query = { userId, organizationId: "org-1" }
     const params = { query }
@@ -55,35 +51,55 @@ describe("solid server parity", () => {
     ).toEqual(passkeyQueryKeys.list(userId, query))
 
     const options = listApiKeysOptions(auth as never, userId, params as never)
-    await (options.queryFn as (context: never) => Promise<unknown>)({} as never)
+    await options.queryFn()
     expect(auth.api.listApiKeys).toHaveBeenCalledWith(params)
   })
 
-  it("delegates helpers to the provided Solid Query client", () => {
-    const client = queryClient()
+  it("delegates through Solid-typed generic helpers and the Solid adapter", async () => {
     const userId = "user-1"
     const params = { query: { userId, organizationId: "org-1" } }
-    const auth = {
-      api: {
-        listApiKeys: vi.fn(),
-        getFullOrganization: vi.fn()
-      }
+    const apiKeyData = { apiKeys: [{ id: "key-1" }] }
+    const organizationData = { id: "org-1" }
+    const queryClient = new QueryClient()
+    const apiKeyDescriptor: ServerQueryDescriptor<
+      ReturnType<typeof apiKeyQueryKeys.list>,
+      typeof apiKeyData
+    > = {
+      queryKey: apiKeyQueryKeys.list(userId, params.query),
+      queryFn: vi.fn(async () => apiKeyData)
     }
+    const organizationDescriptor: ServerQueryDescriptor<
+      ReturnType<typeof organizationQueryKeys.activeOrganization>,
+      typeof organizationData
+    > = {
+      queryKey: organizationQueryKeys.activeOrganization(userId, params.query),
+      queryFn: vi.fn(async () => organizationData)
+    }
+    const apiKeys = adaptServerQueryOptions(apiKeyDescriptor)
+    const activeOrganization = adaptServerQueryOptions(organizationDescriptor)
 
-    ensureListApiKeys(client as never, auth as never, userId, params as never)
-    ensureActiveOrganization(
-      client as never,
-      auth as never,
-      userId,
-      params as never
+    const apiKeyResult = ensureServerQuery(queryClient, apiKeys)
+    const organizationResult = ensureServerQuery(
+      queryClient,
+      activeOrganization
     )
 
-    expect(client.ensureQueryData).toHaveBeenCalledTimes(2)
-    expect(client.ensureQueryData.mock.calls[0]?.[0].queryKey).toEqual(
-      apiKeyQueryKeys.list(userId, params.query)
-    )
-    expect(client.ensureQueryData.mock.calls[1]?.[0].queryKey).toEqual(
+    expectTypeOf(apiKeyResult).toEqualTypeOf<Promise<typeof apiKeyData>>()
+    expectTypeOf(organizationResult).toEqualTypeOf<
+      Promise<typeof organizationData>
+    >()
+    await expect(apiKeyResult).resolves.toBe(apiKeyData)
+    await expect(organizationResult).resolves.toBe(organizationData)
+    expect(apiKeys.queryKey).toEqual(apiKeyQueryKeys.list(userId, params.query))
+    expect(activeOrganization.queryKey).toEqual(
       organizationQueryKeys.activeOrganization(userId, params.query)
     )
+  })
+
+  it("does not export endpoint-specific server wrappers from Solid", () => {
+    expect("listApiKeysOptions" in solidServer).toBe(false)
+    expect("ensureListApiKeys" in solidServer).toBe(false)
+    expect("activeOrganizationOptions" in solidServer).toBe(false)
+    expect("ensureActiveOrganization" in solidServer).toBe(false)
   })
 })

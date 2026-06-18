@@ -3263,9 +3263,9 @@ describe("Solid registry isolation", () => {
     expect(organizationPluginDoc).toContain(
       'createFileRoute("/organization/$slug/$path")'
     )
-    expect(organizationPluginDoc).toContain(
-      "ensureSessionServer(queryClient, auth"
-    )
+    expect(organizationPluginDoc).toContain("adaptServerQueryOptions")
+    expect(organizationPluginDoc).toContain("ensureServerQuery")
+    expect(organizationPluginDoc).toContain("sessionOptions(auth")
     expect(organizationPluginDoc).toContain(
       "ensureSessionClient(queryClient, authClient)"
     )

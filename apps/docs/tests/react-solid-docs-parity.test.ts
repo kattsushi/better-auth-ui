@@ -227,7 +227,7 @@ describe("React/Solid docs parity", () => {
     }
   })
 
-  it("keeps Solid organization query docs aligned with React page-level scope", () => {
+  it("keeps Solid organization query docs aligned with React server-prefetch scope", () => {
     const solidOrganizationQueries = [
       "active-organization",
       "full-organization",
@@ -243,9 +243,11 @@ describe("React/Solid docs parity", () => {
 
       expect(content).toContain("## Usage")
       expect(content).toContain("## Options factory")
+      expect(content).toContain("## Server-side prefetching")
       expect(content).toContain('from "@better-auth-ui/solid"')
-      expect(content).not.toContain("## Server-side prefetching")
-      expect(content).not.toContain("@better-auth-ui/solid/server")
+      expect(content).toContain('from "@better-auth-ui/core/server"')
+      expect(content).toContain("adaptServerQueryOptions")
+      expect(content).toContain("ensureServerQuery")
       expect(content).not.toContain(
         "client-shaped `authClient`/`userId` signature"
       )
@@ -273,64 +275,67 @@ describe("React/Solid docs parity", () => {
     const reactSsr = readDocsFile("react", "ssr.mdx")
     const solidSsr = readDocsFile("solid", "ssr.mdx")
 
-    expect(reactSession).toContain("@better-auth-ui/react/server")
-    expect(reactSession).toContain("ensureSession(queryClient, auth")
+    for (const content of [reactSession, solidSession]) {
+      expect(content).toContain('from "@better-auth-ui/core/server"')
+      expect(content).toContain("adaptServerQueryOptions")
+      expect(content).toContain("ensureServerQuery")
+      expect(content).toContain("sessionOptions(auth")
+      expect(content).toContain(
+        "Both entrypoints share the same session query key"
+      )
+      expect(content).not.toContain("ensureSession(queryClient, auth,")
+      expect(content).not.toContain("packages/react/src/server/queries")
+      expect(content).not.toContain("packages/solid/src/server/queries")
+    }
+
     expect(reactSession).toContain("headers: getRequestHeaders()")
-    expect(reactSession).toContain(
-      "packages/react/src/server/queries/auth/session-query.ts"
-    )
-
-    expect(solidSession).toContain("@better-auth-ui/solid/server")
-    expect(solidSession).toContain("ensureSession(queryClient, auth")
     expect(solidSession).toContain("headers: request.headers")
-    expect(solidSession).toContain(
-      "Both entrypoints share the same session query key"
-    )
-    expect(solidSession).toContain(
-      "packages/solid/src/server/queries/auth/session-query.ts"
-    )
 
-    expect(reactListApiKeys).toContain("@better-auth-ui/react/server")
-    expect(reactListApiKeys).toContain(
-      "ensureListApiKeys(queryClient, auth, userId"
-    )
-    expect(reactActiveOrganization).toContain("@better-auth-ui/react/server")
+    for (const content of [
+      reactListApiKeys,
+      reactActiveOrganization,
+      reactHasPermission
+    ]) {
+      expect(content).toContain('from "@better-auth-ui/core/server"')
+      expect(content).toContain('from "@better-auth-ui/react/server"')
+      expect(content).toContain("adaptServerQueryOptions")
+      expect(content).toContain("ensureServerQuery")
+      expect(content).not.toContain("ensureListApiKeys(queryClient, auth,")
+      expect(content).not.toContain(
+        "ensureActiveOrganization(queryClient, auth,"
+      )
+      expect(content).not.toContain("ensureHasPermission(queryClient, auth,")
+    }
+
+    expect(reactListApiKeys).toContain("listApiKeysOptions(auth, userId")
     expect(reactActiveOrganization).toContain(
-      "ensureActiveOrganization(queryClient, auth, userId"
+      "activeOrganizationOptions(auth, userId"
     )
-    expect(reactHasPermission).toContain(
-      "ensureHasPermission(queryClient, auth, userId"
-    )
+    expect(reactHasPermission).toContain("hasPermissionOptions(auth, userId")
     expect(reactHasPermission).toContain("body: {")
     expect(reactHasPermission).toContain(
       'permissions: { organization: ["update"] }'
     )
 
-    expect(reactSsr).toContain("ensureListApiKeys")
-    expect(reactSsr).toContain("listApiKeysOptions")
-    expect(reactSsr).toContain("ensureAccountInfo")
-    expect(reactSsr).toContain("listDeviceSessionsOptions")
-    expect(reactSsr).toContain("ensureActiveOrganization")
-    expect(reactSsr).toContain("activeOrganizationOptions")
-    expect(reactSsr).toContain("ensureFullOrganization")
-    expect(reactSsr).toContain("hasPermissionOptions")
-    expect(reactSsr).not.toContain("pattern for `accountInfo`")
-    expect(reactSsr).not.toContain("pattern for `fullOrganization`")
-    expect(reactSsr).not.toContain("equivalents for `listAccounts`")
-    expect(reactSsr).not.toContain("equivalents for `accountInfo`")
-    expect(reactSsr).not.toContain("equivalents for `listPasskeys`")
-    expect(reactSsr).not.toContain("equivalents for `hasPermission`")
-    expect(reactSsr).toContain("Better Auth server instance (`auth`)")
-
-    expect(solidSsr).toContain("ensureListApiKeys")
-    expect(solidSsr).toContain("ensureActiveOrganization")
-    expect(solidSsr).toContain("ensureHasPermission")
-    expect(solidSsr).toContain("ensureListPasskeys")
-    expect(solidSsr).toContain("ensureListSessions")
-    expect(solidSsr).toContain("OrganizationAuthServer")
-    expect(solidSsr).not.toContain("server-auth API is provided for session")
-    expect(solidSsr).not.toContain(
-      "client-shaped `authClient`/`userId` signatures"
-    )
+    for (const content of [reactSsr, solidSsr]) {
+      expect(content).toContain('from "@better-auth-ui/core/server"')
+      expect(content).toContain("adaptServerQueryOptions")
+      expect(content).toContain("ensureServerQuery")
+      expect(content).toContain("prefetchServerQuery")
+      expect(content).toContain("fetchServerQuery")
+      expect(content).toContain("sessionOptions(auth")
+      expect(content).toContain("listApiKeysOptions")
+      expect(content).toContain("activeOrganizationOptions")
+      expect(content).toContain("removed endpoint-specific framework wrappers")
+      expect(content).not.toContain("ensureListApiKeys")
+      expect(content).not.toContain("ensureActiveOrganization")
+      expect(content).not.toContain("ensureHasPermission")
+      expect(content).not.toContain("ensureListPasskeys")
+      expect(content).not.toContain("ensureListSessions")
+      expect(content).not.toContain("server-auth API is provided for session")
+      expect(content).not.toContain(
+        "client-shaped `authClient`/`userId` signatures"
+      )
+    }
   })
 })

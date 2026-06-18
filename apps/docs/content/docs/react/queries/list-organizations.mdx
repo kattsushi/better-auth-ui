@@ -41,14 +41,23 @@ const organizations = await fetchListOrganizations(queryClient, authClient, user
 For server loaders, import from `@better-auth-ui/react/server`. The server helper uses your Better Auth server instance and the signed-in `userId` so the cache key stays partitioned per user.
 
 ```ts
-import { ensureListOrganizations } from "@better-auth-ui/react/server"
+import { listOrganizationsOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/react/server"
 import { getRequestHeaders } from "@tanstack/react-start/server"
 
 import { auth } from "@/lib/auth"
 
-await ensureListOrganizations(queryClient, auth, userId, {
-  headers: getRequestHeaders()
-})
+await ensureServerQuery(
+  queryClient,
+  adaptServerQueryOptions(
+    listOrganizationsOptions(auth, userId, {
+        headers: getRequestHeaders()
+      })
+  )
+)
 ```
 
 ## Params

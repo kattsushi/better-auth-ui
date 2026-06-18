@@ -1,7 +1,10 @@
 import {
+  type AuthMutationDefinition,
   type AuthMutationFn,
   type AuthMutationFnData,
   type AuthMutationFnVariables,
+  type AuthMutationMeta,
+  type AuthMutationOptionsAdapter,
   createAuthMutationDefinition
 } from "@better-auth-ui/core"
 import {
@@ -11,7 +14,12 @@ import {
 } from "@tanstack/react-query"
 import type { BetterFetchError } from "better-auth/client"
 
-export type { AuthMutationFn, AuthMutationFnData, AuthMutationFnVariables }
+export type {
+  AuthMutationFn,
+  AuthMutationFnData,
+  AuthMutationFnVariables,
+  AuthMutationMeta
+}
 
 /**
  * Return type of {@link authMutationOptions}, matching the shape produced by
@@ -20,16 +28,15 @@ export type { AuthMutationFn, AuthMutationFnData, AuthMutationFnVariables }
 export type AuthMutationOptions<
   TFn extends AuthMutationFn,
   TMutationKey extends MutationKey = MutationKey
-> = Omit<
+> = AuthMutationOptionsAdapter<
+  TFn,
+  TMutationKey,
   UseMutationOptions<
     AuthMutationFnData<TFn>,
     BetterFetchError,
     AuthMutationFnVariables<TFn>
-  >,
-  "mutationKey"
-> & {
-  mutationKey: TMutationKey
-}
+  >
+>
 
 /**
  * Build `mutationOptions` for a write-style Better Auth endpoint.
@@ -40,19 +47,28 @@ export type AuthMutationOptions<
  * @param authFn - Better Auth client method (e.g. `authClient.emailOtp.sendVerificationOtp`).
  * @param mutationKey - Stable key for the mutation (used by `useIsMutating`, `MutationCache`, …).
  */
-export function authMutationOptions<
+export function adaptAuthMutationDefinition<
   TFn extends AuthMutationFn,
   const TMutationKey extends MutationKey
 >(
-  authFn: TFn,
-  mutationKey: TMutationKey
+  definition: AuthMutationDefinition<TFn, TMutationKey>
 ): AuthMutationOptions<TFn, TMutationKey> {
   return mutationOptions<
     AuthMutationFnData<TFn>,
     BetterFetchError,
     AuthMutationFnVariables<TFn>
-  >(createAuthMutationDefinition(authFn, mutationKey)) as AuthMutationOptions<
-    TFn,
-    TMutationKey
-  >
+  >(definition) as AuthMutationOptions<TFn, TMutationKey>
+}
+
+export function authMutationOptions<
+  TFn extends AuthMutationFn,
+  const TMutationKey extends MutationKey
+>(
+  authFn: TFn,
+  mutationKey: TMutationKey,
+  meta?: AuthMutationMeta
+): AuthMutationOptions<TFn, TMutationKey> {
+  return adaptAuthMutationDefinition(
+    createAuthMutationDefinition(authFn, mutationKey, meta)
+  )
 }

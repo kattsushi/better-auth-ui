@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import { existsSync, readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { viewPaths } from "@better-auth-ui/core"
@@ -571,7 +573,9 @@ describe("Solid auth route component selection", () => {
     expect(settingsRoute).toContain("throw notFound()")
     expect(settingsRoute).toContain("async beforeLoad")
     expect(settingsRoute).toContain("createIsomorphicFn()")
-    expect(settingsRoute).toContain("ensureSessionServer")
+    expect(settingsRoute).toContain("sessionOptions(auth")
+    expect(settingsRoute).toContain("adaptServerQueryOptions")
+    expect(settingsRoute).toContain("ensureServerQuery")
     expect(settingsRoute).toContain("ensureSessionClient")
     expect(settingsRoute).toContain("getRequestHeaders()")
     expect(settingsRoute).toContain('to: "/auth/$path"')

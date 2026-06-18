@@ -2,7 +2,6 @@ import {
   ensureServerQuery as ensureCoreServerQuery,
   fetchServerQuery as fetchCoreServerQuery,
   prefetchServerQuery as prefetchCoreServerQuery,
-  type ServerQueryClientLike,
   type ServerQueryDescriptor
 } from "@better-auth-ui/core/server"
 import {
@@ -36,32 +35,56 @@ export function adaptServerQueryOptions<
   return options as ReactServerQueryOptions<TQueryKey, TData, TError>
 }
 
-const asServerQueryClient = (queryClient: QueryClient) =>
-  queryClient as unknown as ServerQueryClientLike<unknown>
-
-export const ensureServerQuery = <TData>(
+export function ensureServerQuery<
+  const TQueryKey extends QueryKey,
+  TData,
+  TError = APIError
+>(
   queryClient: QueryClient,
-  options: unknown
-) =>
-  ensureCoreServerQuery(
-    asServerQueryClient(queryClient),
+  options: ReactServerQueryOptions<TQueryKey, TData, TError>
+): Promise<TData> {
+  return ensureCoreServerQuery(
+    queryClient as unknown as {
+      ensureQueryData: (
+        options: ReactServerQueryOptions<TQueryKey, TData, TError>
+      ) => Promise<TData>
+    },
     options
-  ) as Promise<TData>
+  )
+}
 
-export const prefetchServerQuery = (
+export function prefetchServerQuery<
+  const TQueryKey extends QueryKey,
+  TData,
+  TError = APIError
+>(
   queryClient: QueryClient,
-  options: unknown
-) =>
-  prefetchCoreServerQuery(
-    asServerQueryClient(queryClient),
+  options: ReactServerQueryOptions<TQueryKey, TData, TError>
+): Promise<void> {
+  return prefetchCoreServerQuery(
+    queryClient as unknown as {
+      prefetchQuery: (
+        options: ReactServerQueryOptions<TQueryKey, TData, TError>
+      ) => Promise<void>
+    },
     options
-  ) as Promise<void>
+  )
+}
 
-export const fetchServerQuery = <TData>(
+export function fetchServerQuery<
+  const TQueryKey extends QueryKey,
+  TData,
+  TError = APIError
+>(
   queryClient: QueryClient,
-  options: unknown
-) =>
-  fetchCoreServerQuery(
-    asServerQueryClient(queryClient),
+  options: ReactServerQueryOptions<TQueryKey, TData, TError>
+): Promise<TData> {
+  return fetchCoreServerQuery(
+    queryClient as unknown as {
+      fetchQuery: (
+        options: ReactServerQueryOptions<TQueryKey, TData, TError>
+      ) => Promise<TData>
+    },
     options
-  ) as Promise<TData>
+  )
+}

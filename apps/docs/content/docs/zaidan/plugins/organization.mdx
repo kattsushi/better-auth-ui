@@ -165,8 +165,12 @@ export function Header() {
 The plugin contributes an `organizations` segment to `viewPaths.settings`. Spread `organizationPlugin().viewPaths.settings` into your settings route's allowed-path set so `/settings/organizations` resolves correctly.
 
 ```tsx title="src/routes/settings/$path.tsx"
+import { sessionOptions } from "@better-auth-ui/core/server"
 import { ensureSession as ensureSessionClient } from "@better-auth-ui/solid"
-import { ensureSession as ensureSessionServer } from "@better-auth-ui/solid/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
 import { viewPaths } from "@better-auth-ui/core"
 import { createFileRoute, notFound, redirect } from "@tanstack/solid-router"
 import { createIsomorphicFn } from "@tanstack/solid-start"
@@ -190,7 +194,12 @@ export const Route = createFileRoute("/settings/$path")({
 
     const ensureSession = createIsomorphicFn()
       .server(() =>
-        ensureSessionServer(queryClient, auth, { headers: getRequestHeaders() })
+        ensureServerQuery(
+          queryClient,
+          adaptServerQueryOptions(
+            sessionOptions(auth, { headers: getRequestHeaders() })
+          )
+        )
       )
       .client(() => ensureSessionClient(queryClient, authClient))
 
@@ -230,7 +239,10 @@ Mount a dynamic route at `/organization/$slug/$path` that renders `<Organization
 
 ```tsx title="src/routes/organization/$slug/$path.tsx"
 import { ensureSession as ensureSessionClient } from "@better-auth-ui/solid"
-import { ensureSession as ensureSessionServer } from "@better-auth-ui/solid/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
 import { createFileRoute, notFound, redirect } from "@tanstack/solid-router"
 import { createIsomorphicFn } from "@tanstack/solid-start"
 import { getRequestHeaders } from "@tanstack/solid-start/server"
@@ -252,7 +264,12 @@ export const Route = createFileRoute("/organization/$slug/$path")({
 
     const ensureSession = createIsomorphicFn()
       .server(() =>
-        ensureSessionServer(queryClient, auth, { headers: getRequestHeaders() })
+        ensureServerQuery(
+          queryClient,
+          adaptServerQueryOptions(
+            sessionOptions(auth, { headers: getRequestHeaders() })
+          )
+        )
       )
       .client(() => ensureSessionClient(queryClient, authClient))
 
@@ -355,7 +372,10 @@ Move `/organization/$path` to `/organization/$slug/$path`. Validate the path seg
 
 ```tsx title="src/routes/organization/$slug/$path.tsx"
 import { ensureSession as ensureSessionClient } from "@better-auth-ui/solid"
-import { ensureSession as ensureSessionServer } from "@better-auth-ui/solid/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
 import { createFileRoute, notFound, redirect } from "@tanstack/solid-router"
 import { createIsomorphicFn } from "@tanstack/solid-start"
 import { getRequestHeaders } from "@tanstack/solid-start/server"
@@ -377,7 +397,12 @@ export const Route = createFileRoute("/organization/$slug/$path")({
 
     const ensureSession = createIsomorphicFn()
       .server(() =>
-        ensureSessionServer(queryClient, auth, { headers: getRequestHeaders() })
+        ensureServerQuery(
+          queryClient,
+          adaptServerQueryOptions(
+            sessionOptions(auth, { headers: getRequestHeaders() })
+          )
+        )
       )
       .client(() => ensureSessionClient(queryClient, authClient))
 

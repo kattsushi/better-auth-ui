@@ -164,10 +164,14 @@ The same pattern works for every settings read — `prefetchListAccounts`, `pref
 
 ## Server-only helpers
 
-If you'd rather skip the HTTP round-trip and hit the Better Auth server directly from a TanStack Start server function (or any other server runtime), import the matching helpers from `@better-auth-ui/react/server`. They accept your Better Auth server instance instead of an `authClient`:
+If you'd rather skip the HTTP round-trip and hit the Better Auth server directly from a TanStack Start server function (or any other server runtime), build the descriptor from `@better-auth-ui/core/server` and adapt it with `@better-auth-ui/react/server`. Core owns endpoint descriptors; the React server entrypoint owns React Query adapter helpers.
 
 ```ts title="src/lib/session.ts"
-import { ensureSession } from "@better-auth-ui/react/server"
+import { sessionOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/react/server"
 import type { QueryClient } from "@tanstack/react-query"
 import { createServerFn } from "@tanstack/react-start"
 import { getRequestHeaders } from "@tanstack/react-start/server"
@@ -179,16 +183,18 @@ const getSession = createServerFn().handler(() =>
 )
 
 export const ensureServerSession = (queryClient: QueryClient) =>
-  ensureSession(queryClient, auth, { headers: getRequestHeaders() })
+  ensureServerQuery(
+    queryClient,
+    adaptServerQueryOptions(
+      sessionOptions(auth, { headers: getRequestHeaders() })
+    )
+  )
 ```
 
-The server entrypoint mirrors supported read helpers with server-auth signatures: `sessionOptions`, `ensureSession`, `prefetchSession`, `fetchSession`, plus equivalents for settings, passkey, API-key, and Organization queries. These helpers accept your Better Auth server instance (`auth`) and request params instead of a browser `authClient`.
+The same pattern applies to every server descriptor exported by `@better-auth-ui/core/server`:
 
-Available server query helper families include:
+1. Create the descriptor in core, for example `sessionOptions(auth, params)`, `listApiKeysOptions(auth, userId, params)`, or `activeOrganizationOptions(auth, userId, params)`.
+2. Wrap it with `adaptServerQueryOptions(...)` from `@better-auth-ui/react/server`.
+3. Pass the adapted options to `ensureServerQuery`, `prefetchServerQuery`, or `fetchServerQuery` from the same React server entrypoint.
 
-- Session: `sessionOptions`, `ensureSession`, `prefetchSession`, `fetchSession`
-- Settings/passkey: `listAccountsOptions`, `ensureListAccounts`, `prefetchListAccounts`, `fetchListAccounts`, `accountInfoOptions`, `ensureAccountInfo`, `listSessionsOptions`, `ensureListSessions`, `listDeviceSessionsOptions`, `ensureListDeviceSessions`, `listPasskeysOptions`, and `ensureListPasskeys` with matching prefetch/fetch helpers
-- API-key: `listApiKeysOptions`, `ensureListApiKeys`, `prefetchListApiKeys`, `fetchListApiKeys`
-- Organization: `activeOrganizationOptions`, `ensureActiveOrganization`, `prefetchActiveOrganization`, `fetchActiveOrganization`, `fullOrganizationOptions`, `ensureFullOrganization`, `listOrganizationsOptions`, `ensureListOrganizations`, `listOrganizationMembersOptions`, `ensureListOrganizationMembers`, `listOrganizationInvitationsOptions`, `ensureListOrganizationInvitations`, `listUserInvitationsOptions`, `ensureListUserInvitations`, `hasPermissionOptions`, and `ensureHasPermission` with matching prefetch/fetch helpers
-
-Cache keys are identical between server and client helpers, so data prefetched on the server hydrates cleanly into client-side hooks like `useSession`, `useListApiKeys`, and `useActiveOrganization`.
+This replaces the removed endpoint-specific framework wrappers with one descriptor-plus-adapter pattern. Cache keys are still identical between server descriptors and client hooks, so data prefetched on the server hydrates cleanly into client-side hooks like `useSession`, `useListApiKeys`, and `useActiveOrganization`.

@@ -1,7 +1,10 @@
 import {
+  type AuthMutationDefinition,
   type AuthMutationFn,
   type AuthMutationFnData,
   type AuthMutationFnVariables,
+  type AuthMutationMeta,
+  type AuthMutationOptionsAdapter,
   createAuthMutationDefinition
 } from "@better-auth-ui/core"
 import {
@@ -11,20 +14,37 @@ import {
 } from "@tanstack/solid-query"
 import type { BetterFetchError } from "better-auth/client"
 
-export type { AuthMutationFn, AuthMutationFnData, AuthMutationFnVariables }
+export type {
+  AuthMutationFn,
+  AuthMutationFnData,
+  AuthMutationFnVariables,
+  AuthMutationMeta
+}
 
 export type AuthMutationOptions<
   TFn extends AuthMutationFn,
   TMutationKey extends MutationKey = MutationKey
-> = Omit<
+> = AuthMutationOptionsAdapter<
+  TFn,
+  TMutationKey,
   CreateMutationOptions<
     AuthMutationFnData<TFn>,
     BetterFetchError,
     AuthMutationFnVariables<TFn>
-  >,
-  "mutationKey"
-> & {
-  mutationKey: TMutationKey
+  >
+>
+
+export function adaptAuthMutationDefinition<
+  TFn extends AuthMutationFn,
+  const TMutationKey extends MutationKey
+>(
+  definition: AuthMutationDefinition<TFn, TMutationKey>
+): AuthMutationOptions<TFn, TMutationKey> {
+  return mutationOptions<
+    AuthMutationFnData<TFn>,
+    BetterFetchError,
+    AuthMutationFnVariables<TFn>
+  >(definition) as AuthMutationOptions<TFn, TMutationKey>
 }
 
 export function authMutationOptions<
@@ -32,14 +52,10 @@ export function authMutationOptions<
   const TMutationKey extends MutationKey
 >(
   authFn: TFn,
-  mutationKey: TMutationKey
+  mutationKey: TMutationKey,
+  meta?: AuthMutationMeta
 ): AuthMutationOptions<TFn, TMutationKey> {
-  return mutationOptions<
-    AuthMutationFnData<TFn>,
-    BetterFetchError,
-    AuthMutationFnVariables<TFn>
-  >(createAuthMutationDefinition(authFn, mutationKey)) as AuthMutationOptions<
-    TFn,
-    TMutationKey
-  >
+  return adaptAuthMutationDefinition(
+    createAuthMutationDefinition(authFn, mutationKey, meta)
+  )
 }

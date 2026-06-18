@@ -4,24 +4,20 @@ import {
   multiSessionQueryKeys,
   passkeyQueryKeys
 } from "@better-auth-ui/core/plugins"
-import { describe, expect, it, vi } from "vitest"
 import {
   accountInfoOptions,
-  ensureAccountInfo,
   listApiKeysOptions,
   listDeviceSessionsOptions,
   listPasskeysOptions,
   listSessionsOptions
-} from "../../src/server"
-
-const queryClient = () => ({
-  ensureQueryData: vi.fn((options) => options),
-  prefetchQuery: vi.fn((options) => options),
-  fetchQuery: vi.fn((options) => options)
-})
+} from "@better-auth-ui/core/server"
+import { QueryClient } from "@tanstack/react-query"
+import { describe, expect, it, vi } from "vitest"
+import * as reactServer from "../../src/server"
+import { adaptServerQueryOptions, ensureServerQuery } from "../../src/server"
 
 describe("react server query parity", () => {
-  it("keeps plugin/settings keys and params forwarding", async () => {
+  it("keeps plugin/settings keys and params forwarding through core descriptors", async () => {
     const userId = "user-1"
     const query = { userId }
     const params = { query }
@@ -52,19 +48,29 @@ describe("react server query parity", () => {
     ).toEqual(authQueryKeys.listSessions(userId, query))
 
     const options = listApiKeysOptions(auth as never, userId, params as never)
-    await (options.queryFn as (context: never) => Promise<unknown>)({} as never)
+    await options.queryFn()
     expect(auth.api.listApiKeys).toHaveBeenCalledWith(params)
   })
 
-  it("delegates representative helpers to query clients", () => {
-    const client = queryClient()
+  it("delegates representative helpers through the React server query client helper", async () => {
     const params = { query: { userId: "user-1" } }
-    const auth = { api: { accountInfo: vi.fn() } }
+    const data = { account: { id: "account-1" } }
+    const auth = { api: { accountInfo: vi.fn(async () => data) } }
+    const queryClient = new QueryClient()
+    const options = adaptServerQueryOptions(
+      accountInfoOptions(auth as never, "user-1", params as never)
+    )
 
-    ensureAccountInfo(client as never, auth as never, "user-1", params as never)
-    expect(client.ensureQueryData).toHaveBeenCalledTimes(1)
-    expect(client.ensureQueryData.mock.calls[0]?.[0].queryKey).toEqual(
+    await expect(ensureServerQuery(queryClient, options)).resolves.toBe(data)
+    expect(auth.api.accountInfo).toHaveBeenCalledWith(params)
+    expect(options.queryKey).toEqual(
       authQueryKeys.accountInfo("user-1", params.query)
     )
+  })
+
+  it("does not export plugin/settings endpoint wrappers from React server", () => {
+    expect("listApiKeysOptions" in reactServer).toBe(false)
+    expect("ensureAccountInfo" in reactServer).toBe(false)
+    expect("listSessionsOptions" in reactServer).toBe(false)
   })
 })

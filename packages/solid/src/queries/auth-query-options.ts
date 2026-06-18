@@ -1,4 +1,5 @@
 import {
+  type AuthQueryDefinition,
   type AuthQueryFn,
   type AuthQueryFnData,
   type AuthQueryKey as CoreAuthQueryKey,
@@ -38,6 +39,17 @@ export type AuthQueryOptions<
   >
 }
 
+export function adaptAuthQueryDefinition<
+  TFn extends AuthQueryFn,
+  const TPrefix extends QueryKey
+>(
+  definition: AuthQueryDefinition<TFn, TPrefix>
+): AuthQueryOptions<TFn, TPrefix> {
+  return queryOptions<AuthQueryFnData<TFn>, BetterFetchError>(
+    definition
+  ) as AuthQueryOptions<TFn, TPrefix>
+}
+
 export function authQueryOptions<
   TFn extends AuthQueryFn,
   const TPrefix extends QueryKey
@@ -46,7 +58,7 @@ export function authQueryOptions<
   queryKey: TPrefix,
   params?: Parameters<TFn>[0]
 ): AuthQueryOptions<TFn, TPrefix> {
-  return queryOptions<AuthQueryFnData<TFn>, BetterFetchError>(
+  return adaptAuthQueryDefinition(
     createAuthQueryDefinition(authFn, queryKey, params)
-  ) as AuthQueryOptions<TFn, TPrefix>
+  )
 }

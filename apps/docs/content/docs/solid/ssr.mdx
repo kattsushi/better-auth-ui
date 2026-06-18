@@ -94,8 +94,12 @@ Use `ensureSession` in `beforeLoad` to gate protected routes. In TanStack Start,
 
 ```tsx title="src/routes/settings/$path.tsx"
 import { viewPaths } from "@better-auth-ui/core"
+import { sessionOptions } from "@better-auth-ui/core/server"
 import { ensureSession as ensureSessionClient } from "@better-auth-ui/solid"
-import { ensureSession as ensureSessionServer } from "@better-auth-ui/solid/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
 import { createFileRoute, notFound, redirect } from "@tanstack/solid-router"
 import { createIsomorphicFn } from "@tanstack/solid-start"
 import { getRequestHeaders } from "@tanstack/solid-start/server"
@@ -112,9 +116,12 @@ export const Route = createFileRoute("/settings/$path")({
 
     const ensureSession = createIsomorphicFn()
       .server(() =>
-        ensureSessionServer(queryClient, auth, {
-          headers: getRequestHeaders()
-        })
+        ensureServerQuery(
+          queryClient,
+          adaptServerQueryOptions(
+            sessionOptions(auth, { headers: getRequestHeaders() })
+          )
+        )
       )
       .client(() => ensureSessionClient(queryClient, authClient))
 
@@ -162,10 +169,14 @@ The same pattern works for Solid read helpers that expose client-shaped loader h
 
 ## Server-only helpers
 
-If you'd rather skip the HTTP round-trip and hit the Better Auth server directly from a TanStack Start server function (or any other server runtime), import the server helpers from `@better-auth-ui/solid/server`. They accept your Better Auth server instance instead of an `authClient`:
+If you'd rather skip the HTTP round-trip and hit the Better Auth server directly from a TanStack Start server function (or any other server runtime), build the descriptor from `@better-auth-ui/core/server` and adapt it with `@better-auth-ui/solid/server`. Core owns endpoint descriptors; the Solid server entrypoint owns Solid Query adapter helpers.
 
 ```ts title="src/lib/session.ts"
-import { ensureSession } from "@better-auth-ui/solid/server"
+import { sessionOptions } from "@better-auth-ui/core/server"
+import {
+  adaptServerQueryOptions,
+  ensureServerQuery
+} from "@better-auth-ui/solid/server"
 import type { QueryClient } from "@tanstack/solid-query"
 import { createServerFn } from "@tanstack/solid-start"
 import { getRequestHeaders } from "@tanstack/solid-start/server"
@@ -177,19 +188,20 @@ const getSession = createServerFn().handler(() =>
 )
 
 export const ensureServerSession = (queryClient: QueryClient) =>
-  ensureSession(queryClient, auth, { headers: getRequestHeaders() })
+  ensureServerQuery(
+    queryClient,
+    adaptServerQueryOptions(
+      sessionOptions(auth, { headers: getRequestHeaders() })
+    )
+  )
 ```
 
-The Solid server entrypoint mirrors the React server helper families with Solid Query adapter types. True server-auth helpers require your app's Better Auth instance and request headers, while client-side route-loader helpers still live in `@better-auth-ui/solid`.
+The same pattern applies to every server descriptor exported by `@better-auth-ui/core/server`:
 
-Available `@better-auth-ui/solid/server` helper families include:
+1. Create the descriptor in core, for example `sessionOptions(auth, params)`, `listApiKeysOptions(auth, userId, params)`, or `activeOrganizationOptions(auth, userId, params)`.
+2. Wrap it with `adaptServerQueryOptions(...)` from `@better-auth-ui/solid/server`.
+3. Pass the adapted options to `ensureServerQuery`, `prefetchServerQuery`, or `fetchServerQuery` from the same Solid server entrypoint.
 
-- Session: `sessionOptions`, `ensureSession`, `prefetchSession`, `fetchSession`
-- Settings/passkey: `listAccountsOptions`, `ensureListAccounts`, `prefetchListAccounts`, `fetchListAccounts`, `accountInfoOptions`, `ensureAccountInfo`, `listSessionsOptions`, `ensureListSessions`, `listDeviceSessionsOptions`, `ensureListDeviceSessions`, `listPasskeysOptions`, and `ensureListPasskeys` with matching prefetch/fetch helpers
-- API-key: `listApiKeysOptions`, `ensureListApiKeys`, `prefetchListApiKeys`, `fetchListApiKeys`
-- Organization: `activeOrganizationOptions`, `ensureActiveOrganization`, `prefetchActiveOrganization`, `fetchActiveOrganization`, `fullOrganizationOptions`, `ensureFullOrganization`, `listOrganizationsOptions`, `ensureListOrganizations`, `listOrganizationMembersOptions`, `ensureListOrganizationMembers`, `listOrganizationInvitationsOptions`, `ensureListOrganizationInvitations`, `listUserInvitationsOptions`, `ensureListUserInvitations`, `hasPermissionOptions`, and `ensureHasPermission` with matching prefetch/fetch helpers
-- Server auth types: `AuthServer`, `ApiKeyAuthServer`, `MagicLinkAuthServer`, `MultiSessionAuthServer`, `OrganizationAuthServer`, `PasskeyAuthServer`, `UsernameAuthServer`
-
-Cache keys are identical between server helpers and component hooks, so data prefetched in route loaders hydrates cleanly into client-side hooks like `useSession`, `useListApiKeys`, and `useActiveOrganization`.
+This replaces the removed endpoint-specific framework wrappers with one descriptor-plus-adapter pattern. Cache keys are still identical between server descriptors and component hooks, so data prefetched in route loaders hydrates cleanly into client-side hooks like `useSession`, `useListApiKeys`, and `useActiveOrganization`.
 
 These helpers do not own secrets, route files, copied UI code, or registry installation, and the Solid package does not create routes for you. For TanStack Start installation and component customization, switch to [Zaidan](/docs/zaidan).
