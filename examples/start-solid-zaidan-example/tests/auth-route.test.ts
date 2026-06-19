@@ -1161,7 +1161,7 @@ describe("Solid auth route component selection", () => {
     )
     expect(switchAccountSubmenuItem).toContain("deviceSession: DeviceSession")
     expect(switchAccountSubmenuItem).toContain("setActiveSessionOptions")
-    expect(switchAccountSubmenuItem).toContain("createMutation")
+    expect(switchAccountSubmenuItem).toContain("createAuthMutation")
     expect(switchAccountSubmenuItem).toContain("window.scrollTo({ top: 0 })")
     expect(switchAccountSubmenuItem).toContain(
       "disabled={setActiveSession.isPending}"
@@ -1872,9 +1872,11 @@ describe("Solid auth route component selection", () => {
     expect(accountSettings).toContain("plugin.accountCards")
     expect(manageAccounts).toContain("setActiveSessionOptions")
     expect(manageAccounts).toContain("revokeMultiSessionOptions")
-    expect(manageAccounts).toContain("const setActiveSession = createMutation")
     expect(manageAccounts).toContain(
-      "const revokeMultiSession = createMutation"
+      "const setActiveSession = createAuthMutation"
+    )
+    expect(manageAccounts).toContain(
+      "const revokeMultiSession = createAuthMutation"
     )
     expect(manageAccounts).toContain("window.scrollTo({ top: 0 })")
     expect(manageAccounts).toContain(
@@ -1911,8 +1913,8 @@ describe("Solid auth route component selection", () => {
     )
 
     expect(userProfile).toContain("updateUserOptions")
-    expect(userProfile).toContain("createMutation")
-    expect(userProfile).toContain("const updateUser = createMutation")
+    expect(userProfile).toContain("createAuthMutation")
+    expect(userProfile).toContain("const updateUser = createAuthMutation")
     expect(userProfile).toContain("onSubmit={submitProfile}")
     expect(userProfile).toContain("const formData = new FormData")
     expect(userProfile).toContain('formData.get("name")')
@@ -1973,7 +1975,7 @@ describe("Solid auth route component selection", () => {
     )
 
     expect(changeEmail).toContain("changeEmailOptions")
-    expect(changeEmail).toContain("const changeEmail = createMutation")
+    expect(changeEmail).toContain("const changeEmail = createAuthMutation")
     expect(changeEmail).toContain("onSubmit={submitChangeEmail}")
     expect(changeEmail).toContain("const formData = new FormData")
     expect(changeEmail).toContain('formData.get("email")')
@@ -2135,7 +2137,9 @@ describe("Solid auth route component selection", () => {
     expect(changePassword).toContain("requestPasswordReset.mutate")
     expect(changePassword).toContain("session.data.user.email")
     expect(changePassword).toContain("passwordResetEmailSent")
-    expect(changePassword).toContain("const changePassword = createMutation")
+    expect(changePassword).toContain(
+      "const changePassword = createAuthMutation"
+    )
     expect(changePassword).toContain("submitChangePassword")
     expect(changePassword).toContain("passwordsDoNotMatch")
     expect(changePassword).toContain("changePassword.mutate({")
@@ -2263,7 +2267,7 @@ describe("Solid auth route component selection", () => {
     expect(activeSessions).toContain("revokeSessionOptions")
     expect(activeSessions).toContain("const activeSessions = createQuery")
     expect(activeSessions).toContain("...listSessionsOptions(")
-    expect(activeSessions).toContain("const revokeSession = createMutation")
+    expect(activeSessions).toContain("const revokeSession = createAuthMutation")
     expect(activeSessions).toContain("...revokeSessionOptions(auth.authClient)")
     expect(activeSessions).toContain("revokeSession.mutate(activeSession)")
     expect(activeSessions).toContain(
@@ -2318,12 +2322,12 @@ describe("Solid auth route component selection", () => {
     expect(linkedAccount).toContain("const accountInfo = createQuery")
     expect(linkedAccount).toContain("...accountInfoOptions(")
     expect(linkedAccount).toContain("account?.accountId")
-    expect(linkedAccount).toContain("const linkSocial = createMutation")
+    expect(linkedAccount).toContain("const linkSocial = createAuthMutation")
     expect(linkedAccount).toContain("...linkSocialOptions(auth.authClient)")
     expect(linkedAccount).toContain("provider:")
     expect(linkedAccount).toContain("callbackURL:")
     expect(linkedAccount).toContain("window.location.pathname")
-    expect(linkedAccount).toContain("const unlinkAccount = createMutation")
+    expect(linkedAccount).toContain("const unlinkAccount = createAuthMutation")
     expect(linkedAccount).toContain("...unlinkAccountOptions(auth.authClient)")
     expect(linkedAccount).toContain("accountUnlinked")
     expect(linkedAccount).toContain("providerId: account.providerId")
@@ -2655,17 +2659,21 @@ describe("Solid auth route component selection", () => {
       "utf8"
     )
 
-    expect(createApiKeyDialog).toContain("const createApiKey = createMutation")
+    expect(createApiKeyDialog).toContain(
+      "const createApiKey = createAuthMutation"
+    )
     expect(createApiKeyDialog).toContain(
       "...createApiKeyOptions(auth.authClient as ApiKeyAuthClient)"
     )
     expect(createApiKeyDialog).toContain("createApiKey.mutate(")
-    expect(createApiKeyDialog).toContain("setNewApiKeySecret(result.key)")
+    expect(createApiKeyDialog).toContain("setNewApiKeySecret(apiKey.key)")
     expect(createApiKeyDialog).toContain("setIsNewKeyDialogOpen(true)")
     expect(newApiKeyDialog).toContain("navigator.clipboard.writeText")
     expect(newApiKeyDialog).toContain("setIsCopied(true)")
     expect(newApiKeyDialog).toContain("setTimeout(() => setIsCopied(false)")
-    expect(deleteApiKeyDialog).toContain("const deleteApiKey = createMutation")
+    expect(deleteApiKeyDialog).toContain(
+      "const deleteApiKey = createAuthMutation"
+    )
     expect(deleteApiKeyDialog).toContain(
       "...deleteApiKeyOptions(auth.authClient as ApiKeyAuthClient)"
     )
@@ -2802,7 +2810,7 @@ describe("Solid auth route component selection", () => {
 
     expect(settingsTypes).toContain("export type ListedPasskey")
     expect(passkeys).toContain("const [isAddDialogOpen")
-    expect(addPasskeyDialog).toContain("const addPasskey = createMutation")
+    expect(addPasskeyDialog).toContain("const addPasskey = createAuthMutation")
     expect(addPasskeyDialog).toContain(
       "...addPasskeyOptions(auth.authClient as PasskeyAuthClient)"
     )
@@ -2812,7 +2820,7 @@ describe("Solid auth route component selection", () => {
     expect(addPasskeyDialog).toContain("name ? { name } : undefined")
     expect(addPasskeyDialog).toContain("props.onOpenChange(false)")
     expect(deletePasskeyDialog).toContain(
-      "const deletePasskey = createMutation"
+      "const deletePasskey = createAuthMutation"
     )
     expect(deletePasskeyDialog).toContain(
       "...deletePasskeyOptions(auth.authClient as PasskeyAuthClient)"

@@ -963,12 +963,12 @@ describe("Solid registry isolation", () => {
     expect(forgotPassword).toContain('from "@better-auth-ui/solid"')
     expect(forgotPassword).toContain('from "solid-js"')
     expect(forgotPassword).toContain("requestPasswordResetOptions")
-    expect(forgotPassword).toContain("createMutation")
+    expect(forgotPassword).toContain("createAuthMutation")
     expect(forgotPassword).toContain('type="email"')
     expect(resetPassword).toContain('from "@better-auth-ui/solid"')
     expect(resetPassword).toContain('from "solid-js"')
     expect(resetPassword).toContain("resetPasswordOptions")
-    expect(resetPassword).toContain("createMutation")
+    expect(resetPassword).toContain("createAuthMutation")
     expect(resetPassword).toContain(
       'type={isPasswordVisible() ? "text" : "password"}'
     )
@@ -976,7 +976,7 @@ describe("Solid registry isolation", () => {
     expect(signUp).toContain('from "@better-auth-ui/solid"')
     expect(signUp).toContain('from "solid-js"')
     expect(signUp).toContain("signUpEmailOptions")
-    expect(signUp).toContain("createMutation")
+    expect(signUp).toContain("createAuthMutation")
     expect(signUp).toContain('type="email"')
     expect(signUp).toContain('autocomplete="new-password"')
   })
@@ -1080,7 +1080,7 @@ describe("Solid registry isolation", () => {
 
     expect(signIn).toContain('from "@better-auth-ui/solid"')
     expect(signIn).toContain("signInEmailOptions")
-    expect(signIn).toContain("createMutation")
+    expect(signIn).toContain("createAuthMutation")
     expect(signIn).toContain("usernameOrEmailPlaceholder")
     expect(signIn).toContain(
       "placeholder={auth.localization.auth.passwordPlaceholder}"
