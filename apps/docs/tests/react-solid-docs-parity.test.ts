@@ -245,6 +245,9 @@ describe("React/Solid docs parity", () => {
       expect(content).toContain("@better-auth-ui/solid")
       expect(content).toContain(`${helper}(queryClient, authClient, userId`)
       expect(content).toContain("client-shaped `authClient`/`userId` signature")
+      expect(content).toContain("@better-auth-ui/solid/server")
+      expect(content).toContain("server-auth Organization helpers")
+      expect(content).not.toContain("not currently exported")
     }
   })
 
@@ -279,7 +282,7 @@ describe("React/Solid docs parity", () => {
     expect(solidSession).toContain("@better-auth-ui/core/server")
     expect(solidSession).toContain("ensureSessionServer(queryClient, auth")
     expect(solidSession).toContain("headers: request.headers")
-    expect(solidSession).toContain("server-auth helpers for session")
+    expect(solidSession).toContain("canonical session server-auth entrypoint")
     expect(solidSession).toContain(
       "packages/core/src/server/queries/auth/session-query-server.ts"
     )
@@ -316,7 +319,13 @@ describe("React/Solid docs parity", () => {
     expect(reactSsr).not.toContain("equivalents for `hasPermission`")
     expect(reactSsr).toContain("Better Auth server instance (`auth`)")
 
-    expect(solidSsr).toContain("server-auth API is provided for session")
-    expect(solidSsr).toContain("client-shaped `authClient`/`userId` signatures")
+    expect(solidSsr).toContain("@better-auth-ui/core/server")
+    expect(solidSsr).toContain("@better-auth-ui/solid/server")
+    expect(solidSsr).toContain("OrganizationAuthServer")
+    expect(solidSsr).toContain("ensureListSessions")
+    expect(solidSsr).toContain("ensureActiveOrganization")
+    expect(solidSsr).not.toContain("server-auth API is provided for session")
+    expect(solidSsr).not.toContain("intentionally narrower")
+    expect(solidSsr).not.toContain("client-shaped cache helpers re-exported")
   })
 })

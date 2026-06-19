@@ -54,7 +54,7 @@ const session = await ensureSessionServer(queryClient, auth, {
 })
 ```
 
-Today `@better-auth-ui/core/server` provides true server-auth helpers for session. Other query families use client/router helpers from `@better-auth-ui/solid` unless explicitly exported from a server entrypoint.
+`@better-auth-ui/core/server` is the canonical session server-auth entrypoint. `@better-auth-ui/solid/server` also exposes session compatibility aliases plus true server-auth helpers for the supported non-session query families.
 
 ## Invalidation
 
