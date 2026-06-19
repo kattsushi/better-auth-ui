@@ -23,6 +23,16 @@
       "types": "./dist/plugins.d.ts",
       "import": "./dist/plugins.js"
     },
+    "./plugins/api-key": {
+      "src": "./src/plugins/api-key.ts",
+      "types": "./dist/plugins/api-key.d.ts",
+      "import": "./dist/plugins/api-key.js"
+    },
+    "./plugins/passkey": {
+      "src": "./src/plugins/passkey.ts",
+      "types": "./dist/plugins/passkey.d.ts",
+      "import": "./dist/plugins/passkey.js"
+    },
     "./server": {
       "src": "./src/server.ts",
       "types": "./dist/server.d.ts",

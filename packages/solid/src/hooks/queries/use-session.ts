@@ -1,20 +1,18 @@
-import { sessionOptions } from "@better-auth-ui/core"
+import {
+  type SessionAuthClient,
+  type SessionData,
+  type SessionOptions,
+  type SessionParams,
+  sessionOptions
+} from "@better-auth-ui/core"
 import {
   createQuery,
   type QueryOptions,
   type UseQueryResult
 } from "@tanstack/solid-query"
 import type { BetterFetchError } from "better-auth/client"
-import type { AuthClient, InferData } from "../../lib/auth-client"
 
-export type SessionData<TAuthClient extends AuthClient = AuthClient> =
-  InferData<TAuthClient["getSession"]>
-
-export type SessionParams<TAuthClient extends AuthClient> = Parameters<
-  TAuthClient["getSession"]
->[0]
-
-export type UseSessionOptions<TAuthClient extends AuthClient> = Omit<
+export type UseSessionOptions<TAuthClient extends SessionAuthClient> = Omit<
   QueryOptions<
     SessionData<TAuthClient>,
     BetterFetchError,
@@ -22,9 +20,10 @@ export type UseSessionOptions<TAuthClient extends AuthClient> = Omit<
   >,
   "queryKey" | "queryFn"
 > &
+  SessionOptions<TAuthClient> &
   SessionParams<TAuthClient>
 
-export function useSession<TAuthClient extends AuthClient>(
+export function useSession<TAuthClient extends SessionAuthClient>(
   authClient: TAuthClient,
   options: UseSessionOptions<TAuthClient> = {}
 ): UseQueryResult<SessionData<TAuthClient>, BetterFetchError> {

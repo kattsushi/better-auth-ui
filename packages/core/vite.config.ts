@@ -8,6 +8,8 @@ export default defineConfig({
       entry: {
         index: "src/index.ts",
         plugins: "src/plugins.ts",
+        "plugins/api-key": "src/plugins/api-key.ts",
+        "plugins/passkey": "src/plugins/passkey.ts",
         server: "src/server.ts"
       },
       formats: ["es"]
