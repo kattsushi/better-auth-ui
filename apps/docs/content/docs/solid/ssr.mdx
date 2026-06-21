@@ -158,7 +158,7 @@ export const Route = createFileRoute("/")({
 })
 ```
 
-The same pattern works for Solid read helpers that expose client-shaped loader helpers — for example `prefetchListAccounts`, `prefetchListApiKeys`, and `prefetchActiveOrganization` live in `@better-auth-ui/solid` next to their options factories. When you want to call the Better Auth server instance directly instead, use the matching server-auth helpers from `@better-auth-ui/core/server`.
+The same pattern works for Solid read helpers that expose client-shaped loader helpers — for example `prefetchListAccounts`, `prefetchListApiKeys`, and `prefetchActiveOrganization` live in `@better-auth-ui/solid` next to their options factories. When you want to call the Better Auth server instance directly instead, use `@better-auth-ui/core/server` for session/settings helpers and the plugin `/server` entrypoints for plugin server-auth helpers.
 
 ## Server-only helpers
 
@@ -186,9 +186,14 @@ Available `@better-auth-ui/core/server` exports include:
 
 - Session helpers: `sessionOptionsServer`, `ensureSessionServer`, `prefetchSessionServer`, `fetchSessionServer`
 - Base server auth type: `AuthServer`
-- Settings/passkey: `listAccountsOptions`, `ensureListAccounts`, `prefetchListAccounts`, `fetchListAccounts`, `accountInfoOptions`, `ensureAccountInfo`, `listSessionsOptions`, `ensureListSessions`, `listDeviceSessionsOptions`, `ensureListDeviceSessions`, `listPasskeysOptions`, and `ensureListPasskeys` with matching prefetch/fetch helpers
-- API-key: `listApiKeysOptions`, `ensureListApiKeys`, `prefetchListApiKeys`, `fetchListApiKeys`
-- Organization: `activeOrganizationOptions`, `ensureActiveOrganization`, `prefetchActiveOrganization`, `fetchActiveOrganization`, `fullOrganizationOptions`, `ensureFullOrganization`, `listOrganizationsOptions`, `ensureListOrganizations`, `listOrganizationMembersOptions`, `ensureListOrganizationMembers`, `listOrganizationInvitationsOptions`, `ensureListOrganizationInvitations`, `listUserInvitationsOptions`, `ensureListUserInvitations`, `hasPermissionOptions`, and `ensureHasPermission` with matching prefetch/fetch helpers
+- Settings helpers: `listAccountsOptions`, `ensureListAccounts`, `prefetchListAccounts`, `fetchListAccounts`, `accountInfoOptions`, `ensureAccountInfo`, `listSessionsOptions`, and `ensureListSessions` with matching prefetch/fetch helpers
+
+Plugin server query helper families live under their plugin server entrypoints:
+
+- API-key (`@better-auth-ui/core/plugins/api-key/server`): `listApiKeysOptions`, `ensureListApiKeys`, `prefetchListApiKeys`, `fetchListApiKeys`
+- Multi-session (`@better-auth-ui/core/plugins/multi-session/server`): `listDeviceSessionsOptions`, `ensureListDeviceSessions`, `prefetchListDeviceSessions`, `fetchListDeviceSessions`
+- Passkey (`@better-auth-ui/core/plugins/passkey/server`): `listPasskeysOptions`, `ensureListPasskeys`, `prefetchListPasskeys`, `fetchListPasskeys`
+- Organization (`@better-auth-ui/core/plugins/organization/server`): `activeOrganizationOptions`, `ensureActiveOrganization`, `prefetchActiveOrganization`, `fetchActiveOrganization`, `fullOrganizationOptions`, `ensureFullOrganization`, `listOrganizationsOptions`, `ensureListOrganizations`, `listOrganizationMembersOptions`, `ensureListOrganizationMembers`, `listOrganizationInvitationsOptions`, `ensureListOrganizationInvitations`, `listUserInvitationsOptions`, `ensureListUserInvitations`, `hasPermissionOptions`, and `ensureHasPermission` with matching prefetch/fetch helpers
 
 Cache keys are identical between server-auth helpers, loader helpers, and component hooks, so data prefetched in route loaders hydrates cleanly into client-side hooks like `useSession`, `useListApiKeys`, and `useActiveOrganization`.
 

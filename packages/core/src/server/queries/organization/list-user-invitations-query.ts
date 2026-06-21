@@ -1,16 +1,7 @@
 import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
 import type { APIError } from "better-auth"
-import type { AuthServerMethod } from "../../../lib/auth-server"
 import { organizationQueryKeys } from "../../../plugins/organization"
-
-type OrganizationAuthServer = AuthServerMethod<
-  | "getFullOrganization"
-  | "hasPermission"
-  | "listInvitations"
-  | "listMembers"
-  | "listOrganizations"
-  | "listUserInvitations"
->
+import type { OrganizationAuthServer } from "../../../plugins/organization/server/organization-auth-server"
 
 export type ListUserInvitationsData<
   TAuth extends OrganizationAuthServer = OrganizationAuthServer

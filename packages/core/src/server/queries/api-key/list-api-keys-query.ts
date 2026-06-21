@@ -1,9 +1,7 @@
 import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
 import type { APIError } from "better-auth"
-import type { AuthServerMethod } from "../../../lib/auth-server"
 import { apiKeyQueryKeys } from "../../../plugins/api-key"
-
-export type ApiKeyAuthServer = AuthServerMethod<"listApiKeys">
+import type { ApiKeyAuthServer } from "../../../plugins/api-key/server/api-key-auth-server"
 
 export type ListApiKeysData<TAuth extends ApiKeyAuthServer = ApiKeyAuthServer> =
   Awaited<ReturnType<TAuth["api"]["listApiKeys"]>>

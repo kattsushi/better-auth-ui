@@ -33,8 +33,8 @@ export type ListApiKeysOptions<
  * Query options factory for the current user's API keys.
  *
  * Shares a query key with the server-side `listApiKeysOptions` from
- * `@better-auth-ui/core/server`, so SSR-hydrated data is reused from the
- * cache without an immediate refetch.
+ * `@better-auth-ui/core/plugins/api-key/server`, so SSR-hydrated data is
+ * reused from the cache without an immediate refetch.
  *
  * @param authClient - The Better Auth client with the API key plugin.
  * @param userId - The current signed-in user's ID. Used for cache partitioning.

@@ -1,9 +1,7 @@
 import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
 import type { APIError } from "better-auth"
-import type { AuthServerMethod } from "../../../lib/auth-server"
 import { multiSessionQueryKeys } from "../../../plugins/multi-session"
-
-export type MultiSessionAuthServer = AuthServerMethod<"listDeviceSessions">
+import type { MultiSessionAuthServer } from "../../../plugins/multi-session/server/multi-session-auth-server"
 
 export type ListDeviceSessionsData<TAuth extends MultiSessionAuthServer> =
   Awaited<ReturnType<TAuth["api"]["listDeviceSessions"]>>

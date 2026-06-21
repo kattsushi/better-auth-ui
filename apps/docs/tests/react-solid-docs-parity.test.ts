@@ -245,7 +245,9 @@ describe("React/Solid docs parity", () => {
       expect(content).toContain("@better-auth-ui/solid")
       expect(content).toContain(`${helper}(queryClient, authClient, userId`)
       expect(content).toContain("client-shaped `authClient`/`userId` signature")
-      expect(content).toContain("@better-auth-ui/core/server")
+      expect(content).toContain(
+        "@better-auth-ui/core/plugins/organization/server"
+      )
       expect(content).toContain("server-auth Organization helpers")
       expect(content).not.toContain("not currently exported")
     }
@@ -287,13 +289,20 @@ describe("React/Solid docs parity", () => {
       "packages/core/src/server/queries/auth/session-query-server.ts"
     )
 
-    expect(reactListApiKeys).toContain("@better-auth-ui/core/server")
+    expect(reactListApiKeys).toContain(
+      "@better-auth-ui/core/plugins/api-key/server"
+    )
     expect(reactListApiKeys).toContain(
       "ensureListApiKeys(queryClient, auth, userId"
     )
-    expect(reactActiveOrganization).toContain("@better-auth-ui/core/server")
+    expect(reactActiveOrganization).toContain(
+      "@better-auth-ui/core/plugins/organization/server"
+    )
     expect(reactActiveOrganization).toContain(
       "ensureActiveOrganization(queryClient, auth, userId"
+    )
+    expect(reactHasPermission).toContain(
+      "@better-auth-ui/core/plugins/organization/server"
     )
     expect(reactHasPermission).toContain(
       "ensureHasPermission(queryClient, auth, userId"
@@ -303,6 +312,17 @@ describe("React/Solid docs parity", () => {
       'permissions: { organization: ["update"] }'
     )
 
+    expect(reactSsr).toContain(
+      "Available `@better-auth-ui/core/server` helper families include"
+    )
+    expect(reactSsr).toContain("@better-auth-ui/core/plugins/api-key/server")
+    expect(reactSsr).toContain(
+      "@better-auth-ui/core/plugins/multi-session/server"
+    )
+    expect(reactSsr).toContain("@better-auth-ui/core/plugins/passkey/server")
+    expect(reactSsr).toContain(
+      "@better-auth-ui/core/plugins/organization/server"
+    )
     expect(reactSsr).toContain("ensureListApiKeys")
     expect(reactSsr).toContain("listApiKeysOptions")
     expect(reactSsr).toContain("ensureAccountInfo")
@@ -311,6 +331,10 @@ describe("React/Solid docs parity", () => {
     expect(reactSsr).toContain("activeOrganizationOptions")
     expect(reactSsr).toContain("ensureFullOrganization")
     expect(reactSsr).toContain("hasPermissionOptions")
+    expect(reactSsr).not.toContain("Settings/passkey")
+    expect(reactSsr).not.toContain(
+      "Available server query helper families include"
+    )
     expect(reactSsr).not.toContain("pattern for `accountInfo`")
     expect(reactSsr).not.toContain("pattern for `fullOrganization`")
     expect(reactSsr).not.toContain("equivalents for `listAccounts`")
@@ -319,11 +343,21 @@ describe("React/Solid docs parity", () => {
     expect(reactSsr).not.toContain("equivalents for `hasPermission`")
     expect(reactSsr).toContain("Better Auth server instance (`auth`)")
 
-    expect(solidSsr).toContain("@better-auth-ui/core/server")
-    expect(solidSsr).toContain("@better-auth-ui/core/server")
+    expect(solidSsr).toContain(
+      "Available `@better-auth-ui/core/server` exports include"
+    )
+    expect(solidSsr).toContain("@better-auth-ui/core/plugins/api-key/server")
+    expect(solidSsr).toContain(
+      "@better-auth-ui/core/plugins/multi-session/server"
+    )
+    expect(solidSsr).toContain("@better-auth-ui/core/plugins/passkey/server")
+    expect(solidSsr).toContain(
+      "@better-auth-ui/core/plugins/organization/server"
+    )
     expect(solidSsr).not.toContain("OrganizationAuthServer")
     expect(solidSsr).toContain("ensureListSessions")
     expect(solidSsr).toContain("ensureActiveOrganization")
+    expect(solidSsr).not.toContain("Settings/passkey")
     expect(solidSsr).not.toContain("server-auth API is provided for session")
     expect(solidSsr).not.toContain("intentionally narrower")
     expect(solidSsr).not.toContain("client-shaped cache helpers re-exported")

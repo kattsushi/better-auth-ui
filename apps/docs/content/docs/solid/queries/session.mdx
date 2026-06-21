@@ -54,7 +54,7 @@ const session = await ensureSessionServer(queryClient, auth, {
 })
 ```
 
-`@better-auth-ui/core/server` is the canonical session server-auth entrypoint. It also exposes server-auth helpers for the supported non-session query families.
+`@better-auth-ui/core/server` is the canonical session server-auth entrypoint. Plugin non-session server helpers live under their plugin `/server` entrypoints, such as `@better-auth-ui/core/plugins/organization/server`.
 
 ## Invalidation
 

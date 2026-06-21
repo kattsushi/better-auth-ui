@@ -184,11 +184,16 @@ export const ensureServerSession = (queryClient: QueryClient) =>
 
 Session server-auth helpers are canonical from `@better-auth-ui/core/server` as `sessionOptionsServer`, `ensureSessionServer`, `prefetchSessionServer`, and `fetchSessionServer`. These helpers accept your Better Auth server instance (`auth`) and request params instead of a browser `authClient`.
 
-Available server query helper families include:
+Available `@better-auth-ui/core/server` helper families include:
 
 - Session: `sessionOptionsServer`, `ensureSessionServer`, `prefetchSessionServer`, `fetchSessionServer`
-- Settings/passkey: `listAccountsOptions`, `ensureListAccounts`, `prefetchListAccounts`, `fetchListAccounts`, `accountInfoOptions`, `ensureAccountInfo`, `listSessionsOptions`, `ensureListSessions`, `listDeviceSessionsOptions`, `ensureListDeviceSessions`, `listPasskeysOptions`, and `ensureListPasskeys` with matching prefetch/fetch helpers
-- API-key: `listApiKeysOptions`, `ensureListApiKeys`, `prefetchListApiKeys`, `fetchListApiKeys`
-- Organization: `activeOrganizationOptions`, `ensureActiveOrganization`, `prefetchActiveOrganization`, `fetchActiveOrganization`, `fullOrganizationOptions`, `ensureFullOrganization`, `listOrganizationsOptions`, `ensureListOrganizations`, `listOrganizationMembersOptions`, `ensureListOrganizationMembers`, `listOrganizationInvitationsOptions`, `ensureListOrganizationInvitations`, `listUserInvitationsOptions`, `ensureListUserInvitations`, `hasPermissionOptions`, and `ensureHasPermission` with matching prefetch/fetch helpers
+- Settings: `listAccountsOptions`, `ensureListAccounts`, `prefetchListAccounts`, `fetchListAccounts`, `accountInfoOptions`, `ensureAccountInfo`, `listSessionsOptions`, and `ensureListSessions` with matching prefetch/fetch helpers
+
+Plugin server query helper families live under their plugin server entrypoints:
+
+- API-key (`@better-auth-ui/core/plugins/api-key/server`): `listApiKeysOptions`, `ensureListApiKeys`, `prefetchListApiKeys`, `fetchListApiKeys`
+- Multi-session (`@better-auth-ui/core/plugins/multi-session/server`): `listDeviceSessionsOptions`, `ensureListDeviceSessions`, `prefetchListDeviceSessions`, `fetchListDeviceSessions`
+- Passkey (`@better-auth-ui/core/plugins/passkey/server`): `listPasskeysOptions`, `ensureListPasskeys`, `prefetchListPasskeys`, `fetchListPasskeys`
+- Organization (`@better-auth-ui/core/plugins/organization/server`): `activeOrganizationOptions`, `ensureActiveOrganization`, `prefetchActiveOrganization`, `fetchActiveOrganization`, `fullOrganizationOptions`, `ensureFullOrganization`, `listOrganizationsOptions`, `ensureListOrganizations`, `listOrganizationMembersOptions`, `ensureListOrganizationMembers`, `listOrganizationInvitationsOptions`, `ensureListOrganizationInvitations`, `listUserInvitationsOptions`, `ensureListUserInvitations`, `hasPermissionOptions`, and `ensureHasPermission` with matching prefetch/fetch helpers
 
 Cache keys are identical between server and client helpers, so data prefetched on the server hydrates cleanly into client-side hooks like `useSession`, `useListApiKeys`, and `useActiveOrganization`.
