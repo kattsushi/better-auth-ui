@@ -1,5 +1,6 @@
 import {
   type AuthClient,
+  type authQueryKeys,
   type SessionData,
   type SessionOptions,
   type SessionParams,
@@ -11,16 +12,12 @@ import {
 } from "@tanstack/solid-query"
 import type { BetterFetchError } from "better-auth/client"
 
-type SessionQueryKey<TAuthClient extends AuthClient> = ReturnType<
-  typeof sessionOptions<TAuthClient>
->["queryKey"]
-
 type SolidSessionOptions<TAuthClient extends AuthClient> = Omit<
   SolidQueryOptions<
     SessionData<TAuthClient>,
     BetterFetchError,
     SessionData<TAuthClient>,
-    SessionQueryKey<TAuthClient>
+    typeof authQueryKeys.session
   >,
   "queryKey" | "queryFn"
 >
