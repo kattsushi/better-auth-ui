@@ -1,10 +1,10 @@
-import { authMutationKeys } from "@better-auth-ui/core"
 import {
   matchMutation,
   matchQuery,
   type QueryClient,
   type QueryKey
 } from "@tanstack/query-core"
+import { authMutationKeys } from "./auth-mutation-keys"
 
 type AuthMutationMeta = {
   invalidates?: Array<QueryKey>

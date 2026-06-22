@@ -1323,7 +1323,7 @@ describe("Solid auth route component selection", () => {
     expect(userProfile).toContain("<ChangeAvatar")
     expect(userProfile).not.toContain("handleAvatarFileChange")
     expect(changeAvatar).toContain("fileToBase64")
-    expect(changeAvatar).toContain("updateUserOptions")
+    expect(changeAvatar).toContain("updateUserMutation")
     expect(changeAvatar).toContain("avatarChangedSuccess")
     expect(providerButton).toContain("auth.authClient.signIn.social")
     expect(providerButton).toContain("resolveSocialAuthParams")
@@ -1912,9 +1912,8 @@ describe("Solid auth route component selection", () => {
       "utf8"
     )
 
-    expect(userProfile).toContain("updateUserOptions")
-    expect(userProfile).toContain("createAuthMutation")
-    expect(userProfile).toContain("const updateUser = createAuthMutation")
+    expect(userProfile).toContain("updateUserMutation")
+    expect(userProfile).toContain("const updateUser = updateUserMutation")
     expect(userProfile).toContain("onSubmit={submitProfile}")
     expect(userProfile).toContain("const formData = new FormData")
     expect(userProfile).toContain('formData.get("name")')

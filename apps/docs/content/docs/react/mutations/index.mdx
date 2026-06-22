@@ -28,7 +28,7 @@ Hooks that change auth state update the cache for you. Override `onSuccess` in t
 
 - `useSignInEmail` / `useSignInUsername` / `useSignInPasskey` / `useSignUpEmail` — reset the session query so the new session is refetched. (`useSignInSocial` and `useSignInMagicLink` redirect instead, so they leave the cache alone.)
 - `useSignOut` — remove every `["auth", ...]` query.
-- `useUpdateUser` — optimistically merge the update into the cached session, then refetch.
+- `useUpdateUser` — update the current user's profile fields and refresh cached session data.
 - `useSetActiveSession` — optimistically swap the cached session, scroll to top, and refetch both the session and device-session queries.
 - `useChangeEmail` — refetch the session.
 - `useAddPasskey` / `useDeletePasskey` — refetch the passkey list.

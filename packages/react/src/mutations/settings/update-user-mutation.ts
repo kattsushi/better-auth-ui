@@ -27,11 +27,3 @@ export function useUpdateUser<TAuthClient extends AuthClient>(
     queryClient
   )
 }
-
-function Test() {
-  const { mutateAsync, error } = useUpdateUser({} as AuthClient)
-
-  async function testFunction() {
-    const result = await mutateAsync({ name: "" })
-  }
-}

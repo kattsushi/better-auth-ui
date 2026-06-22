@@ -4,6 +4,7 @@ import {
   authMutationKeys,
   authQueryKeys,
   basePaths,
+  updateUserOptions,
   viewPaths
 } from "@better-auth-ui/core"
 import {
@@ -60,8 +61,7 @@ import {
   signInUsernameOptions,
   signOutOptions,
   signUpEmailOptions,
-  unlinkAccountOptions,
-  updateUserOptions
+  unlinkAccountOptions
 } from "../src"
 import { invalidateAuthMutationMeta } from "../src/lib/mutation-invalidator"
 import { getSessionUserId } from "../src/queries/create-user-scoped-query"
