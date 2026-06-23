@@ -1913,13 +1913,15 @@ describe("Solid auth route component selection", () => {
     )
 
     expect(userProfile).toContain("useUpdateUser")
-    expect(userProfile).toContain("const updateUser = useUpdateUser")
+    expect(userProfile).toContain(
+      "const { mutate: updateUser, isPending: updateUserPending } = useUpdateUser"
+    )
     expect(userProfile).toContain("onSubmit={submitProfile}")
     expect(userProfile).toContain("const formData = new FormData")
     expect(userProfile).toContain('formData.get("name")')
     expect(userProfile).toContain("parseAdditionalFieldValue")
     expect(userProfile).toContain("additionalFieldValues")
-    expect(userProfile).toContain("updateUser.mutate({")
+    expect(userProfile).toContain("updateUser({")
     expect(userProfile).toContain("name,")
     expect(userProfile).toContain("...additionalFieldValues")
     expect(userProfile).toContain("profileUpdatedSuccess")

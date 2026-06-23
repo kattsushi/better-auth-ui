@@ -21,10 +21,13 @@ export function UserProfile(props: UserProfileProps = {}) {
   const auth = useAuth()
   const session = useSession(auth.authClient)
   const [name, setName] = createSignal("")
-  const updateUser = useUpdateUser(auth.authClient, {
-    onSuccess: () =>
-      toast.success(auth.localization.settings.profileUpdatedSuccess)
-  })
+  const { mutate: updateUser, isPending: updateUserPending } = useUpdateUser(
+    auth.authClient,
+    {
+      onSuccess: () =>
+        toast.success(auth.localization.settings.profileUpdatedSuccess)
+    }
+  )
 
   const profileFields = () =>
     auth.additionalFields?.filter((field) => field.profile !== false) ?? []
@@ -58,7 +61,7 @@ export function UserProfile(props: UserProfileProps = {}) {
       }
     }
 
-    updateUser.mutate({
+    updateUser({
       name,
       ...additionalFieldValues
     })
@@ -78,7 +81,7 @@ export function UserProfile(props: UserProfileProps = {}) {
               <Label for="settings-name">{auth.localization.auth.name}</Label>
               <Input
                 autocomplete="name"
-                disabled={updateUser.isPending}
+                disabled={updateUserPending}
                 id="settings-name"
                 name="name"
                 onInput={(event) => setName(event.currentTarget.value)}
@@ -101,7 +104,7 @@ export function UserProfile(props: UserProfileProps = {}) {
                       ...field,
                       defaultValue: value() as AdditionalFieldValue | null
                     }}
-                    isPending={updateUser.isPending || !session.data}
+                    isPending={updateUserPending || !session.data}
                     name={field.name}
                   />
                 )
@@ -111,7 +114,7 @@ export function UserProfile(props: UserProfileProps = {}) {
           <CardFooter>
             <Button
               aria-label="Save changes"
-              disabled={updateUser.isPending || !session.data}
+              disabled={updateUserPending || !session.data}
               size="sm"
               type="submit"
             >
