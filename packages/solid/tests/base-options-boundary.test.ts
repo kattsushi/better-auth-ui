@@ -29,4 +29,8 @@ describe("Solid base option factory ownership", () => {
       expect(solid).not.toHaveProperty(name)
     }
   })
+
+  it("does not expose createAuthMutation from the Solid package root", () => {
+    expect(solid).not.toHaveProperty("createAuthMutation")
+  })
 })

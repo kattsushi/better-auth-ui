@@ -33,9 +33,6 @@ export function useAuthMutationResult<TData, TVariables, TContext = unknown>(
   >
 }
 
-/** @deprecated Use `useAuthMutationResult` instead. */
-export const createAuthMutation = useAuthMutationResult
-
 export function createAuthMutationOptions<
   TMethod extends MutationMethod,
   const TMutationKey extends MutationKey
