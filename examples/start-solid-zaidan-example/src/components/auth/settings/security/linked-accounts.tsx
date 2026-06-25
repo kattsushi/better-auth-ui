@@ -22,14 +22,18 @@ export function LinkedAccountsSettings(
   const auth = useAuth()
   const session = useSession(auth.authClient)
   const userId = () => session.data?.user.id
-  const linkedAccounts = createQuery(() => ({
-    ...listAccountsOptions(auth.authClient, userId()),
-    enabled: shouldLoadLinkedAccounts({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    }),
-    initialData: undefined
-  }))
+  const linkedAccounts = createQuery(() => {
+    const { initialData: _initialData, ...accountOptions } =
+      listAccountsOptions(auth.authClient, userId())
+
+    return {
+      ...accountOptions,
+      enabled: shouldLoadLinkedAccounts({
+        isSsr: import.meta.env.SSR,
+        userId: userId()
+      })
+    }
+  })
   const socialProviders = () => auth.socialProviders ?? []
   const linkedSocialAccounts = () =>
     ((linkedAccounts.data ?? []) as LinkedAccount[]).filter(

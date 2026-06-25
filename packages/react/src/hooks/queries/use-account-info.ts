@@ -1,14 +1,11 @@
 import {
   type AccountInfoOptions,
+  type AccountInfoParams,
   type AuthClient,
   accountInfoOptions
 } from "@better-auth-ui/core"
 import { type QueryClient, skipToken, useQuery } from "@tanstack/react-query"
 import { useSession } from "./use-session"
-
-type AccountInfoParams<TAuthClient extends AuthClient> = Parameters<
-  TAuthClient["accountInfo"]
->[0]
 
 export type UseAccountInfoOptions<TAuthClient extends AuthClient> =
   AccountInfoOptions<TAuthClient> & AccountInfoParams<TAuthClient>

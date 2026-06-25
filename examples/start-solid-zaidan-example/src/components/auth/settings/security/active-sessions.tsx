@@ -22,14 +22,18 @@ export function ActiveSessionsSettings(
   const auth = useAuth()
   const session = useSession(auth.authClient)
   const userId = () => session.data?.user.id
-  const activeSessions = createQuery(() => ({
-    ...listSessionsOptions(auth.authClient, userId()),
-    enabled: shouldLoadDeviceSessions({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    }),
-    initialData: undefined
-  }))
+  const activeSessions = createQuery(() => {
+    const { initialData: _initialData, ...sessionOptions } =
+      listSessionsOptions(auth.authClient, userId())
+
+    return {
+      ...sessionOptions,
+      enabled: shouldLoadDeviceSessions({
+        isSsr: import.meta.env.SSR,
+        userId: userId()
+      })
+    }
+  })
   const sessions = () =>
     [...(activeSessions.data ?? [])].sort((activeSession) =>
       activeSession.id === session.data?.session.id ? -1 : 1

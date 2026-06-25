@@ -38,14 +38,18 @@ export function ChangePasswordSettings(
   const auth = useAuth()
   const session = useSession(auth.authClient)
   const userId = () => session.data?.user.id
-  const linkedAccounts = createQuery(() => ({
-    ...listAccountsOptions(auth.authClient, userId()),
-    enabled: shouldLoadAccounts({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    }),
-    initialData: undefined
-  }))
+  const linkedAccounts = createQuery(() => {
+    const { initialData: _initialData, ...accountOptions } =
+      listAccountsOptions(auth.authClient, userId())
+
+    return {
+      ...accountOptions,
+      enabled: shouldLoadAccounts({
+        isSsr: import.meta.env.SSR,
+        userId: userId()
+      })
+    }
+  })
   const hasCredentialAccount = () =>
     linkedAccounts.data?.some(
       (account: { providerId?: string }) => account.providerId === "credential"

@@ -61,14 +61,18 @@ export function DeleteAccount(props: DeleteAccountProps = {}) {
   }
   const sendDeleteAccountVerification = () =>
     Boolean(deleteUserPluginConfig()?.sendDeleteAccountVerification)
-  const accounts = createQuery(() => ({
-    ...listAccountsOptions(auth.authClient, userId()),
-    enabled: shouldLoadAccounts({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    }),
-    initialData: undefined
-  }))
+  const accounts = createQuery(() => {
+    const { initialData: _initialData, ...accountOptions } =
+      listAccountsOptions(auth.authClient, userId())
+
+    return {
+      ...accountOptions,
+      enabled: shouldLoadAccounts({
+        isSsr: import.meta.env.SSR,
+        userId: userId()
+      })
+    }
+  })
   const hasCredentialAccount = () =>
     accounts.data?.some(
       (account: { providerId?: string }) => account.providerId === "credential"
