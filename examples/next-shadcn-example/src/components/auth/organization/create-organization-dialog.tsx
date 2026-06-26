@@ -1,11 +1,10 @@
 "use client"
 
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
-  useAuthPlugin,
   useCreateOrganization
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import { Briefcase } from "lucide-react"
 import { type SyntheticEvent, useEffect, useState } from "react"
 

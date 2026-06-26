@@ -1,12 +1,11 @@
 "use client"
 
+import { useAuth, useSession } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
   useActiveOrganization,
-  useAuth,
-  useListOrganizationMembers,
-  useSession
-} from "@better-auth-ui/react"
+  useListOrganizationMembers
+} from "@better-auth-ui/react/plugins/organization"
 
 import { ApiKeys } from "./api-keys"
 

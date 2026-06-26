@@ -1,8 +1,8 @@
+import { useAuth } from "@better-auth-ui/react"
 import {
   type MultiSessionAuthClient,
-  useAuth,
   useSetActiveSession
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/multi-session"
 import { Dropdown, Spinner } from "@heroui/react"
 import type { Session, User } from "better-auth"
 import { UserView } from "../user/user-view"

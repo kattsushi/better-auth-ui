@@ -1,8 +1,5 @@
-import {
-  type ListedApiKey,
-  useAuth,
-  useAuthPlugin
-} from "@better-auth-ui/react"
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
+import type { ListedApiKey } from "@better-auth-ui/react/plugins/api-key"
 import { Key, Xmark } from "@gravity-ui/icons"
 import { Button } from "@heroui/react"
 import { useState } from "react"

@@ -13,9 +13,6 @@ import {
 import {
   resolveUserInitials,
   resolveUserLabel,
-  shouldLoadAccounts as shouldLoadAccountsFromShared,
-  shouldLoadDeviceSessions as shouldLoadDeviceSessionsFromShared,
-  shouldLoadLinkedAccounts as shouldLoadLinkedAccountsFromShared,
   timeAgo
 } from "../src/components/auth/settings/shared/helpers"
 import { SignIn } from "../src/components/auth/sign-in"
@@ -468,28 +465,6 @@ describe("Solid auth route component selection", () => {
     })
   })
 
-  it("loads linked accounts only after a client session user is known", () => {
-    expect(
-      shouldLoadLinkedAccountsFromShared({ isSsr: true, userId: "user-1" })
-    ).toBe(false)
-    expect(shouldLoadLinkedAccountsFromShared({ isSsr: false })).toBe(false)
-    expect(
-      shouldLoadLinkedAccountsFromShared({ isSsr: false, userId: "user-1" })
-    ).toBe(true)
-  })
-
-  it("keeps shared settings load guards behavior-compatible in the shared settings module", () => {
-    const blockedBySsr = { isSsr: true, userId: "user-1" }
-    const blockedWithoutUser = { isSsr: false }
-    const loadableClientUser = { isSsr: false, userId: "user-1" }
-
-    expect(shouldLoadAccountsFromShared(blockedBySsr)).toBe(false)
-    expect(shouldLoadAccountsFromShared(blockedWithoutUser)).toBe(false)
-    expect(shouldLoadAccountsFromShared(loadableClientUser)).toBe(true)
-    expect(shouldLoadDeviceSessionsFromShared(loadableClientUser)).toBe(true)
-    expect(shouldLoadLinkedAccountsFromShared(loadableClientUser)).toBe(true)
-  })
-
   it("moves settings label and time helpers into the shared settings module", () => {
     expect(resolveUserLabel("  Ada Lovelace  ", "ada@example.com")).toBe(
       "Ada Lovelace"
@@ -545,7 +520,9 @@ describe("Solid auth route component selection", () => {
     expect(settingsComponents).not.toContain(
       "function shouldLoadLinkedAccounts"
     )
-    expect(sharedHelpers).toContain("function shouldLoadLinkedAccounts")
+    expect(sharedHelpers).not.toContain("shouldLoadAccounts")
+    expect(sharedHelpers).not.toContain("shouldLoadDeviceSessions")
+    expect(sharedHelpers).not.toContain("shouldLoadLinkedAccounts")
     expect(sharedHelpers).toContain("resolveUserLabel")
     expect(sharedHelpers).toContain("resolveUserInitials")
     expect(sharedHelpers).toContain("function timeAgo")
@@ -674,10 +651,6 @@ describe("Solid auth route component selection", () => {
       ),
       "utf8"
     )
-    const apiKeys = readFileSync(
-      resolve(__dirname, "../src/components/auth/api-key/api-keys.tsx"),
-      "utf8"
-    )
     const changePassword = readFileSync(
       resolve(
         __dirname,
@@ -685,19 +658,8 @@ describe("Solid auth route component selection", () => {
       ),
       "utf8"
     )
-    const passkeys = readFileSync(
-      resolve(__dirname, "../src/components/auth/passkey/passkeys.tsx"),
-      "utf8"
-    )
     const dangerZone = readFileSync(
       resolve(__dirname, "../src/components/auth/delete-user/danger-zone.tsx"),
-      "utf8"
-    )
-    const deleteAccount = readFileSync(
-      resolve(
-        __dirname,
-        "../src/components/auth/delete-user/delete-account.tsx"
-      ),
       "utf8"
     )
 
@@ -715,10 +677,7 @@ describe("Solid auth route component selection", () => {
       userProfile,
       changeEmail,
       changePassword,
-      activeSessions,
-      apiKeys,
-      passkeys,
-      deleteAccount
+      activeSessions
     ]) {
       expect(source).toContain("useSession")
       expect(source).toContain("const session = useSession(auth.authClient")
@@ -1149,7 +1108,9 @@ describe("Solid auth route component selection", () => {
 
     expect(switchAccountSubmenuContent).toContain("useListDeviceSessions")
     expect(switchAccountSubmenuContent).not.toContain("createQuery")
-    expect(switchAccountSubmenuContent).toContain("shouldLoadDeviceSessions")
+    expect(switchAccountSubmenuContent).not.toContain(
+      "shouldLoadDeviceSessions"
+    )
     expect(switchAccountSubmenuContent).toContain("DropdownMenuSubContent")
     expect(switchAccountSubmenuContent).toContain("SwitchAccountSubmenuItem")
     expect(switchAccountSubmenuContent).toContain('to="/auth/$path"')
@@ -2985,14 +2946,14 @@ describe("Solid auth route component selection", () => {
     const activeOrganizationQuery = readFileSync(
       resolve(
         __dirname,
-        "../../../packages/solid/src/queries/organization/active-organization-query.ts"
+        "../../../packages/solid/src/plugins/organization/queries/active-organization-query.ts"
       ),
       "utf8"
     )
     const listMembersQuery = readFileSync(
       resolve(
         __dirname,
-        "../../../packages/solid/src/queries/organization/list-members-query.ts"
+        "../../../packages/solid/src/plugins/organization/queries/list-members-query.ts"
       ),
       "utf8"
     )

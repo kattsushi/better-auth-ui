@@ -1,11 +1,10 @@
 "use client"
 
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
-  useAuthPlugin,
   useListOrganizations
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"

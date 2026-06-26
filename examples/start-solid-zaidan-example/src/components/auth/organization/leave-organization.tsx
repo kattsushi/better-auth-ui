@@ -1,13 +1,13 @@
 import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
+import { useAuth } from "@better-auth-ui/solid"
 import type {
   LeaveOrganizationParams,
   OrganizationAuthClient
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 import {
   useActiveOrganization,
-  useAuth,
   useLeaveOrganization
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 import { createSignal, Show } from "solid-js"
 import { toast } from "solid-sonner"
 import { Button } from "@/components/ui/button"

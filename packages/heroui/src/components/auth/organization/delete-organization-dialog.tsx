@@ -1,9 +1,8 @@
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
-  useAuthPlugin,
   useDeleteOrganization
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import { TriangleExclamation } from "@gravity-ui/icons"
 import { AlertDialog, Button, Card, Form, Spinner, toast } from "@heroui/react"
 import type { Organization } from "better-auth/client"

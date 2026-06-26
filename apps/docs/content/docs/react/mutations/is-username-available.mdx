@@ -10,11 +10,11 @@ Modeled as a mutation (not a query) because callers typically trigger the check 
 ## Usage
 
 ```tsx
+import { useAuth } from "@better-auth-ui/react"
 import {
   type UsernameAuthClient,
-  useAuth,
   useIsUsernameAvailable
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/username"
 
 const { authClient } = useAuth<UsernameAuthClient>()
 const { mutateAsync: checkUsername, data } = useIsUsernameAvailable(authClient)
@@ -28,7 +28,7 @@ const result = await checkUsername({ username: "alice" })
 ## Options factory
 
 ```tsx
-import { isUsernameAvailableOptions } from "@better-auth-ui/react"
+import { isUsernameAvailableOptions } from "@better-auth-ui/react/plugins/username"
 import { useMutation } from "@tanstack/react-query"
 
 const { mutate } = useMutation(isUsernameAvailableOptions(authClient))

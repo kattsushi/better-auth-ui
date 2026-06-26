@@ -1,11 +1,10 @@
 import { fileToBase64 } from "@better-auth-ui/core"
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
   useActiveOrganization,
-  useAuth,
-  useAuthPlugin,
   useUpdateOrganization
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import { CloudArrowUpIn, TrashBin } from "@gravity-ui/icons"
 import { Button, cn, Dropdown, Label, Spinner, toast } from "@heroui/react"
 import { type ChangeEvent, useRef, useState } from "react"

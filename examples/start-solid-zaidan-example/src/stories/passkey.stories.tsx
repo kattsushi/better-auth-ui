@@ -1,6 +1,6 @@
 import { authQueryKeys } from "@better-auth-ui/core"
 import { passkeyQueryKeys } from "@better-auth-ui/core/plugins/passkey"
-import type { PasskeyAuthClient } from "@better-auth-ui/solid"
+import type { PasskeyAuthClient } from "@better-auth-ui/solid/plugins/passkey"
 import { QueryClient } from "@tanstack/solid-query"
 import {
   createMemoryHistory,

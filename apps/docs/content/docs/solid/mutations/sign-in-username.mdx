@@ -8,7 +8,7 @@ Requires the Better Auth username plugin. When reading the client from auth cont
 ## Options factory
 
 ```tsx
-import { signInUsernameOptions } from "@better-auth-ui/solid"
+import { signInUsernameOptions } from "@better-auth-ui/solid/plugins/username"
 import { createMutation } from "@tanstack/solid-query"
 
 const signIn = createMutation(() => signInUsernameOptions(authClient))

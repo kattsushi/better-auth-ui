@@ -1,12 +1,10 @@
+import { useAuth, useAuthPlugin, useUser } from "@better-auth-ui/react"
 import {
   type ListDeviceSession,
   type MultiSessionAuthClient,
-  useAuth,
-  useAuthPlugin,
   useRevokeMultiSession,
-  useSetActiveSession,
-  useUser
-} from "@better-auth-ui/react"
+  useSetActiveSession
+} from "@better-auth-ui/react/plugins/multi-session"
 import {
   ArrowRightArrowLeft,
   ArrowRightFromSquare,

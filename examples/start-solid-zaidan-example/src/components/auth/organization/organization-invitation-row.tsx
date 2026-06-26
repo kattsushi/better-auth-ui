@@ -1,9 +1,9 @@
-import type { OrganizationAuthClient } from "@better-auth-ui/solid"
+import { useAuth } from "@better-auth-ui/solid"
+import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import {
-  useAuth,
   useCancelInvitation,
   useHasPermission
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 import { X } from "lucide-solid"
 import { Show } from "solid-js"
 import { Badge } from "@/components/ui/badge"

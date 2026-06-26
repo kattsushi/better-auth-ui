@@ -9,7 +9,6 @@ import type { BetterFetchError } from "better-auth/client"
 import { Eye, EyeOff } from "lucide-solid"
 import { createSignal, Show } from "solid-js"
 import { toast } from "solid-sonner"
-import { shouldLoadAccounts } from "@/components/auth/settings/shared/helpers"
 import type { ChangePasswordFieldErrors } from "@/components/auth/settings/shared/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -36,13 +35,7 @@ export function ChangePasswordSettings(
 ) {
   const auth = useAuth()
   const session = useSession(auth.authClient)
-  const userId = () => session.data?.user.id
-  const linkedAccounts = useListAccounts(auth.authClient, {
-    enabled: shouldLoadAccounts({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    })
-  })
+  const linkedAccounts = useListAccounts(auth.authClient)
   const hasCredentialAccount = () =>
     linkedAccounts.data?.some(
       (account: { providerId?: string }) => account.providerId === "credential"

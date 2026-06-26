@@ -3,12 +3,12 @@ import {
   type MagicLinkLocalization,
   magicLinkLocalization
 } from "@better-auth-ui/core/plugins/magic-link"
+import { useAuth } from "@better-auth-ui/solid"
+import type { AuthPlugin } from "@better-auth-ui/solid/plugins"
 import {
   type MagicLinkAuthClient,
-  useAuth,
   useSignInMagicLink
-} from "@better-auth-ui/solid"
-import type { AuthPlugin } from "@better-auth-ui/solid/plugins"
+} from "@better-auth-ui/solid/plugins/magic-link"
 import { Link } from "@tanstack/solid-router"
 import { type Component, createSignal, For, Show } from "solid-js"
 import { toast } from "solid-sonner"

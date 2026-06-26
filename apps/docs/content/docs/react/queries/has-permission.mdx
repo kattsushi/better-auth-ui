@@ -8,7 +8,8 @@ Organization queries require `organizationClient()` on your Better Auth client. 
 ## Usage
 
 ```tsx
-import { useAuth, useHasPermission } from "@better-auth-ui/react"
+import { useAuth } from "@better-auth-ui/react"
+import { useHasPermission } from "@better-auth-ui/react/plugins/organization"
 
 const { authClient } = useAuth()
 const result = useHasPermission(authClient, {
@@ -24,7 +25,7 @@ import {
   fetchHasPermission,
   hasPermissionOptions,
   prefetchHasPermission
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 
 const params = {
   organizationId: "org_123",

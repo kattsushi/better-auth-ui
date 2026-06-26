@@ -1,13 +1,11 @@
 "use client"
 
+import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
-  useAuthPlugin,
   useHasPermission,
-  useSession,
   useUpdateMemberRole
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import type { Member, Organization, User } from "better-auth/client"
 import { LogOut, Pencil, Trash2 } from "lucide-react"
 import { useState } from "react"

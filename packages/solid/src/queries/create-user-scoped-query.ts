@@ -3,8 +3,7 @@ import {
   type DataTag,
   type QueryClient,
   type QueryKey,
-  queryOptions,
-  skipToken
+  queryOptions
 } from "@tanstack/solid-query"
 import type { BetterFetchError } from "better-auth/client"
 
@@ -96,7 +95,7 @@ export function createUserScopedQuery<
     return {
       ...queryOptionsRest(),
       ...baseOptions,
-      queryFn: canFetch() ? baseOptions.queryFn : skipToken
+      enabled: canFetch()
     }
   })
 }

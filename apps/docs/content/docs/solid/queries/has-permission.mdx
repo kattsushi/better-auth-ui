@@ -6,7 +6,7 @@ description: Check organization permissions for the current member.
 ## Usage
 
 ```tsx
-import { useHasPermission } from "@better-auth-ui/solid"
+import { useHasPermission } from "@better-auth-ui/solid/plugins/organization"
 
 const result = useHasPermission(authClient, {
   permissions: { organization: ["update"] }
@@ -18,7 +18,7 @@ Organization queries require `organizationClient()` on your Better Auth client. 
 ## Options factory
 
 ```tsx
-import { hasPermissionOptions } from "@better-auth-ui/solid"
+import { hasPermissionOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createQuery } from "@tanstack/solid-query"
 
 const params = {
@@ -46,7 +46,7 @@ import {
   ensureHasPermission,
   fetchHasPermission,
   prefetchHasPermission
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 
 await ensureHasPermission(queryClient, authClient, userId, {
   organizationId: "org_123",

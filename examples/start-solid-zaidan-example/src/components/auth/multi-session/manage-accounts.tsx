@@ -3,24 +3,20 @@ import {
   type MultiSessionLocalization,
   multiSessionLocalization
 } from "@better-auth-ui/core/plugins/multi-session"
+import { useAuth, useSession } from "@better-auth-ui/solid"
 import {
   type MultiSessionAuthClient,
-  useAuth,
   useListDeviceSessions,
   useRevokeMultiSession,
-  useSession,
   useSetActiveSession
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/multi-session"
 import { For, Show } from "solid-js"
 import { toast } from "solid-sonner"
 import {
   ManageAccountRow,
   ManageAccountRowSkeleton
 } from "@/components/auth/multi-session/manage-account"
-import {
-  resolveUserLabel,
-  shouldLoadDeviceSessions
-} from "@/components/auth/settings/shared/helpers"
+import { resolveUserLabel } from "@/components/auth/settings/shared/helpers"
 import type { DeviceSession } from "@/components/auth/settings/shared/types"
 import { Card, CardContent } from "@/components/ui/card"
 import { ItemGroup, ItemSeparator } from "@/components/ui/item"
@@ -33,7 +29,6 @@ export type ManageAccountsProps = {
 export function ManageAccounts(props: ManageAccountsProps = {}) {
   const auth = useAuth<MultiSessionAuthClient>()
   const session = useSession(auth.authClient)
-  const userId = () => session.data?.user.id
   const multiSessionPluginConfig = () =>
     auth.plugins.find((plugin) => plugin.id === coreMultiSessionPlugin.id)
   const multiSessionLabels = (): MultiSessionLocalization => ({
@@ -42,12 +37,7 @@ export function ManageAccounts(props: ManageAccountsProps = {}) {
       | Partial<MultiSessionLocalization>
       | undefined)
   })
-  const deviceSessions = useListDeviceSessions(auth.authClient, {
-    enabled: shouldLoadDeviceSessions({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    })
-  })
+  const deviceSessions = useListDeviceSessions(auth.authClient)
   const setActiveSession = useSetActiveSession(auth.authClient, {
     onSuccess: () => window.scrollTo({ top: 0 })
   })

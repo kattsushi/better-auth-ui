@@ -7,10 +7,7 @@ import {
 } from "@better-auth-ui/solid"
 import { For, Show } from "solid-js"
 import { toast } from "solid-sonner"
-import {
-  resolveUserLabel,
-  shouldLoadDeviceSessions
-} from "@/components/auth/settings/shared/helpers"
+import { resolveUserLabel } from "@/components/auth/settings/shared/helpers"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
@@ -25,13 +22,7 @@ export function ActiveSessionsSettings(
 ) {
   const auth = useAuth()
   const session = useSession(auth.authClient)
-  const userId = () => session.data?.user.id
-  const activeSessions = useListSessions(auth.authClient, {
-    enabled: shouldLoadDeviceSessions({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    })
-  })
+  const activeSessions = useListSessions(auth.authClient)
   const sessions = () =>
     [...(activeSessions.data ?? [])].sort((activeSession) =>
       activeSession.id === session.data?.session.id ? -1 : 1

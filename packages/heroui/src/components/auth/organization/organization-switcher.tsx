@@ -1,12 +1,10 @@
+import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
   useActiveOrganization,
-  useAuth,
-  useAuthPlugin,
   useListOrganizations,
-  useSession,
   useSetActiveOrganization
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import { ChevronsExpandVertical, CirclePlus, Gear } from "@gravity-ui/icons"
 import {
   Button,

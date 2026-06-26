@@ -6,7 +6,7 @@ description: Reject an organization invitation.
 ## Usage
 
 ```tsx
-import { useRejectInvitation } from "@better-auth-ui/solid"
+import { useRejectInvitation } from "@better-auth-ui/solid/plugins/organization"
 
 const mutation = useRejectInvitation(authClient)
 
@@ -18,7 +18,7 @@ Organization mutations require `organizationClient()` on the Better Auth client.
 ## Options factory
 
 ```tsx
-import { rejectInvitationOptions } from "@better-auth-ui/solid"
+import { rejectInvitationOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createMutation } from "@tanstack/solid-query"
 
 const mutation = createMutation(() => rejectInvitationOptions(authClient))

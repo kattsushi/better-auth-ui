@@ -1,9 +1,8 @@
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
-  useAuthPlugin,
   useListUserInvitations
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import { Card, type CardProps } from "@heroui/react"
 
 import { organizationPlugin } from "../../../lib/auth/organization-plugin"

@@ -10,11 +10,11 @@ Keyed per-user; waits for the active session before firing.
 ## Usage
 
 ```tsx
+import { useAuth } from "@better-auth-ui/react"
 import {
   type MultiSessionAuthClient,
-  useAuth,
   useListDeviceSessions
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/multi-session"
 
 const { authClient } = useAuth<MultiSessionAuthClient>()
 const { data: deviceSessions } = useListDeviceSessions(authClient)
@@ -30,7 +30,7 @@ const { data: deviceSessions } = useListDeviceSessions(authClient, {
 ## Options factory
 
 ```tsx
-import { listDeviceSessionsOptions } from "@better-auth-ui/react"
+import { listDeviceSessionsOptions } from "@better-auth-ui/react/plugins/multi-session"
 import { useQuery } from "@tanstack/react-query"
 
 const { data: deviceSessions } = useQuery(
@@ -41,7 +41,7 @@ const { data: deviceSessions } = useQuery(
 ## Invalidation
 
 ```ts
-import { listDeviceSessionsOptions } from "@better-auth-ui/react"
+import { listDeviceSessionsOptions } from "@better-auth-ui/react/plugins/multi-session"
 
 queryClient.invalidateQueries({
   queryKey: listDeviceSessionsOptions(authClient, userId).queryKey

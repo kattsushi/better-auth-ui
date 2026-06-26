@@ -1,16 +1,14 @@
 import { apiKeyLocalization } from "@better-auth-ui/core/plugins/api-key"
+import { useAuth } from "@better-auth-ui/solid"
 import {
   type ApiKeyAuthClient,
-  useAuth,
-  useListApiKeys,
-  useSession
-} from "@better-auth-ui/solid"
+  useListApiKeys
+} from "@better-auth-ui/solid/plugins/api-key"
 import { createSignal, For, Show } from "solid-js"
 import { ApiKey } from "@/components/auth/api-key/api-key"
 import { ApiKeySkeleton } from "@/components/auth/api-key/api-key-skeleton"
 import { ApiKeysEmpty } from "@/components/auth/api-key/api-keys-empty"
 import { CreateApiKeyDialog } from "@/components/auth/api-key/create-api-key-dialog"
-import { shouldLoadDeviceSessions } from "@/components/auth/settings/shared/helpers"
 import type { ListedApiKey } from "@/components/auth/settings/shared/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -28,27 +26,17 @@ export type ApiKeysProps = {
 
 export function ApiKeys(props: ApiKeysProps = {}) {
   const auth = useAuth<ApiKeyAuthClient>()
-  const session = useSession(auth.authClient)
-  const userId = () => session.data?.user.id
   const [isCreateDialogOpen, setIsCreateDialogOpen] = createSignal(false)
   const listParams = () =>
-    props.organizationId
+    props.isPending !== undefined || props.organizationId
       ? {
           query: {
-            organizationId: props.organizationId,
+            organizationId: props.organizationId ?? "",
             configId: "organization" as const
           }
         }
       : undefined
-  const apiKeys = useListApiKeys(auth.authClient, {
-    ...listParams(),
-    enabled:
-      !props.isPending &&
-      shouldLoadDeviceSessions({
-        isSsr: import.meta.env.SSR,
-        userId: userId()
-      })
-  })
+  const apiKeys = useListApiKeys(auth.authClient, listParams())
   const keys = () => apiKeys.data?.apiKeys ?? []
   const pending = () => Boolean(props.isPending || apiKeys.isPending)
 

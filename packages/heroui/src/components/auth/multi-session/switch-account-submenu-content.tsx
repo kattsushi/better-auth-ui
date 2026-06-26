@@ -1,10 +1,8 @@
+import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
 import {
   type MultiSessionAuthClient,
-  useAuth,
-  useAuthPlugin,
-  useListDeviceSessions,
-  useSession
-} from "@better-auth-ui/react"
+  useListDeviceSessions
+} from "@better-auth-ui/react/plugins/multi-session"
 import { Check, CirclePlus } from "@gravity-ui/icons"
 import { Dropdown, Label } from "@heroui/react"
 

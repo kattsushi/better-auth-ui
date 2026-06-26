@@ -8,11 +8,11 @@ Refetches the device sessions list on success.
 ## Usage
 
 ```tsx
+import { useAuth } from "@better-auth-ui/react"
 import {
   type MultiSessionAuthClient,
-  useAuth,
   useRevokeMultiSession
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/multi-session"
 
 const { authClient } = useAuth<MultiSessionAuthClient>()
 const { mutate: revokeMultiSession } = useRevokeMultiSession(authClient)
@@ -25,7 +25,7 @@ revokeMultiSession({ sessionToken: deviceSession.session.token })
 ## Options factory
 
 ```tsx
-import { revokeMultiSessionOptions } from "@better-auth-ui/react"
+import { revokeMultiSessionOptions } from "@better-auth-ui/react/plugins/multi-session"
 import { useMutation } from "@tanstack/react-query"
 
 const { mutate } = useMutation(revokeMultiSessionOptions(authClient))

@@ -1,16 +1,14 @@
+import { useAuth } from "@better-auth-ui/solid"
 import {
   type PasskeyAuthClient,
-  useAuth,
-  useListPasskeys,
-  useSession
-} from "@better-auth-ui/solid"
+  useListPasskeys
+} from "@better-auth-ui/solid/plugins/passkey"
 import { createSignal, For, Show } from "solid-js"
 import { AddPasskeyDialog } from "@/components/auth/passkey/add-passkey-dialog"
 import { Passkey } from "@/components/auth/passkey/passkey"
 import { passkeyLabels } from "@/components/auth/passkey/passkey-localization"
 import { PasskeySkeleton } from "@/components/auth/passkey/passkey-skeleton"
 import { PasskeysEmpty } from "@/components/auth/passkey/passkeys-empty"
-import { shouldLoadDeviceSessions } from "@/components/auth/settings/shared/helpers"
 import type { ListedPasskey } from "@/components/auth/settings/shared/types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -25,15 +23,8 @@ export type PasskeysSettingsProps = {
 export function PasskeysSettings(props: PasskeysSettingsProps) {
   const auth = useAuth<PasskeyAuthClient>()
   const labels = () => passkeyLabels(auth)
-  const session = useSession(auth.authClient)
-  const userId = () => session.data?.user.id
   const [isAddDialogOpen, setIsAddDialogOpen] = createSignal(false)
-  const passkeys = useListPasskeys(auth.authClient, {
-    enabled: shouldLoadDeviceSessions({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    })
-  })
+  const passkeys = useListPasskeys(auth.authClient)
   const items = () => passkeys.data ?? []
 
   return (

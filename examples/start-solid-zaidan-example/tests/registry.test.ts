@@ -32,8 +32,16 @@ const makeTempRoot = () => {
   return root
 }
 
+const parseJson = <T>(source: string, path: string) => {
+  try {
+    return JSON.parse(source) as T
+  } catch (error) {
+    throw new Error(`Invalid JSON in ${path}`, { cause: error })
+  }
+}
+
 const readJson = <T>(path: string) =>
-  JSON.parse(readFileSync(path, "utf8")) as T
+  parseJson<T>(readFileSync(path, "utf8"), path)
 
 const collectFiles = (root: string): string[] =>
   readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
@@ -1978,7 +1986,7 @@ describe("Solid registry isolation", () => {
     expect(generatedSwitchAccountSubmenuSource).toContain(
       'from "./switch-account-submenu-content"'
     )
-    expect(generatedSwitchAccountSubmenuContentSource).toContain(
+    expect(generatedSwitchAccountSubmenuContentSource).not.toContain(
       'from "@/components/auth/settings/shared/helpers"'
     )
     expect(generatedSwitchAccountSubmenuContentSource).toContain(
@@ -2232,7 +2240,17 @@ describe("Solid registry isolation", () => {
     const report = verifyLocalRegistryCoherence()
 
     expect(report.packageName).toBe("@better-auth-ui/solid")
-    expect(report.packageExports).toEqual([".", "./email", "./plugins"])
+    expect(report.packageExports).toEqual([
+      ".",
+      "./email",
+      "./plugins",
+      "./plugins/api-key",
+      "./plugins/magic-link",
+      "./plugins/multi-session",
+      "./plugins/organization",
+      "./plugins/passkey",
+      "./plugins/username"
+    ])
     expect(report.exampleSolidDependency).toBe("*")
     expect(report.staticItemNames).toEqual(expectedSolidRegistryPayloadNames)
     expect(report.missingStaticFiles).toEqual([])
@@ -2692,9 +2710,7 @@ describe("Solid registry isolation", () => {
     expect(combinedSolidPackageDocs).toContain("createApiKeyOptions")
     expect(combinedSolidPackageDocs).toContain("signInUsernameOptions")
     expect(combinedSolidPackageDocs).toContain("@better-auth-ui/core/server")
-    expect(combinedSolidPackageDocs).not.toContain(
-      "@better-auth-ui/solid/plugins"
-    )
+    expect(combinedSolidPackageDocs).toContain("@better-auth-ui/solid/plugins")
 
     for (const { name, content } of solidPackageDocs) {
       expect(
@@ -3140,9 +3156,9 @@ describe("Solid registry isolation", () => {
       resolve(__dirname, "../../../apps/docs/public/r/solid/organization.json"),
       "utf8"
     )
-    const organizationPayload = JSON.parse(organizationRegistry) as {
+    const organizationPayload = parseJson<{
       registryDependencies: string[]
-    }
+    }>(organizationRegistry, "apps/docs/public/r/solid/organization.json")
     const solidRegistry = readFileSync(
       resolve(__dirname, "../../../apps/docs/public/r/solid/registry.json"),
       "utf8"
@@ -3745,9 +3761,11 @@ describe("Solid registry isolation", () => {
       }
     }
 
-    const meta = JSON.parse(
-      readFileSync(resolve(zaidanDocsRoot, "components/meta.json"), "utf8")
-    ) as { pages: string[] }
+    const metaPath = resolve(zaidanDocsRoot, "components/meta.json")
+    const meta = parseJson<{ pages: string[] }>(
+      readFileSync(metaPath, "utf8"),
+      metaPath
+    )
     const authStart = meta.pages.indexOf("---Auth---")
     expect(meta.pages.slice(authStart + 1, authStart + 7)).toEqual([
       "auth",

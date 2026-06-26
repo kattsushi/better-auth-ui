@@ -1,9 +1,9 @@
 import { apiKeyLocalization } from "@better-auth-ui/core/plugins/api-key"
+import { useAuth } from "@better-auth-ui/solid"
 import {
   type ApiKeyAuthClient,
-  useAuth,
   useCreateApiKey
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/api-key"
 import { Key } from "lucide-solid"
 import { createSignal } from "solid-js"
 import { NewApiKeyDialog } from "@/components/auth/api-key/new-api-key-dialog"

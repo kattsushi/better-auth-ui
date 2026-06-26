@@ -1,8 +1,8 @@
+import { useAuth } from "@better-auth-ui/solid"
 import {
   type UsernameAuthClient,
-  useAuth,
   useIsUsernameAvailable
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/username"
 import { Check, X } from "lucide-solid"
 import { createSignal, Show } from "solid-js"
 import type { AdditionalFieldProps } from "@/components/auth/additional-field"

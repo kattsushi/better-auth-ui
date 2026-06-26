@@ -3,14 +3,12 @@ import {
   type UsernameLocalization,
   usernameLocalization
 } from "@better-auth-ui/core/plugins/username"
+import { useAuth, useFetchOptions, useSignInEmail } from "@better-auth-ui/solid"
+import type { AuthPlugin } from "@better-auth-ui/solid/plugins"
 import {
   type UsernameAuthClient,
-  useAuth,
-  useFetchOptions,
-  useSignInEmail,
   useSignInUsername
-} from "@better-auth-ui/solid"
-import type { AuthPlugin } from "@better-auth-ui/solid/plugins"
+} from "@better-auth-ui/solid/plugins/username"
 import { useQueryClient } from "@tanstack/solid-query"
 import { Link } from "@tanstack/solid-router"
 import type { BetterFetchError } from "better-auth/client"

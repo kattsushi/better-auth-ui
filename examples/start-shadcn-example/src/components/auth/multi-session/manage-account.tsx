@@ -1,14 +1,12 @@
 "use client"
 
+import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
 import {
   type ListDeviceSession,
   type MultiSessionAuthClient,
-  useAuth,
-  useAuthPlugin,
   useRevokeMultiSession,
-  useSession,
   useSetActiveSession
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/multi-session"
 import { ArrowLeftRight, LogOut, MoreHorizontal } from "lucide-react"
 import { toast } from "sonner"
 import { UserView } from "@/components/auth/user/user-view"

@@ -1,11 +1,10 @@
 "use client"
 
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
-  useAuthPlugin,
   useLeaveOrganization
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import type { Organization } from "better-auth/client"
 import { LogOut } from "lucide-react"
 import { toast } from "sonner"

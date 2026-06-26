@@ -8,7 +8,8 @@ Requires the Better Auth API key plugin.
 ## Usage
 
 ```tsx
-import { useAuth, useCreateApiKey } from "@better-auth-ui/react"
+import { useAuth } from "@better-auth-ui/react"
+import { useCreateApiKey } from "@better-auth-ui/react/plugins/api-key"
 
 const { authClient } = useAuth()
 const mutation = useCreateApiKey(authClient)
@@ -19,7 +20,7 @@ mutation.mutate(/* params */)
 ## Options factory
 
 ```tsx
-import { createApiKeyOptions } from "@better-auth-ui/react"
+import { createApiKeyOptions } from "@better-auth-ui/react/plugins/api-key"
 import { useMutation } from "@tanstack/react-query"
 
 const mutation = useMutation(createApiKeyOptions(authClient))

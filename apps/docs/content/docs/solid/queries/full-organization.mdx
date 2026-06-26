@@ -6,7 +6,7 @@ description: Read full details for one organization.
 ## Usage
 
 ```tsx
-import { useFullOrganization } from "@better-auth-ui/solid"
+import { useFullOrganization } from "@better-auth-ui/solid/plugins/organization"
 
 const result = useFullOrganization(authClient)
 ```
@@ -16,7 +16,7 @@ Organization queries require `organizationClient()` on your Better Auth client. 
 ## Options factory
 
 ```tsx
-import { fullOrganizationOptions } from "@better-auth-ui/solid"
+import { fullOrganizationOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createQuery } from "@tanstack/solid-query"
 
 const query = createQuery(() =>
@@ -39,7 +39,7 @@ import {
   ensureFullOrganization,
   fetchFullOrganization,
   prefetchFullOrganization
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 
 await ensureFullOrganization(queryClient, authClient, userId, { query: { organizationId: "org_123" } })
 await prefetchFullOrganization(queryClient, authClient, userId, { query: { organizationId: "org_123" } })

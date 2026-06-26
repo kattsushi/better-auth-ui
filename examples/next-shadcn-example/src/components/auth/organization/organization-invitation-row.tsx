@@ -1,12 +1,11 @@
 "use client"
 
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
-  useAuthPlugin,
   useCancelInvitation,
   useHasPermission
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import type { Invitation } from "better-auth/client"
 import { X } from "lucide-react"
 

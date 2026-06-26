@@ -11,13 +11,25 @@ import {
   resolveAuthConfig
 } from "../src"
 
-const packageJson = () =>
-  JSON.parse(readFileSync(resolve(__dirname, "../package.json"), "utf8")) as {
-    name: string
-    version: string
-    exports: Record<string, unknown>
-    peerDependencies: Record<string, string>
+type PackageJson = {
+  name: string
+  version: string
+  exports: Record<string, unknown>
+  peerDependencies: Record<string, string>
+}
+
+function parsePackageJson(source: string): PackageJson {
+  try {
+    return JSON.parse(source) as PackageJson
+  } catch (error) {
+    throw new Error("Unable to parse packages/solid/package.json", {
+      cause: error
+    })
   }
+}
+
+const packageJson = () =>
+  parsePackageJson(readFileSync(resolve(__dirname, "../package.json"), "utf8"))
 
 describe("@better-auth-ui/solid foundation", () => {
   it("declares the additive Solid package exports with native email support", () => {
@@ -28,9 +40,16 @@ describe("@better-auth-ui/solid foundation", () => {
     expect(Object.keys(metadata.exports).sort()).toEqual([
       ".",
       "./email",
-      "./plugins"
+      "./plugins",
+      "./plugins/api-key",
+      "./plugins/magic-link",
+      "./plugins/multi-session",
+      "./plugins/organization",
+      "./plugins/passkey",
+      "./plugins/username"
     ])
     expect(metadata.exports).toHaveProperty("./email")
+    expect(metadata.exports).toHaveProperty("./plugins/api-key")
   })
 
   it("declares Solid runtime peers needed by the public surface", () => {

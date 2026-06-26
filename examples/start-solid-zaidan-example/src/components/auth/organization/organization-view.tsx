@@ -1,12 +1,11 @@
 import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
 import { organizationLocalization } from "@better-auth-ui/core/plugins/organization"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid"
+import { useAuth, useSession } from "@better-auth-ui/solid"
+import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import {
   useActiveOrganization,
-  useAuth,
-  useListOrganizationMembers,
-  useSession
-} from "@better-auth-ui/solid"
+  useListOrganizationMembers
+} from "@better-auth-ui/solid/plugins/organization"
 import type { Organization } from "better-auth/client"
 import type { ComponentProps } from "solid-js"
 import { Show, splitProps } from "solid-js"

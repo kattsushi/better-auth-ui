@@ -4,7 +4,7 @@ import {
   type ListAccountsParams,
   listAccountsOptions
 } from "@better-auth-ui/core"
-import { skipToken, useQuery } from "@tanstack/solid-query"
+import { useQuery } from "@tanstack/solid-query"
 import { useSession } from "../../hooks/queries/use-session"
 import { getSessionUserId } from "../create-user-scoped-query"
 
@@ -12,9 +12,7 @@ export type UseListAccountsOptions<TAuthClient extends AuthClient> = Omit<
   ListAccountsOptions<TAuthClient>,
   "initialData"
 > &
-  ListAccountsParams<TAuthClient> & {
-    enabled?: boolean
-  }
+  ListAccountsParams<TAuthClient>
 
 export function useListAccounts<TAuthClient extends AuthClient>(
   authClient: TAuthClient,
@@ -33,7 +31,7 @@ export function useListAccounts<TAuthClient extends AuthClient>(
     return {
       ...queryOptions,
       ...baseOptions,
-      queryFn: userId() ? baseOptions.queryFn : skipToken,
+      enabled: Boolean(userId()),
       initialData: undefined
     }
   })

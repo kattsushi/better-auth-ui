@@ -1,10 +1,9 @@
+import { useAuth, useSession } from "@better-auth-ui/solid"
 import {
   type OrganizationAuthClient,
   useActiveOrganization,
-  useAuth,
-  useListOrganizationMembers,
-  useSession
-} from "@better-auth-ui/solid"
+  useListOrganizationMembers
+} from "@better-auth-ui/solid/plugins/organization"
 import { createMemo, Show } from "solid-js"
 import { ApiKeys } from "@/components/auth/api-key/api-keys"
 

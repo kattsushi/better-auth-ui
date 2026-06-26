@@ -1,11 +1,10 @@
 "use client"
 
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type UsernameAuthClient,
-  useAuth,
-  useAuthPlugin,
   useIsUsernameAvailable
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/username"
 import { useDebouncer } from "@tanstack/react-pacer"
 import { Check, X } from "lucide-react"
 import { useState } from "react"

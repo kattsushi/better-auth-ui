@@ -1,14 +1,12 @@
 "use client"
 
+import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
   useActiveOrganization,
-  useAuth,
-  useAuthPlugin,
   useListOrganizations,
-  useSession,
   useSetActiveOrganization
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import type { Organization } from "better-auth/client"
 import {
   ChevronsUpDown,

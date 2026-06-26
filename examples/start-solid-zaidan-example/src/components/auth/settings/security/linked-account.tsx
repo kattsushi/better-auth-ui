@@ -1,4 +1,4 @@
-import { type AccountInfoParams, getProviderName } from "@better-auth-ui/core"
+import { getProviderName } from "@better-auth-ui/core"
 import {
   useAccountInfo,
   useAuth,
@@ -68,14 +68,12 @@ function ProviderIcon(props: {
 export function LinkedAccountRow(props: {
   account?: LinkedAccount
   provider: LinkedProvider
-  userId?: string
 }) {
   const auth = useAuth()
   const providerName = () => getProviderName(props.provider)
   const accountInfo = useAccountInfo(auth.authClient, {
-    query: { accountId: props.account?.accountId },
-    enabled: Boolean(props.userId && props.account?.accountId)
-  } as AccountInfoParams<typeof auth.authClient> & { enabled: boolean })
+    query: { accountId: props.account?.accountId ?? "" }
+  })
   const linkSocial = useLinkSocial(auth.authClient)
   const unlinkAccount = useUnlinkAccount(auth.authClient, {
     onSuccess: () => toast.success(auth.localization.settings.accountUnlinked)

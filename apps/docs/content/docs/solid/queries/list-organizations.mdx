@@ -6,7 +6,7 @@ description: List organizations for the current user.
 ## Usage
 
 ```tsx
-import { useListOrganizations } from "@better-auth-ui/solid"
+import { useListOrganizations } from "@better-auth-ui/solid/plugins/organization"
 
 const result = useListOrganizations(authClient)
 ```
@@ -16,7 +16,7 @@ Organization queries require `organizationClient()` on your Better Auth client. 
 ## Options factory
 
 ```tsx
-import { listOrganizationsOptions } from "@better-auth-ui/solid"
+import { listOrganizationsOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createQuery } from "@tanstack/solid-query"
 
 const query = createQuery(() =>
@@ -39,7 +39,7 @@ import {
   ensureListOrganizations,
   fetchListOrganizations,
   prefetchListOrganizations
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 
 await ensureListOrganizations(queryClient, authClient, userId)
 await prefetchListOrganizations(queryClient, authClient, userId)

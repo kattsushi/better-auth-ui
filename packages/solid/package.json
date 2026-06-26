@@ -25,6 +25,30 @@
     "./plugins": {
       "types": "./dist/plugins.d.ts",
       "import": "./dist/plugins.js"
+    },
+    "./plugins/api-key": {
+      "types": "./dist/plugins/api-key/index.d.ts",
+      "import": "./dist/plugins/api-key/index.js"
+    },
+    "./plugins/magic-link": {
+      "types": "./dist/plugins/magic-link/index.d.ts",
+      "import": "./dist/plugins/magic-link/index.js"
+    },
+    "./plugins/multi-session": {
+      "types": "./dist/plugins/multi-session/index.d.ts",
+      "import": "./dist/plugins/multi-session/index.js"
+    },
+    "./plugins/organization": {
+      "types": "./dist/plugins/organization/index.d.ts",
+      "import": "./dist/plugins/organization/index.js"
+    },
+    "./plugins/passkey": {
+      "types": "./dist/plugins/passkey/index.d.ts",
+      "import": "./dist/plugins/passkey/index.js"
+    },
+    "./plugins/username": {
+      "types": "./dist/plugins/username/index.d.ts",
+      "import": "./dist/plugins/username/index.js"
     }
   },
   "devDependencies": {

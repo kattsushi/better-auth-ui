@@ -1,10 +1,10 @@
 "use client"
 
+import { useAuth } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
   useHasPermission
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import type { ComponentProps } from "react"
 
 import { Card, CardContent } from "@/components/ui/card"

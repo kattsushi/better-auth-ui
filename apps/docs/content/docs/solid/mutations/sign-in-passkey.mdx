@@ -8,7 +8,7 @@ Requires the Better Auth passkey plugin. When reading the client from auth conte
 ## Options factory
 
 ```tsx
-import { signInPasskeyOptions } from "@better-auth-ui/solid"
+import { signInPasskeyOptions } from "@better-auth-ui/solid/plugins/passkey"
 import { createMutation } from "@tanstack/solid-query"
 
 const signInWithPasskey = createMutation(() => signInPasskeyOptions(authClient))

@@ -1,13 +1,12 @@
 "use client"
 
 import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
-  useAuth,
-  useAuthPlugin,
   useHasPermission,
   useListOrganizationInvitations
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 import { ChevronUp, Filter, Search, X } from "lucide-react"
 import { type ComponentProps, type ReactNode, useMemo, useState } from "react"
 

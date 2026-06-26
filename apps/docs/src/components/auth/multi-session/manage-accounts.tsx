@@ -1,12 +1,10 @@
 "use client"
 
+import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
 import {
   type MultiSessionAuthClient,
-  useAuth,
-  useAuthPlugin,
-  useListDeviceSessions,
-  useSession
-} from "@better-auth-ui/react"
+  useListDeviceSessions
+} from "@better-auth-ui/react/plugins/multi-session"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"

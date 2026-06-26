@@ -1,12 +1,11 @@
 "use client"
 
 import { type AuthView, authMutationKeys } from "@better-auth-ui/core"
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type PasskeyAuthClient,
-  useAuth,
-  useAuthPlugin,
   useSignInPasskey
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/passkey"
 import { useIsMutating } from "@tanstack/react-query"
 import { Fingerprint } from "lucide-react"
 

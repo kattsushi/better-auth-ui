@@ -1,11 +1,10 @@
 "use client"
 
+import { useAuth, useSession } from "@better-auth-ui/react"
 import {
   type MultiSessionAuthClient,
-  useAuth,
-  useSession,
   useSetActiveSession
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/multi-session"
 import {
   ChevronsUpDown,
   LogIn,

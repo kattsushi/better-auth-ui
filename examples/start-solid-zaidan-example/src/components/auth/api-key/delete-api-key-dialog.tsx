@@ -1,9 +1,9 @@
 import { apiKeyLocalization } from "@better-auth-ui/core/plugins/api-key"
+import { useAuth } from "@better-auth-ui/solid"
 import {
   type ApiKeyAuthClient,
-  useAuth,
   useDeleteApiKey
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/api-key"
 import { Key } from "lucide-solid"
 import type { ListedApiKey } from "@/components/auth/settings/shared/types"
 import { Button } from "@/components/ui/button"

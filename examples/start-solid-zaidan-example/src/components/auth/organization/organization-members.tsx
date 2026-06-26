@@ -1,10 +1,7 @@
 import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid"
-import {
-  useAuth,
-  useListOrganizationMembers,
-  useSession
-} from "@better-auth-ui/solid"
+import { useAuth, useSession } from "@better-auth-ui/solid"
+import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
+import { useListOrganizationMembers } from "@better-auth-ui/solid/plugins/organization"
 import { ChevronUp, Filter, Search, X } from "lucide-solid"
 import { createMemo, createSignal, For, type JSX, Show } from "solid-js"
 import { Badge } from "@/components/ui/badge"

@@ -1,10 +1,10 @@
 import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid"
+import { useAuth } from "@better-auth-ui/solid"
+import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import {
   useAcceptInvitation,
-  useAuth,
   useRejectInvitation
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 import { Check, Clock, X } from "lucide-solid"
 import { Button } from "@/components/ui/button"
 import { organizationPlugin } from "@/lib/auth/organization-plugin"

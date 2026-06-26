@@ -49,22 +49,26 @@ import {
 } from "@better-auth-ui/core/plugins/passkey"
 import { usernameMutationKeys } from "@better-auth-ui/core/plugins/username"
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { resolveAuthConfig } from "../src"
+import { listApiKeysOptions } from "../src/plugins/api-key"
+import { listDeviceSessionsOptions } from "../src/plugins/multi-session"
 import {
-  addPasskeyOptions,
   createOrganizationMeta,
   createOrganizationOptions,
-  deletePasskeyOptions,
   hasPermissionOptions,
-  isUsernameAvailableOptions,
-  listApiKeysOptions,
-  listDeviceSessionsOptions,
   listOrganizationMembersOptions,
-  listOrganizationsOptions,
+  listOrganizationsOptions
+} from "../src/plugins/organization"
+import {
+  addPasskeyOptions,
+  deletePasskeyOptions,
   listPasskeysOptions,
-  resolveAuthConfig,
-  signInPasskeyOptions,
+  signInPasskeyOptions
+} from "../src/plugins/passkey"
+import {
+  isUsernameAvailableOptions,
   signInUsernameOptions
-} from "../src"
+} from "../src/plugins/username"
 import { getSessionUserId } from "../src/queries/create-user-scoped-query"
 
 const signal = new AbortController().signal

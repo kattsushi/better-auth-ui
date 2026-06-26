@@ -8,7 +8,7 @@ This page documents the Solid package API for the Better Auth API key plugin. Re
 ## Usage
 
 ```tsx
-import { useListApiKeys } from "@better-auth-ui/solid"
+import { useListApiKeys } from "@better-auth-ui/solid/plugins/api-key"
 
 const apiKeys = useListApiKeys(authClient)
 ```
@@ -21,7 +21,7 @@ import {
   fetchListApiKeys,
   listApiKeysOptions,
   prefetchListApiKeys
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/api-key"
 
 const options = listApiKeysOptions(authClient, userId)
 await ensureListApiKeys(queryClient, authClient, userId)
@@ -32,7 +32,7 @@ const keys = await fetchListApiKeys(queryClient, authClient, userId)
 ## Invalidation
 
 ```ts
-import { listApiKeysOptions } from "@better-auth-ui/solid"
+import { listApiKeysOptions } from "@better-auth-ui/solid/plugins/api-key"
 
 queryClient.invalidateQueries({
   queryKey: listApiKeysOptions(authClient, userId).queryKey

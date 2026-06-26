@@ -1,19 +1,18 @@
 import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
+import { useAuth, useSession } from "@better-auth-ui/solid"
 import type {
   LeaveOrganizationParams,
   OrganizationAuthClient,
   RemoveMemberParams,
   UpdateMemberRoleParams
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 import {
   useActiveOrganization,
-  useAuth,
   useHasPermission,
   useLeaveOrganization,
   useRemoveMember,
-  useSession,
   useUpdateMemberRole
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 import { LogOut, Pencil, Trash2 } from "lucide-solid"
 import { createSignal, For, Show } from "solid-js"
 import { toast } from "solid-sonner"

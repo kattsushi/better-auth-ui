@@ -1,11 +1,11 @@
 "use client"
 
+import { useAuth } from "@better-auth-ui/react"
 import {
   type ListDeviceSession,
   type MultiSessionAuthClient,
-  useAuth,
   useSetActiveSession
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/multi-session"
 import { UserView } from "@/components/auth/user/user-view"
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"

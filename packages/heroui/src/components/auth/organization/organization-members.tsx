@@ -1,12 +1,10 @@
+import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
 import {
   type OrganizationAuthClient,
   useActiveOrganization,
-  useAuth,
-  useAuthPlugin,
   useHasPermission,
-  useListOrganizationMembers,
-  useSession
-} from "@better-auth-ui/react"
+  useListOrganizationMembers
+} from "@better-auth-ui/react/plugins/organization"
 import { Funnel, Xmark } from "@gravity-ui/icons"
 import {
   Button,

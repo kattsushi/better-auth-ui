@@ -6,7 +6,7 @@ description: Read the active organization from the session or a URL slug.
 ## Usage
 
 ```tsx
-import { useActiveOrganization } from "@better-auth-ui/solid"
+import { useActiveOrganization } from "@better-auth-ui/solid/plugins/organization"
 
 const result = useActiveOrganization(authClient)
 ```
@@ -16,7 +16,7 @@ Organization queries require `organizationClient()` on your Better Auth client. 
 ## Options factory
 
 ```tsx
-import { activeOrganizationOptions } from "@better-auth-ui/solid"
+import { activeOrganizationOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createQuery } from "@tanstack/solid-query"
 
 const query = createQuery(() =>
@@ -39,7 +39,7 @@ import {
   ensureActiveOrganization,
   fetchActiveOrganization,
   prefetchActiveOrganization
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 
 await ensureActiveOrganization(queryClient, authClient, userId, { query: { organizationId: "org_123" } })
 await prefetchActiveOrganization(queryClient, authClient, userId, { query: { organizationId: "org_123" } })

@@ -1,11 +1,10 @@
 "use client"
 
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type PasskeyAuthClient,
-  useAuth,
-  useAuthPlugin,
   useDeletePasskey
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/passkey"
 import { Fingerprint } from "lucide-react"
 
 import {

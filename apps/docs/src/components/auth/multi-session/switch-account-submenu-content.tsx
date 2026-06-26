@@ -1,12 +1,10 @@
 "use client"
 
+import { useAuth, useAuthPlugin, useSession } from "@better-auth-ui/react"
 import {
   type MultiSessionAuthClient,
-  useAuth,
-  useAuthPlugin,
-  useListDeviceSessions,
-  useSession
-} from "@better-auth-ui/react"
+  useListDeviceSessions
+} from "@better-auth-ui/react/plugins/multi-session"
 import { Check, CirclePlus } from "lucide-react"
 import { UserView } from "@/components/auth/user/user-view"
 import {

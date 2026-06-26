@@ -2,13 +2,15 @@
 
 import { authMutationKeys } from "@better-auth-ui/core"
 import {
-  type UsernameAuthClient,
   useAuth,
   useAuthPlugin,
   useFetchOptions,
-  useSignInEmail,
-  useSignInUsername
+  useSignInEmail
 } from "@better-auth-ui/react"
+import {
+  type UsernameAuthClient,
+  useSignInUsername
+} from "@better-auth-ui/react/plugins/username"
 import { useIsMutating } from "@tanstack/react-query"
 import { type SyntheticEvent, useState } from "react"
 import {

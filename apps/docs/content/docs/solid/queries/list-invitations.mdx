@@ -6,7 +6,7 @@ description: List pending invitations for an organization.
 ## Usage
 
 ```tsx
-import { useListOrganizationInvitations } from "@better-auth-ui/solid"
+import { useListOrganizationInvitations } from "@better-auth-ui/solid/plugins/organization"
 
 const result = useListOrganizationInvitations(authClient)
 ```
@@ -16,7 +16,7 @@ Organization queries require `organizationClient()` on your Better Auth client. 
 ## Options factory
 
 ```tsx
-import { listOrganizationInvitationsOptions } from "@better-auth-ui/solid"
+import { listOrganizationInvitationsOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createQuery } from "@tanstack/solid-query"
 
 const query = createQuery(() =>
@@ -39,7 +39,7 @@ import {
   ensureListOrganizationInvitations,
   fetchListOrganizationInvitations,
   prefetchListOrganizationInvitations
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 
 await ensureListOrganizationInvitations(queryClient, authClient, userId, { query: { organizationId: "org_123" } })
 await prefetchListOrganizationInvitations(queryClient, authClient, userId, { query: { organizationId: "org_123" } })

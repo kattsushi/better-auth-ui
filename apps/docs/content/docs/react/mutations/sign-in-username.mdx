@@ -8,11 +8,11 @@ Resets the session query on success so the new session is refetched.
 ## Usage
 
 ```tsx
+import { useAuth } from "@better-auth-ui/react"
 import {
   type UsernameAuthClient,
-  useAuth,
   useSignInUsername
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/username"
 
 const { authClient } = useAuth<UsernameAuthClient>()
 const { mutate: signInUsername } = useSignInUsername(authClient)
@@ -28,7 +28,7 @@ signInUsername({
 ## Options factory
 
 ```tsx
-import { signInUsernameOptions } from "@better-auth-ui/react"
+import { signInUsernameOptions } from "@better-auth-ui/react/plugins/username"
 import { useMutation } from "@tanstack/react-query"
 
 const { mutate } = useMutation(signInUsernameOptions(authClient))

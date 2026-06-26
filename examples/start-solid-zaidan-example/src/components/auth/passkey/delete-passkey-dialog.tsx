@@ -1,8 +1,8 @@
+import { useAuth } from "@better-auth-ui/solid"
 import {
   type PasskeyAuthClient,
-  useAuth,
   useDeletePasskey
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/passkey"
 import { Fingerprint } from "lucide-solid"
 import { passkeyLabels } from "@/components/auth/passkey/passkey-localization"
 import type { ListedPasskey } from "@/components/auth/settings/shared/types"

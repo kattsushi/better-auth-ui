@@ -5,15 +5,12 @@ import {
   type AuthClient,
   accountInfoOptions
 } from "@better-auth-ui/core"
-import { createQuery, skipToken } from "@tanstack/solid-query"
+import { createQuery } from "@tanstack/solid-query"
 import { useSession } from "../../hooks/queries/use-session"
 import { getSessionUserId } from "../create-user-scoped-query"
 
 export type UseAccountInfoOptions<TAuthClient extends AuthClient> =
-  AccountInfoOptions<TAuthClient> &
-    AccountInfoParams<TAuthClient> & {
-      enabled?: boolean
-    }
+  AccountInfoOptions<TAuthClient> & AccountInfoParams<TAuthClient>
 
 export function useAccountInfo<TAuthClient extends AuthClient>(
   authClient: TAuthClient,
@@ -34,7 +31,7 @@ export function useAccountInfo<TAuthClient extends AuthClient>(
       return {
         ...queryOptions,
         ...baseOptions,
-        queryFn: canFetch ? baseOptions.queryFn : skipToken,
+        enabled: canFetch,
         initialData: initialData as
           | AccountInfoData<TAuthClient>
           | (() => AccountInfoData<TAuthClient>)
@@ -52,7 +49,7 @@ export function useAccountInfo<TAuthClient extends AuthClient>(
     return {
       ...queryOptions,
       ...baseOptions,
-      queryFn: canFetch ? baseOptions.queryFn : skipToken,
+      enabled: canFetch,
       initialData: undefined
     }
   })

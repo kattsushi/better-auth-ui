@@ -8,7 +8,8 @@ Requires the Better Auth API key plugin.
 ## Usage
 
 ```tsx
-import { useAuth, useListApiKeys } from "@better-auth-ui/react"
+import { useAuth } from "@better-auth-ui/react"
+import { useListApiKeys } from "@better-auth-ui/react/plugins/api-key"
 
 const { authClient } = useAuth()
 const { data: apiKeys } = useListApiKeys(authClient)
@@ -22,7 +23,7 @@ import {
   fetchListApiKeys,
   listApiKeysOptions,
   prefetchListApiKeys
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/api-key"
 
 const options = listApiKeysOptions(authClient, userId)
 await ensureListApiKeys(queryClient, authClient, userId)

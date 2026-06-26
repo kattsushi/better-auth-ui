@@ -6,7 +6,7 @@ description: Remove a member from an organization.
 ## Usage
 
 ```tsx
-import { useRemoveMember } from "@better-auth-ui/solid"
+import { useRemoveMember } from "@better-auth-ui/solid/plugins/organization"
 
 const mutation = useRemoveMember(authClient)
 
@@ -18,7 +18,7 @@ Organization mutations require `organizationClient()` on the Better Auth client.
 ## Options factory
 
 ```tsx
-import { removeMemberOptions } from "@better-auth-ui/solid"
+import { removeMemberOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createMutation } from "@tanstack/solid-query"
 
 const mutation = createMutation(() => removeMemberOptions(authClient))

@@ -1,9 +1,8 @@
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type ApiKeyAuthClient,
-  useAuth,
-  useAuthPlugin,
   useListApiKeys
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/api-key"
 import { Button, Card, type CardProps, cn } from "@heroui/react"
 import { useState } from "react"
 

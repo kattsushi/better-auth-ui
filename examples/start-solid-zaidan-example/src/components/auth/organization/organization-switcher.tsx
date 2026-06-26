@@ -2,14 +2,13 @@ import {
   organizationLocalization as defaultOrganizationLocalization,
   type OrganizationLocalization
 } from "@better-auth-ui/core/plugins/organization"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid"
+import { useAuth, useSession } from "@better-auth-ui/solid"
+import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import {
   useActiveOrganization,
-  useAuth,
   useListOrganizations,
-  useSession,
   useSetActiveOrganization
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 import { useNavigate } from "@tanstack/solid-router"
 import type { Organization } from "better-auth/client"
 import {

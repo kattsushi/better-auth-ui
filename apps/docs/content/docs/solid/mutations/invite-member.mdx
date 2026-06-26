@@ -6,7 +6,7 @@ description: Invite a member to an organization.
 ## Usage
 
 ```tsx
-import { useInviteMember } from "@better-auth-ui/solid"
+import { useInviteMember } from "@better-auth-ui/solid/plugins/organization"
 
 const mutation = useInviteMember(authClient)
 
@@ -18,7 +18,7 @@ Organization mutations require `organizationClient()` on the Better Auth client.
 ## Options factory
 
 ```tsx
-import { inviteMemberOptions } from "@better-auth-ui/solid"
+import { inviteMemberOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createMutation } from "@tanstack/solid-query"
 
 const mutation = createMutation(() => inviteMemberOptions(authClient))

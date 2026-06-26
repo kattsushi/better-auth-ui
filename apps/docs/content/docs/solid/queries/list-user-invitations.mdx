@@ -6,7 +6,7 @@ description: List invitations addressed to the current user.
 ## Usage
 
 ```tsx
-import { useListUserInvitations } from "@better-auth-ui/solid"
+import { useListUserInvitations } from "@better-auth-ui/solid/plugins/organization"
 
 const result = useListUserInvitations(authClient)
 ```
@@ -16,7 +16,7 @@ Organization queries require `organizationClient()` on your Better Auth client. 
 ## Options factory
 
 ```tsx
-import { listUserInvitationsOptions } from "@better-auth-ui/solid"
+import { listUserInvitationsOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createQuery } from "@tanstack/solid-query"
 
 const query = createQuery(() =>
@@ -39,7 +39,7 @@ import {
   ensureListUserInvitations,
   fetchListUserInvitations,
   prefetchListUserInvitations
-} from "@better-auth-ui/solid"
+} from "@better-auth-ui/solid/plugins/organization"
 
 await ensureListUserInvitations(queryClient, authClient, userId)
 await prefetchListUserInvitations(queryClient, authClient, userId)

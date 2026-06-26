@@ -1,12 +1,11 @@
 "use client"
 
 import { authMutationKeys } from "@better-auth-ui/core"
+import { useAuth, useAuthPlugin } from "@better-auth-ui/react"
 import {
   type MagicLinkAuthClient,
-  useAuth,
-  useAuthPlugin,
   useSignInMagicLink
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/magic-link"
 import { useIsMutating } from "@tanstack/react-query"
 import { type SyntheticEvent, useState } from "react"
 import { toast } from "sonner"

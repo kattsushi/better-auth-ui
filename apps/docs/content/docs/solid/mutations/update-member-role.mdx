@@ -6,7 +6,7 @@ description: Update a member role.
 ## Usage
 
 ```tsx
-import { useUpdateMemberRole } from "@better-auth-ui/solid"
+import { useUpdateMemberRole } from "@better-auth-ui/solid/plugins/organization"
 
 const mutation = useUpdateMemberRole(authClient)
 
@@ -18,7 +18,7 @@ Organization mutations require `organizationClient()` on the Better Auth client.
 ## Options factory
 
 ```tsx
-import { updateMemberRoleOptions } from "@better-auth-ui/solid"
+import { updateMemberRoleOptions } from "@better-auth-ui/solid/plugins/organization"
 import { createMutation } from "@tanstack/solid-query"
 
 const mutation = createMutation(() => updateMemberRoleOptions(authClient))

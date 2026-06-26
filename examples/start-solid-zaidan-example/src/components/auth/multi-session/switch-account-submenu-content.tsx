@@ -3,16 +3,14 @@ import {
   type MultiSessionLocalization,
   multiSessionLocalization
 } from "@better-auth-ui/core/plugins/multi-session"
+import { useAuth, useSession } from "@better-auth-ui/solid"
 import {
   type MultiSessionAuthClient,
-  useAuth,
-  useListDeviceSessions,
-  useSession
-} from "@better-auth-ui/solid"
+  useListDeviceSessions
+} from "@better-auth-ui/solid/plugins/multi-session"
 import { Link } from "@tanstack/solid-router"
 import { Check, CirclePlus } from "lucide-solid"
 import { For, Show } from "solid-js"
-import { shouldLoadDeviceSessions } from "@/components/auth/settings/shared/helpers"
 import type { DeviceSession } from "@/components/auth/settings/shared/types"
 import { UserView } from "@/components/auth/user/user-view"
 import {
@@ -27,7 +25,6 @@ export function SwitchAccountSubmenuContent() {
   const session = useSession(auth.authClient, {
     enabled: !import.meta.env.SSR
   })
-  const userId = () => session.data?.user.id
   const multiSessionPluginConfig = () =>
     auth.plugins.find((plugin) => plugin.id === coreMultiSessionPlugin.id)
   const multiSessionLabels = (): MultiSessionLocalization => ({
@@ -36,12 +33,7 @@ export function SwitchAccountSubmenuContent() {
       | Partial<MultiSessionLocalization>
       | undefined)
   })
-  const deviceSessions = useListDeviceSessions(auth.authClient, {
-    enabled: shouldLoadDeviceSessions({
-      isSsr: import.meta.env.SSR,
-      userId: userId()
-    })
-  })
+  const deviceSessions = useListDeviceSessions(auth.authClient)
   const otherDeviceSessions = () => {
     const sessions = (deviceSessions.data ?? []) as DeviceSession[]
 

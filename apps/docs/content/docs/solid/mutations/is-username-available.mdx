@@ -10,7 +10,7 @@ This check is modeled as a mutation because callers usually trigger it from user
 ## Options factory
 
 ```tsx
-import { isUsernameAvailableOptions } from "@better-auth-ui/solid"
+import { isUsernameAvailableOptions } from "@better-auth-ui/solid/plugins/username"
 import { createMutation } from "@tanstack/solid-query"
 
 const checkUsername = createMutation(() => isUsernameAvailableOptions(authClient))

@@ -8,7 +8,8 @@ Organization queries require `organizationClient()` on your Better Auth client. 
 ## Usage
 
 ```tsx
-import { useAuth, useListOrganizationMembers } from "@better-auth-ui/react"
+import { useAuth } from "@better-auth-ui/react"
+import { useListOrganizationMembers } from "@better-auth-ui/react/plugins/organization"
 
 const { authClient } = useAuth()
 const result = useListOrganizationMembers(authClient)
@@ -22,7 +23,7 @@ import {
   fetchListOrganizationMembers,
   listOrganizationMembersOptions,
   prefetchListOrganizationMembers
-} from "@better-auth-ui/react"
+} from "@better-auth-ui/react/plugins/organization"
 
 const options = listOrganizationMembersOptions(authClient, userId)
 await ensureListOrganizationMembers(queryClient, authClient, userId)
