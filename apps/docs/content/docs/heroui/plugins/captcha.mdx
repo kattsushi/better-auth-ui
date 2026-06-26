@@ -36,7 +36,7 @@ export const auth = betterAuth({
 })
 ```
 
-The Better Auth captcha plugin protects `/sign-up/email`, `/sign-in/email`, and `/request-password-reset` by default — exactly the views the UI plugin renders the widget on. To also protect `/sign-in/username`, pass it explicitly:
+The Better Auth captcha plugin protects `/sign-up/email`, `/sign-in/email`, and `/request-password-reset` by default — exactly the views the UI plugin renders the widget on. Better Auth 1.7+ matches full auth paths, so use exact endpoints like these or explicit wildcards such as `/sign-in/*`; do not rely on partial prefixes like `/sign-in`. To also protect `/sign-in/username`, pass it explicitly:
 
 ```ts
 captcha({
