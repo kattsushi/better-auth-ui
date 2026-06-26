@@ -1,6 +1,6 @@
-import type { InferClientAPI } from "better-auth/client"
 import type { multiSessionClient } from "better-auth/client/plugins"
+import type { AuthClient } from "../../lib/auth-client"
 
-export type MultiSessionAuthClient = InferClientAPI<{
+export type MultiSessionAuthClient = AuthClient<{
   plugins: [ReturnType<typeof multiSessionClient>]
 }>

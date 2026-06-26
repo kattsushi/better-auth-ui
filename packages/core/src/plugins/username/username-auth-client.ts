@@ -1,6 +1,6 @@
-import type { InferClientAPI } from "better-auth/client"
 import type { usernameClient } from "better-auth/client/plugins"
+import type { AuthClient } from "../../lib/auth-client"
 
-export type UsernameAuthClient = InferClientAPI<{
+export type UsernameAuthClient = AuthClient<{
   plugins: [ReturnType<typeof usernameClient>]
 }>
