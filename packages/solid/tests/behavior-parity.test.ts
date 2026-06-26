@@ -181,10 +181,12 @@ describe("Solid auth behavior parity", () => {
 
     expect(accountInfoQuery).toContain("Boolean(userId() && query?.accountId)")
     expect(accountInfoQuery).toContain("enabled(queryState as never)")
+    expect(accountInfoQuery).not.toContain("initialData: undefined")
     expect(listAccountsQuery).toContain("Boolean(userId())")
     expect(listAccountsQuery).toContain("enabled(query as never)")
     expect(listSessionsQuery).toContain("Boolean(userId())")
     expect(listSessionsQuery).toContain("enabled(query as never)")
+    expect(listSessionsQuery).not.toContain("initialData: undefined")
   })
 
   it("uses accessor-style wrappers for base Solid query and mutation files", () => {
@@ -217,10 +219,9 @@ describe("Solid auth behavior parity", () => {
       if (file.includes("/mutations/")) {
         expect(source).toContain("useMutation(() =>")
         expect(source).not.toContain("createMutation")
-      } else if (file.includes("use-list-accounts")) {
-        expect(source).toContain("useQuery(() =>")
       } else {
-        expect(source).toContain("createQuery(() =>")
+        expect(source).toContain("useQuery(() =>")
+        expect(source).not.toContain("createQuery")
       }
     }
   })

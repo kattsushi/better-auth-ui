@@ -1,19 +1,20 @@
 import {
   type AuthClient,
-  type ListSessionsData,
   type ListSessionsOptions,
   type ListSessionsParams,
   listSessionsOptions
 } from "@better-auth-ui/core"
-import { createQuery } from "@tanstack/solid-query"
+import { useQuery } from "@tanstack/solid-query"
 import { getSessionUserId } from "../../queries/create-user-scoped-query"
 import { useSession } from "./use-session"
 
-export type UseListSessionsOptions<TAuthClient extends AuthClient> =
-  ListSessionsOptions<TAuthClient> &
-    ListSessionsParams<TAuthClient> & {
-      enabled?: boolean | ((query: never) => boolean)
-    }
+export type UseListSessionsOptions<TAuthClient extends AuthClient> = Omit<
+  ListSessionsOptions<TAuthClient>,
+  "enabled" | "initialData"
+> &
+  Partial<NonNullable<ListSessionsParams<TAuthClient>>> & {
+    enabled?: boolean | ((query: never) => boolean)
+  }
 
 export function useListSessions<TAuthClient extends AuthClient>(
   authClient: TAuthClient,
@@ -21,35 +22,21 @@ export function useListSessions<TAuthClient extends AuthClient>(
 ) {
   const session = useSession(authClient)
   const userId = () => getSessionUserId(session)
-  const { query, fetchOptions, initialData, enabled, ...queryOptions } = options
+  const { query, fetchOptions, enabled, ...restOptions } = options
+  const queryOptions = restOptions as Omit<
+    ListSessionsOptions<TAuthClient>,
+    "enabled" | "initialData"
+  >
 
-  if (initialData !== undefined) {
-    return createQuery(() => {
-      const baseOptions = listSessionsOptions(authClient, userId(), {
+  return useQuery(() => {
+    const { initialData: _initialData, ...baseOptions } = listSessionsOptions(
+      authClient,
+      userId(),
+      {
         query,
         fetchOptions
-      })
-
-      return {
-        ...queryOptions,
-        ...baseOptions,
-        enabled: (query) =>
-          Boolean(userId()) &&
-          (typeof enabled === "function"
-            ? enabled(query as never)
-            : enabled !== false),
-        initialData: initialData as
-          | ListSessionsData<TAuthClient>
-          | (() => ListSessionsData<TAuthClient>)
       }
-    })
-  }
-
-  return createQuery(() => {
-    const baseOptions = listSessionsOptions(authClient, userId(), {
-      query,
-      fetchOptions
-    })
+    )
 
     return {
       ...queryOptions,
@@ -58,8 +45,7 @@ export function useListSessions<TAuthClient extends AuthClient>(
         Boolean(userId()) &&
         (typeof enabled === "function"
           ? enabled(query as never)
-          : enabled !== false),
-      initialData: undefined
+          : enabled !== false)
     }
   })
 }
