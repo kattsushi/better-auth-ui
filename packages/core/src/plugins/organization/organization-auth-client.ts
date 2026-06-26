@@ -1,11 +1,6 @@
-import type { createAuthClient } from "better-auth/client"
+import type { InferClientAPI } from "better-auth/client"
 import type { organizationClient } from "better-auth/client/plugins"
-import type { OmitUseAndStoreKeys } from "../../lib/auth-client"
 
-export type OrganizationAuthClient = OmitUseAndStoreKeys<
-  ReturnType<
-    typeof createAuthClient<{
-      plugins: [ReturnType<typeof organizationClient<object>>]
-    }>
-  >
->
+export type OrganizationAuthClient = InferClientAPI<{
+  plugins: [ReturnType<typeof organizationClient<object>>]
+}>

@@ -1,9 +1,6 @@
 import type { passkeyClient } from "@better-auth/passkey/client"
-import type { createAuthClient } from "better-auth/client"
-import type { OmitUseAndStoreKeys } from "../../lib/auth-client"
+import type { InferClientAPI } from "better-auth/client"
 
-export type PasskeyAuthClient = OmitUseAndStoreKeys<
-  ReturnType<
-    typeof createAuthClient<{ plugins: [ReturnType<typeof passkeyClient>] }>
-  >
->
+export type PasskeyAuthClient = InferClientAPI<{
+  plugins: [ReturnType<typeof passkeyClient>]
+}>

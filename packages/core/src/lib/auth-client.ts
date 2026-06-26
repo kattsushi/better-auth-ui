@@ -1,15 +1,6 @@
-import type { createAuthClient } from "better-auth/client"
+import type { InferClientAPI } from "better-auth/client"
 
-// Sanitizes AuthClient to be agnostic.
-export type OmitUseKeys<T> = {
-  [K in keyof T as K extends `use${string}` ? never : K]: T[K]
-}
-
-export type OmitUseAndStoreKeys<T> = Omit<OmitUseKeys<T>, "$store">
-
-export type AuthClient = OmitUseAndStoreKeys<
-  ReturnType<typeof createAuthClient>
->
+export type AuthClient = InferClientAPI<object>
 
 /**
  * Unwraps a Better Auth client method's `data` payload.
