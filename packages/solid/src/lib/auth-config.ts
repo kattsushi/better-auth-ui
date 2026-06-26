@@ -7,13 +7,6 @@ import {
 } from "@better-auth-ui/core"
 import { mergeAdditionalFields, resolveRedirectTo } from "./auth-utils"
 
-declare module "@better-auth-ui/core" {
-  interface AuthConfig {
-    /** The Solid Better Auth client used by auth context consumers. */
-    authClient: AuthClient
-  }
-}
-
 export type SolidAuthConfig<TAuthClient extends AuthClient = AuthClient> = Omit<
   AuthConfig,
   "authClient"
