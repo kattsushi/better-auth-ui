@@ -1,7 +1,8 @@
+import type { InferData } from "@better-auth-ui/core"
+import type { PasskeyAuthClient } from "@better-auth-ui/core/plugins/passkey"
 import { passkeyQueryKeys } from "@better-auth-ui/core/plugins/passkey"
 import type { QueryClient } from "@tanstack/solid-query"
 import { useSession } from "../../../hooks/queries/use-session"
-import type { InferData } from "../../../lib/auth-client"
 import {
   createUserScopedOptions,
   createUserScopedQuery,
@@ -10,7 +11,6 @@ import {
   getSessionUserId,
   prefetchUserScopedQuery
 } from "../../../queries/create-user-scoped-query"
-import type { PasskeyAuthClient } from "../passkey-auth-client"
 
 export type ListPasskeysData<TAuthClient extends PasskeyAuthClient> = InferData<
   TAuthClient["passkey"]["listUserPasskeys"]

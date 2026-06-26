@@ -1,3 +1,4 @@
+import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import {
   type CreateMutationOptions,
   type MutationKey,
@@ -9,7 +10,6 @@ import {
   createAuthMutationOptions,
   type MutationMethod
 } from "../../../mutations/create-auth-mutation"
-import type { OrganizationAuthClient } from "../organization-auth-client"
 import type { AuthMutationMeta } from "./metadata"
 
 export type OrganizationMutationOptions<TMethod extends MutationMethod> = Omit<

@@ -1,10 +1,10 @@
+import type { MultiSessionAuthClient } from "@better-auth-ui/core/plugins/multi-session"
 import {
   type RevokeMultiSessionOptions,
   revokeMultiSessionOptions
 } from "@better-auth-ui/core/plugins/multi-session"
 import { useMutation } from "@tanstack/solid-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-import type { MultiSessionAuthClient } from "../../multi-session-auth-client"
 
 export function useRevokeMultiSession<
   TAuthClient extends MultiSessionAuthClient

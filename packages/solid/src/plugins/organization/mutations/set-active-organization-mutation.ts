@@ -1,10 +1,10 @@
+import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import {
   organizationMutationKeys,
   organizationQueryKeys
 } from "@better-auth-ui/core/plugins/organization"
 import { useMutation, useQueryClient } from "@tanstack/solid-query"
 import { useSession } from "../../../hooks/queries/use-session"
-import type { OrganizationAuthClient } from "../organization-auth-client"
 import { useListOrganizations } from "../queries"
 import { setActiveOrganizationMeta } from "./metadata"
 import {

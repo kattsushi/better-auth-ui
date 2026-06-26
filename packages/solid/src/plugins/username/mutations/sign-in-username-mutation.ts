@@ -1,8 +1,8 @@
 import { authQueryKeys } from "@better-auth-ui/core"
+import type { UsernameAuthClient } from "@better-auth-ui/core/plugins/username"
 import { usernameMutationKeys } from "@better-auth-ui/core/plugins/username"
 import { useMutation } from "@tanstack/solid-query"
 import { createAuthMutationOptions } from "../../../mutations/create-auth-mutation"
-import type { UsernameAuthClient } from "../username-auth-client"
 
 export type SignInUsernameParams<TAuthClient extends UsernameAuthClient> =
   Parameters<TAuthClient["signIn"]["username"]>[0]

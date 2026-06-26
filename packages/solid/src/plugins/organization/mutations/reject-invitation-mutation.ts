@@ -1,5 +1,5 @@
+import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import { organizationMutationKeys } from "@better-auth-ui/core/plugins/organization"
-import type { OrganizationAuthClient } from "../organization-auth-client"
 import { rejectInvitationMeta } from "./metadata"
 import {
   createOrganizationMutationOptions,

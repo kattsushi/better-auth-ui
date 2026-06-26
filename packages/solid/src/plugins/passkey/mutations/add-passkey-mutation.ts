@@ -1,3 +1,4 @@
+import type { PasskeyAuthClient } from "@better-auth-ui/core/plugins/passkey"
 import {
   passkeyMutationKeys,
   passkeyQueryKeys
@@ -5,7 +6,6 @@ import {
 import { useMutation } from "@tanstack/solid-query"
 import { useSession } from "../../../hooks/queries/use-session"
 import { createAuthMutationOptions } from "../../../mutations/create-auth-mutation"
-import type { PasskeyAuthClient } from "../passkey-auth-client"
 
 export type AddPasskeyParams<TAuthClient extends PasskeyAuthClient> =
   Parameters<TAuthClient["passkey"]["addPasskey"]>[0]
