@@ -1,6 +1,6 @@
+import type { AuthClient } from "@better-auth-ui/core"
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query"
 import { createContext, type JSX, useContext } from "solid-js"
-import type { AuthClient } from "./auth-client"
 import {
   resolveAuthConfig,
   type SolidAuthConfig,

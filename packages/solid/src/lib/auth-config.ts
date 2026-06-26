@@ -1,10 +1,10 @@
+import type { AuthClient } from "@better-auth-ui/core"
 import {
   type AuthConfig,
   type DeepPartial,
   deepmerge,
   defaultAuthConfig
 } from "@better-auth-ui/core"
-import type { AuthClient } from "./auth-client"
 import { mergeAdditionalFields, resolveRedirectTo } from "./auth-utils"
 
 declare module "@better-auth-ui/core" {
