@@ -27,39 +27,21 @@ const fallbackQueryClient = new QueryClient({
 })
 
 declare module "@better-auth-ui/core" {
-  interface AuthConfig {
-    /**
-     * The auth client to use for the authentication context.
-     * @remarks `AuthClient`
-     */
-    authClient: AuthClient
-  }
-
   /** Widen `AdditionalField.label` to `ReactNode` in the React package. */
   interface AdditionalFieldRegister {
     label: ReactNode
   }
 }
 
-export type ReactAuthConfig<TAuthClient extends AuthClient = AuthClient> = Omit<
-  AuthConfig,
-  "authClient"
-> & {
-  authClient: TAuthClient
-}
-
-export type ReactAuthConfigInput<TAuthClient extends AuthClient = AuthClient> =
-  DeepPartial<Omit<AuthConfig, "authClient">> & {
-    authClient: TAuthClient
-  }
-
 export type AuthProviderProps<TAuthClient extends AuthClient = AuthClient> =
-  PropsWithChildren<ReactAuthConfigInput<TAuthClient>> & {
-    authClient: TAuthClient
-    navigate: (options: { to: string; replace?: boolean }) => void
-    /** TanStack QueryClient to use for your application's queries */
-    queryClient?: QueryClient
-  }
+  PropsWithChildren<
+    DeepPartial<AuthConfig<TAuthClient>> & {
+      authClient: TAuthClient
+      navigate: (options: { to: string; replace?: boolean }) => void
+      /** TanStack QueryClient to use for your application's queries */
+      queryClient?: QueryClient
+    }
+  >
 
 /**
  * Provides merged authentication configuration and a resolved React Query client to descendant components.
@@ -78,12 +60,9 @@ export function AuthProvider<TAuthClient extends AuthClient = AuthClient>({
 }: AuthProviderProps<TAuthClient>) {
   const { authClient, ...partialConfig } = config
   const mergedConfig = {
-    ...deepmerge<Omit<AuthConfig, "authClient">>(
-      defaultAuthConfig,
-      partialConfig
-    ),
+    ...deepmerge(defaultAuthConfig, partialConfig),
     authClient
-  } as ReactAuthConfig<TAuthClient>
+  } as AuthConfig
 
   mergedConfig.redirectTo =
     (typeof window !== "undefined" &&
@@ -131,14 +110,12 @@ export function AuthProvider<TAuthClient extends AuthClient = AuthClient>({
  * @returns The merged authentication configuration provided by AuthProvider.
  * @throws If no AuthProvider is present in the component tree.
  */
-export function useAuth<
-  TAuthClient extends AuthClient = AuthClient
->(): ReactAuthConfig<TAuthClient> {
+export function useAuth<TAuthClient extends AuthClient = AuthClient>() {
   const context = useContext(AuthContext)
 
   if (!context) {
     throw new Error("[Better Auth UI] AuthProvider is required")
   }
 
-  return context as ReactAuthConfig<TAuthClient>
+  return context as AuthConfig<TAuthClient>
 }
