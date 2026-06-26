@@ -1,9 +1,9 @@
-import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
-import { useAuth } from "@better-auth-ui/solid"
 import type {
-  DeleteOrganizationParams,
-  OrganizationAuthClient
-} from "@better-auth-ui/solid/plugins/organization"
+  OrganizationAuthClient,
+  OrganizationLocalization
+} from "@better-auth-ui/core/plugins/organization"
+import { useAuth } from "@better-auth-ui/solid"
+import type { DeleteOrganizationParams } from "@better-auth-ui/solid/plugins/organization"
 import { useDeleteOrganization } from "@better-auth-ui/solid/plugins/organization"
 import type { Organization } from "better-auth/client"
 import { TriangleAlert } from "lucide-solid"

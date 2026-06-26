@@ -1,8 +1,6 @@
+import type { MultiSessionAuthClient } from "@better-auth-ui/core/plugins/multi-session"
 import { useAuth } from "@better-auth-ui/solid"
-import {
-  type MultiSessionAuthClient,
-  useSetActiveSession
-} from "@better-auth-ui/solid/plugins/multi-session"
+import { useSetActiveSession } from "@better-auth-ui/solid/plugins/multi-session"
 import { LoaderCircle } from "lucide-solid"
 import type { DeviceSession } from "@/components/auth/settings/shared/types"
 import { UserView } from "@/components/auth/user/user-view"

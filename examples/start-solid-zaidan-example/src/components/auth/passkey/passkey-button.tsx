@@ -1,9 +1,7 @@
 import { type AuthView, authMutationKeys } from "@better-auth-ui/core"
+import type { PasskeyAuthClient } from "@better-auth-ui/core/plugins/passkey"
 import { useAuth } from "@better-auth-ui/solid"
-import {
-  type PasskeyAuthClient,
-  useSignInPasskey
-} from "@better-auth-ui/solid/plugins/passkey"
+import { useSignInPasskey } from "@better-auth-ui/solid/plugins/passkey"
 import { useIsMutating } from "@tanstack/solid-query"
 import { Fingerprint } from "lucide-solid"
 import { passkeyLabels } from "@/components/auth/passkey/passkey-localization"

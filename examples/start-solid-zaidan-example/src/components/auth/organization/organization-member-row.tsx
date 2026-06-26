@@ -1,8 +1,10 @@
-import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
+import type {
+  OrganizationAuthClient,
+  OrganizationLocalization
+} from "@better-auth-ui/core/plugins/organization"
 import { useAuth, useSession } from "@better-auth-ui/solid"
 import type {
   LeaveOrganizationParams,
-  OrganizationAuthClient,
   RemoveMemberParams,
   UpdateMemberRoleParams
 } from "@better-auth-ui/solid/plugins/organization"

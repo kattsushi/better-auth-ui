@@ -1,5 +1,5 @@
+import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import { useAuth } from "@better-auth-ui/solid"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import {
   useCancelInvitation,
   useHasPermission

@@ -1,9 +1,9 @@
+import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import {
   organizationLocalization as defaultOrganizationLocalization,
   type OrganizationLocalization
 } from "@better-auth-ui/core/plugins/organization"
 import { useAuth, useSession } from "@better-auth-ui/solid"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import {
   useActiveOrganization,
   useListOrganizations,

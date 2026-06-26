@@ -1,4 +1,4 @@
-import type { MagicLinkAuthClient } from "@better-auth-ui/solid/plugins/magic-link"
+import type { MagicLinkAuthClient } from "@better-auth-ui/core/plugins/magic-link"
 import {
   createMemoryHistory,
   createRootRoute,

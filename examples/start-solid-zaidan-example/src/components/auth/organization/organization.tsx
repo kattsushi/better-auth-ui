@@ -1,5 +1,5 @@
+import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import { useAuth } from "@better-auth-ui/solid"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import { useActiveOrganization } from "@better-auth-ui/solid/plugins/organization"
 import { useNavigate } from "@tanstack/solid-router"
 import { Settings as SettingsIcon, Users as UsersIcon } from "lucide-solid"

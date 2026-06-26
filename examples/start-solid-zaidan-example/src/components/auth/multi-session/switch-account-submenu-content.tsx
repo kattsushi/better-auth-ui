@@ -1,13 +1,11 @@
+import type { MultiSessionAuthClient } from "@better-auth-ui/core/plugins/multi-session"
 import {
   multiSessionPlugin as coreMultiSessionPlugin,
   type MultiSessionLocalization,
   multiSessionLocalization
 } from "@better-auth-ui/core/plugins/multi-session"
 import { useAuth, useSession } from "@better-auth-ui/solid"
-import {
-  type MultiSessionAuthClient,
-  useListDeviceSessions
-} from "@better-auth-ui/solid/plugins/multi-session"
+import { useListDeviceSessions } from "@better-auth-ui/solid/plugins/multi-session"
 import { Link } from "@tanstack/solid-router"
 import { Check, CirclePlus } from "lucide-solid"
 import { For, Show } from "solid-js"

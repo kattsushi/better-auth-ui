@@ -1,8 +1,6 @@
+import type { PasskeyAuthClient } from "@better-auth-ui/core/plugins/passkey"
 import { useAuth } from "@better-auth-ui/solid"
-import {
-  type PasskeyAuthClient,
-  useListPasskeys
-} from "@better-auth-ui/solid/plugins/passkey"
+import { useListPasskeys } from "@better-auth-ui/solid/plugins/passkey"
 import { createSignal, For, Show } from "solid-js"
 import { AddPasskeyDialog } from "@/components/auth/passkey/add-passkey-dialog"
 import { Passkey } from "@/components/auth/passkey/passkey"

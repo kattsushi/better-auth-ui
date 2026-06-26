@@ -1,7 +1,9 @@
 import { fileToBase64 } from "@better-auth-ui/core"
-import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
+import type {
+  OrganizationAuthClient,
+  OrganizationLocalization
+} from "@better-auth-ui/core/plugins/organization"
 import { useAuth } from "@better-auth-ui/solid"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import {
   useActiveOrganization,
   useUpdateOrganization

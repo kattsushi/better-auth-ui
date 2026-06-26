@@ -1,9 +1,7 @@
+import type { ApiKeyAuthClient } from "@better-auth-ui/core/plugins/api-key"
 import { apiKeyLocalization } from "@better-auth-ui/core/plugins/api-key"
 import { useAuth } from "@better-auth-ui/solid"
-import {
-  type ApiKeyAuthClient,
-  useListApiKeys
-} from "@better-auth-ui/solid/plugins/api-key"
+import { useListApiKeys } from "@better-auth-ui/solid/plugins/api-key"
 import { createSignal, For, Show } from "solid-js"
 import { ApiKey } from "@/components/auth/api-key/api-key"
 import { ApiKeySkeleton } from "@/components/auth/api-key/api-key-skeleton"

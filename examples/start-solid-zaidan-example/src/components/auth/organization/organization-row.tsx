@@ -1,7 +1,9 @@
-import type { OrganizationLocalization } from "@better-auth-ui/core/plugins/organization"
+import type {
+  OrganizationAuthClient,
+  OrganizationLocalization
+} from "@better-auth-ui/core/plugins/organization"
 import { organizationLocalization } from "@better-auth-ui/core/plugins/organization"
 import { useAuth } from "@better-auth-ui/solid"
-import type { OrganizationAuthClient } from "@better-auth-ui/solid/plugins/organization"
 import { useSetActiveOrganization } from "@better-auth-ui/solid/plugins/organization"
 import { useNavigate } from "@tanstack/solid-router"
 import type { Organization } from "better-auth/client"
