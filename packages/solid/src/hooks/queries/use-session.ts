@@ -4,7 +4,11 @@ import {
   type SessionParams,
   sessionOptions
 } from "@better-auth-ui/core"
-import { type UseQueryOptions, useQuery } from "@tanstack/solid-query"
+import {
+  type QueryClient,
+  type UseQueryOptions,
+  useQuery
+} from "@tanstack/solid-query"
 import type { BetterFetchError } from "better-auth/client"
 
 export type UseSessionOptions<TAuthClient extends AuthClient> = Omit<
@@ -19,12 +23,15 @@ export type UseSessionOptions<TAuthClient extends AuthClient> = Omit<
 
 export function useSession<TAuthClient extends AuthClient>(
   authClient: TAuthClient,
-  options: UseSessionOptions<TAuthClient> = {}
+  options: UseSessionOptions<TAuthClient> = {},
+  queryClient?: () => QueryClient
 ) {
   const { query, fetchOptions, ...queryOptions } = options
 
-  return useQuery(() => ({
-    ...sessionOptions(authClient, { query, fetchOptions }),
-    ...queryOptions
-  }))
+  return useQuery(() => {
+    return {
+      ...sessionOptions(authClient, { query, fetchOptions }),
+      ...queryOptions
+    }
+  }, queryClient)
 }
