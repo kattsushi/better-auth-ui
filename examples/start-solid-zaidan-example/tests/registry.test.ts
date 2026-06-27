@@ -2699,7 +2699,7 @@ describe("Solid registry isolation", () => {
       .join("\n")
 
     expect(combinedSolidPackageDocs).toContain(
-      "@better-auth-ui/solid` owns provider wiring and Solid hooks"
+      "`@better-auth-ui/solid` owns provider wiring and Solid hooks; core owns shared option factories/helpers"
     )
     expect(combinedSolidPackageDocs).toContain("ensureSession")
     expect(combinedSolidPackageDocs).toContain("prefetchSession")
