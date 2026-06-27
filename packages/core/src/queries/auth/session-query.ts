@@ -107,3 +107,20 @@ export const fetchSession = <TAuthClient extends AuthClient>(
     ...queryOptions
   })
 }
+
+/**
+ * Read the current session synchronously from the query cache without
+ * triggering a fetch. Returns the cached session data, or `undefined` when
+ * no entry exists — use this for non-suspending reads where a network call
+ * is undesirable.
+ *
+ * @param queryClient - The TanStack Query client.
+ * @param authClient - The Better Auth client.
+ */
+export const getSession = <TAuthClient extends AuthClient = AuthClient>(
+  queryClient: QueryClient,
+  _authClient?: TAuthClient
+) => {
+  const queryKey = authQueryKeys.session
+  return queryClient.getQueryData<SessionData<TAuthClient>>(queryKey)
+}
