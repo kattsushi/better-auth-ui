@@ -62,9 +62,9 @@ export function OrganizationInvitationRow(
   props: OrganizationInvitationRowProps
 ) {
   const auth = useAuth<OrganizationAuthClient>()
-  const permission = useHasPermission(auth.authClient, {
+  const permission = useHasPermission(auth.authClient, () => ({
     permissions: { invitation: ["cancel"] }
-  })
+  }))
   const cancelInvitation = useCancelInvitation(auth.authClient)
   const roleLabel = () =>
     props.roles[props.invitation.role ?? ""] ??

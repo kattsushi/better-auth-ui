@@ -10,20 +10,11 @@ import {
   type UseQueryOptions,
   useQuery
 } from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/client"
 import { useSession } from "../../../../hooks/queries/use-session"
 
 export type UseListDeviceSessionsOptions<
   TAuthClient extends MultiSessionAuthClient
-> = Omit<
-  UseQueryOptions<
-    ListDeviceSessionsData<TAuthClient>,
-    BetterFetchError,
-    ListDeviceSessionsData<TAuthClient>,
-    ReturnType<typeof listDeviceSessionsOptions<TAuthClient>>["queryKey"]
-  >,
-  "queryKey" | "queryFn"
-> &
+> = Omit<UseQueryOptions<ListDeviceSessionsData<TAuthClient>>, "queryKey"> &
   ListDeviceSessionsParams<TAuthClient>
 
 export function useListDeviceSessions<
@@ -44,9 +35,11 @@ export function useListDeviceSessions<
 
   return useQuery(
     {
-      ...queryOptions,
       ...baseOptions,
-      queryFn: userId ? baseOptions.queryFn : skipToken
+
+      queryFn: userId ? baseOptions.queryFn : skipToken,
+
+      ...queryOptions
     },
     queryClient
   )

@@ -6,54 +6,51 @@ import {
 } from "@better-auth-ui/core/plugins/organization"
 import {
   createQuery,
-  skipToken,
-  type UseQueryOptions
+  type QueryClient,
+  type QueryOptions,
+  skipToken
 } from "@tanstack/solid-query"
-import type { BetterFetchError } from "better-auth/client"
+import type { Accessor } from "solid-js"
 import { useSession } from "../../../../hooks/queries/use-session"
 import { useOrganizationSlug } from "../../queries/plugin"
 
 export type UseActiveOrganizationOptions<
   TAuthClient extends OrganizationAuthClient
-> = Omit<
-  UseQueryOptions<
-    ActiveOrganizationData<TAuthClient>,
-    BetterFetchError,
-    ActiveOrganizationData<TAuthClient>,
-    ReturnType<typeof activeOrganizationOptions<TAuthClient>>["queryKey"]
-  >,
-  "queryKey" | "queryFn" | "initialData"
-> &
-  ActiveOrganizationParams<TAuthClient>
+> = Accessor<
+  Omit<QueryOptions<ActiveOrganizationData<TAuthClient>>, "queryKey"> &
+    ActiveOrganizationParams<TAuthClient>
+>
 
 export function useActiveOrganization<
   TAuthClient extends OrganizationAuthClient
 >(
   authClient: TAuthClient,
-  options: UseActiveOrganizationOptions<TAuthClient> = {}
+  options?: UseActiveOrganizationOptions<TAuthClient>,
+  queryClient?: Accessor<QueryClient>
 ) {
-  const session = useSession(authClient)
+  const session = useSession(authClient, undefined, queryClient)
   const slug = useOrganizationSlug()
 
   return createQuery(() => {
     const userId = session.data?.user.id
-    const { query, fetchOptions, ...queryOptionsRest } = options
+    const { query, fetchOptions, initialData, ...queryOptions } =
+      options?.() ?? {}
     const effectiveQuery = slug ? { organizationSlug: slug } : query
-    const { initialData: _initialData, ...baseOptions } =
-      activeOrganizationOptions(authClient, userId, {
-        query: effectiveQuery,
-        fetchOptions
-      } as ActiveOrganizationParams<TAuthClient>)
+    const baseOptions = activeOrganizationOptions(authClient, userId, {
+      query: effectiveQuery,
+      fetchOptions
+    } as ActiveOrganizationParams<TAuthClient>)
 
     return {
-      ...queryOptionsRest,
       ...baseOptions,
       queryFn:
         slug === null
           ? async () => null
           : userId
             ? baseOptions.queryFn
-            : skipToken
+            : skipToken,
+      ...queryOptions,
+      initialData: initialData as undefined
     }
-  })
+  }, queryClient)
 }

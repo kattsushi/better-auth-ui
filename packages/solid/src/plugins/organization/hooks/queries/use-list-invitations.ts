@@ -6,53 +6,52 @@ import {
 } from "@better-auth-ui/core/plugins/organization"
 import {
   createQuery,
-  skipToken,
-  type UseQueryOptions
+  type QueryClient,
+  type QueryOptions,
+  skipToken
 } from "@tanstack/solid-query"
-import type { BetterFetchError } from "better-auth/client"
+import type { Accessor } from "solid-js"
 import { useSession } from "../../../../hooks/queries/use-session"
 import { useActiveOrganization } from "./use-active-organization"
 
 export type UseListOrganizationInvitationsOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = Omit<
-  UseQueryOptions<
-    ListOrganizationInvitationsData<TAuthClient>,
-    BetterFetchError,
-    ListOrganizationInvitationsData<TAuthClient>,
-    ReturnType<
-      typeof listOrganizationInvitationsOptions<TAuthClient>
-    >["queryKey"]
-  >,
-  "queryKey" | "queryFn" | "initialData"
-> &
-  ListOrganizationInvitationsParams<TAuthClient>
+> = Accessor<
+  Omit<QueryOptions<ListOrganizationInvitationsData<TAuthClient>>, "queryKey"> &
+    ListOrganizationInvitationsParams<TAuthClient>
+>
 
 export function useListOrganizationInvitations<
   TAuthClient extends OrganizationAuthClient
 >(
   authClient: TAuthClient,
-  options: UseListOrganizationInvitationsOptions<TAuthClient> = {}
+  options?: UseListOrganizationInvitationsOptions<TAuthClient>,
+  queryClient?: Accessor<QueryClient>
 ) {
-  const session = useSession(authClient)
-  const activeOrganization = useActiveOrganization(authClient, {
-    enabled: !options.query?.organizationId
-  })
+  const session = useSession(authClient, undefined, queryClient)
+  const activeOrganization = useActiveOrganization(
+    authClient,
+    () => ({
+      enabled: !options?.().query?.organizationId
+    }),
+    queryClient
+  )
 
   return createQuery(() => {
     const userId = session.data?.user.id
-    const { query, fetchOptions, ...queryOptions } = options
+    const { query, fetchOptions, initialData, ...queryOptions } =
+      options?.() ?? {}
     const organizationId = query?.organizationId ?? activeOrganization.data?.id
-    const { initialData: _initialData, ...baseOptions } =
-      listOrganizationInvitationsOptions(authClient, userId, {
-        query: { ...query, organizationId },
-        fetchOptions
-      })
+    const baseOptions = listOrganizationInvitationsOptions(authClient, userId, {
+      query: { ...query, organizationId },
+      fetchOptions
+    })
 
     return {
-      ...queryOptions,
       ...baseOptions,
-      queryFn: userId && organizationId ? baseOptions.queryFn : skipToken
+      queryFn: userId && organizationId ? baseOptions.queryFn : skipToken,
+      ...queryOptions,
+      initialData: initialData as undefined
     }
-  })
+  }, queryClient)
 }

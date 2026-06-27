@@ -1,5 +1,8 @@
-import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
-import type { BetterFetchError } from "better-auth/client"
+import {
+  type QueryClient,
+  type QueryOptions,
+  skipToken
+} from "@tanstack/query-core"
 import type { InferData } from "../../lib/auth-client"
 import type { MultiSessionAuthClient } from "./multi-session-auth-client"
 import { multiSessionQueryKeys } from "./multi-session-query-keys"
@@ -18,33 +21,29 @@ export type ListDeviceSessionsParams<
 
 export type ListDeviceSessionsOptions<
   TAuthClient extends MultiSessionAuthClient = MultiSessionAuthClient
-> = Omit<
-  ReturnType<typeof listDeviceSessionsOptions<TAuthClient>>,
-  "queryKey" | "queryFn"
->
+> = Omit<QueryOptions<ListDeviceSessionsData<TAuthClient>>, "queryKey"> &
+  ListDeviceSessionsParams<TAuthClient>
 
 export function listDeviceSessionsOptions<
   TAuthClient extends MultiSessionAuthClient
 >(
   authClient: TAuthClient,
-  userId: string | undefined,
+  userId?: string,
   params?: ListDeviceSessionsParams<TAuthClient>
 ) {
   type TData = ListDeviceSessionsData<TAuthClient>
   const queryKey = multiSessionQueryKeys.list(userId, params?.query)
 
-  const options = {
+  return {
     queryKey,
-    queryFn: ({ signal }) =>
-      authClient.multiSession.listDeviceSessions({
-        ...params,
-        fetchOptions: { ...params?.fetchOptions, signal, throw: true }
-      }) as Promise<TData>
-  } as QueryOptions<TData, BetterFetchError, TData, typeof queryKey>
-
-  return options as typeof options & {
-    queryKey: DataTag<typeof queryKey, TData, BetterFetchError>
-  }
+    queryFn: userId
+      ? ({ signal }) =>
+          authClient.multiSession.listDeviceSessions({
+            ...params,
+            fetchOptions: { ...params?.fetchOptions, signal, throw: true }
+          }) as Promise<TData>
+      : skipToken
+  } satisfies QueryOptions
 }
 
 export const ensureListDeviceSessions = <
@@ -52,31 +51,56 @@ export const ensureListDeviceSessions = <
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string,
-  params?: ListDeviceSessionsParams<TAuthClient>
-) =>
-  queryClient.ensureQueryData(
-    listDeviceSessionsOptions(authClient, userId, params)
-  )
+  userId?: string,
+  options?: ListDeviceSessionsOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.ensureQueryData({
+    ...listDeviceSessionsOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 export const prefetchListDeviceSessions = <
   TAuthClient extends MultiSessionAuthClient
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string,
-  params?: ListDeviceSessionsParams<TAuthClient>
-) =>
-  queryClient.prefetchQuery(
-    listDeviceSessionsOptions(authClient, userId, params)
-  )
+  userId?: string,
+  options?: ListDeviceSessionsOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.prefetchQuery({
+    ...listDeviceSessionsOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 export const fetchListDeviceSessions = <
   TAuthClient extends MultiSessionAuthClient
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string,
+  userId?: string,
+  options?: ListDeviceSessionsOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.fetchQuery({
+    ...listDeviceSessionsOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
+export const getListDeviceSessions = <
+  TAuthClient extends MultiSessionAuthClient = MultiSessionAuthClient
+>(
+  queryClient: QueryClient,
+  _authClient?: TAuthClient,
+  userId?: string,
   params?: ListDeviceSessionsParams<TAuthClient>
-) =>
-  queryClient.fetchQuery(listDeviceSessionsOptions(authClient, userId, params))
+) => {
+  const queryKey = multiSessionQueryKeys.list(userId, params?.query)
+  return queryClient.getQueryData<ListDeviceSessionsData<TAuthClient>>(queryKey)
+}

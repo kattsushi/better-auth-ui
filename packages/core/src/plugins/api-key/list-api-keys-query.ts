@@ -1,5 +1,8 @@
-import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
-import type { BetterFetchError } from "better-auth/client"
+import {
+  type QueryClient,
+  type QueryOptions,
+  skipToken
+} from "@tanstack/query-core"
 import type { InferData } from "../../lib/auth-client"
 import type { ApiKeyAuthClient } from "./api-key-auth-client"
 import { apiKeyQueryKeys } from "./api-key-query-keys"
@@ -18,50 +21,78 @@ export type ListedApiKey<
 
 export type ListApiKeysOptions<
   TAuthClient extends ApiKeyAuthClient = ApiKeyAuthClient
-> = Omit<
-  ReturnType<typeof listApiKeysOptions<TAuthClient>>,
-  "queryKey" | "queryFn"
->
+> = Omit<QueryOptions<ListApiKeysData<TAuthClient>>, "queryKey"> &
+  ListApiKeysParams<TAuthClient>
 
 export function listApiKeysOptions<TAuthClient extends ApiKeyAuthClient>(
   authClient: TAuthClient,
-  userId: string | undefined,
+  userId?: string,
   params?: ListApiKeysParams<TAuthClient>
 ) {
   type TData = ListApiKeysData<TAuthClient>
   const queryKey = apiKeyQueryKeys.list(userId, params?.query)
 
-  const options = {
+  return {
     queryKey,
-    queryFn: ({ signal }) =>
-      authClient.apiKey.list({
-        ...params,
-        fetchOptions: { ...params?.fetchOptions, signal, throw: true }
-      }) as Promise<TData>
-  } as QueryOptions<TData, BetterFetchError, TData, typeof queryKey>
-
-  return options as typeof options & {
-    queryKey: DataTag<typeof queryKey, TData, BetterFetchError>
-  }
+    queryFn: userId
+      ? ({ signal }) =>
+          authClient.apiKey.list({
+            ...params,
+            fetchOptions: { ...params?.fetchOptions, signal, throw: true }
+          }) as Promise<TData>
+      : skipToken
+  } satisfies QueryOptions
 }
 
 export const ensureListApiKeys = <TAuthClient extends ApiKeyAuthClient>(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string,
-  params?: ListApiKeysParams<TAuthClient>
-) => queryClient.ensureQueryData(listApiKeysOptions(authClient, userId, params))
+  userId?: string,
+  options?: ListApiKeysOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.ensureQueryData({
+    ...listApiKeysOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 export const prefetchListApiKeys = <TAuthClient extends ApiKeyAuthClient>(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string,
-  params?: ListApiKeysParams<TAuthClient>
-) => queryClient.prefetchQuery(listApiKeysOptions(authClient, userId, params))
+  userId?: string,
+  options?: ListApiKeysOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.prefetchQuery({
+    ...listApiKeysOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 export const fetchListApiKeys = <TAuthClient extends ApiKeyAuthClient>(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string,
+  userId?: string,
+  options?: ListApiKeysOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.fetchQuery({
+    ...listApiKeysOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
+export const getListApiKeys = <
+  TAuthClient extends ApiKeyAuthClient = ApiKeyAuthClient
+>(
+  queryClient: QueryClient,
+  _authClient?: TAuthClient,
+  userId?: string,
   params?: ListApiKeysParams<TAuthClient>
-) => queryClient.fetchQuery(listApiKeysOptions(authClient, userId, params))
+) => {
+  const queryKey = apiKeyQueryKeys.list(userId, params?.query)
+  return queryClient.getQueryData<ListApiKeysData<TAuthClient>>(queryKey)
+}

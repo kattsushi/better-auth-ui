@@ -6,32 +6,30 @@ import {
 } from "@better-auth-ui/core/plugins/api-key"
 import {
   createQuery,
-  skipToken,
-  type UseQueryOptions
+  type QueryClient,
+  type QueryOptions,
+  skipToken
 } from "@tanstack/solid-query"
-import type { BetterFetchError } from "better-auth/client"
+import type { Accessor } from "solid-js"
 import { useSession } from "../../../../hooks/queries/use-session"
 
-export type UseListApiKeysOptions<TAuthClient extends ApiKeyAuthClient> = Omit<
-  UseQueryOptions<
-    ListApiKeysData<TAuthClient>,
-    BetterFetchError,
-    ListApiKeysData<TAuthClient>,
-    ReturnType<typeof listApiKeysOptions<TAuthClient>>["queryKey"]
-  >,
-  "queryKey" | "queryFn" | "initialData"
-> &
-  ListApiKeysParams<TAuthClient>
+export type UseListApiKeysOptions<TAuthClient extends ApiKeyAuthClient> =
+  Accessor<
+    Omit<QueryOptions<ListApiKeysData<TAuthClient>>, "queryKey"> &
+      ListApiKeysParams<TAuthClient>
+  >
 
 export function useListApiKeys<TAuthClient extends ApiKeyAuthClient>(
   authClient: TAuthClient,
-  options: UseListApiKeysOptions<TAuthClient> = {}
+  options?: UseListApiKeysOptions<TAuthClient>,
+  queryClient?: Accessor<QueryClient>
 ) {
-  const session = useSession(authClient)
+  const session = useSession(authClient, undefined, queryClient)
 
   return createQuery(() => {
     const userId = session.data?.user.id
-    const { query, fetchOptions, ...queryOptionsRest } = options
+    const { query, fetchOptions, initialData, ...queryOptions } =
+      options?.() ?? {}
     const queryParams = query as
       | { configId?: string; organizationId?: string }
       | undefined
@@ -39,19 +37,16 @@ export function useListApiKeys<TAuthClient extends ApiKeyAuthClient>(
       queryParams?.configId === "organization"
         ? Boolean(queryParams.organizationId)
         : true
-    const { initialData: _initialData, ...baseOptions } = listApiKeysOptions(
-      authClient,
-      userId,
-      {
-        query,
-        fetchOptions
-      }
-    )
+    const baseOptions = listApiKeysOptions(authClient, userId, {
+      query,
+      fetchOptions
+    })
 
     return {
-      ...queryOptionsRest,
       ...baseOptions,
-      queryFn: userId && hasRequiredParams ? baseOptions.queryFn : skipToken
+      queryFn: userId && hasRequiredParams ? baseOptions.queryFn : skipToken,
+      ...queryOptions,
+      initialData: initialData as undefined
     }
-  })
+  }, queryClient)
 }

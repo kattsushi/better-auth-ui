@@ -34,7 +34,7 @@ export function ApiKeys(props: ApiKeysProps = {}) {
           }
         }
       : undefined
-  const apiKeys = useListApiKeys(auth.authClient, listParams())
+  const apiKeys = useListApiKeys(auth.authClient, () => listParams() ?? {})
   const keys = () => apiKeys.data?.apiKeys ?? []
   const pending = () => Boolean(props.isPending || apiKeys.isPending)
 

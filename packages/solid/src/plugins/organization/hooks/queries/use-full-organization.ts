@@ -6,41 +6,41 @@ import {
 } from "@better-auth-ui/core/plugins/organization"
 import {
   createQuery,
-  skipToken,
-  type UseQueryOptions
+  type QueryClient,
+  type QueryOptions,
+  skipToken
 } from "@tanstack/solid-query"
-import type { BetterFetchError } from "better-auth/client"
+import type { Accessor } from "solid-js"
 import { useSession } from "../../../../hooks/queries/use-session"
 
 export type UseFullOrganizationOptions<
   TAuthClient extends OrganizationAuthClient
-> = Omit<
-  UseQueryOptions<
-    FullOrganizationData<TAuthClient>,
-    BetterFetchError,
-    FullOrganizationData<TAuthClient>,
-    ReturnType<typeof fullOrganizationOptions<TAuthClient>>["queryKey"]
-  >,
-  "queryKey" | "queryFn" | "initialData"
-> &
-  FullOrganizationParams<TAuthClient>
+> = Accessor<
+  Omit<QueryOptions<FullOrganizationData<TAuthClient>>, "queryKey"> &
+    FullOrganizationParams<TAuthClient>
+>
 
 export function useFullOrganization<TAuthClient extends OrganizationAuthClient>(
   authClient: TAuthClient,
-  options: UseFullOrganizationOptions<TAuthClient> = {}
+  options?: UseFullOrganizationOptions<TAuthClient>,
+  queryClient?: Accessor<QueryClient>
 ) {
-  const session = useSession(authClient)
+  const session = useSession(authClient, undefined, queryClient)
 
   return createQuery(() => {
     const userId = session.data?.user.id
-    const { query, fetchOptions, ...queryOptions } = options
-    const { initialData: _initialData, ...baseOptions } =
-      fullOrganizationOptions(authClient, userId, { query, fetchOptions })
+    const { query, fetchOptions, initialData, ...queryOptions } =
+      options?.() ?? {}
+    const baseOptions = fullOrganizationOptions(authClient, userId, {
+      query,
+      fetchOptions
+    })
 
     return {
-      ...queryOptions,
       ...baseOptions,
-      queryFn: userId ? baseOptions.queryFn : skipToken
+      queryFn: userId ? baseOptions.queryFn : skipToken,
+      ...queryOptions,
+      initialData: initialData as undefined
     }
-  })
+  }, queryClient)
 }

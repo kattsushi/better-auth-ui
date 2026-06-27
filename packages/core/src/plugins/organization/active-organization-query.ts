@@ -1,5 +1,8 @@
-import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
-import type { BetterFetchError } from "better-auth/client"
+import {
+  type QueryClient,
+  type QueryOptions,
+  skipToken
+} from "@tanstack/query-core"
 import type { FullOrganizationParams } from "./full-organization-query"
 import type { ListOrganization } from "./list-organizations-query"
 import type { OrganizationAuthClient } from "./organization-auth-client"
@@ -20,16 +23,14 @@ export type ActiveOrganizationParams<
 
 export type ActiveOrganizationOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = Omit<
-  ReturnType<typeof activeOrganizationOptions<TAuthClient>>,
-  "queryKey" | "queryFn"
->
+> = Omit<QueryOptions<ActiveOrganizationData<TAuthClient>>, "queryKey"> &
+  ActiveOrganizationParams<TAuthClient>
 
 export function activeOrganizationOptions<
   TAuthClient extends OrganizationAuthClient
 >(
   authClient: TAuthClient,
-  userId: string | undefined,
+  userId?: string,
   params?: ActiveOrganizationParams<TAuthClient>
 ) {
   type TData = ActiveOrganizationData<TAuthClient>
@@ -38,18 +39,16 @@ export function activeOrganizationOptions<
     params?.query
   )
 
-  const options = {
+  return {
     queryKey,
-    queryFn: ({ signal }) =>
-      authClient.organization.getFullOrganization({
-        ...params,
-        fetchOptions: { ...params?.fetchOptions, signal, throw: true }
-      }) as Promise<TData>
-  } as QueryOptions<TData, BetterFetchError, TData, typeof queryKey>
-
-  return options as typeof options & {
-    queryKey: DataTag<typeof queryKey, TData, BetterFetchError>
-  }
+    queryFn: userId
+      ? ({ signal }) =>
+          authClient.organization.getFullOrganization({
+            ...params,
+            fetchOptions: { ...params?.fetchOptions, signal, throw: true }
+          }) as Promise<TData>
+      : skipToken
+  } satisfies QueryOptions
 }
 
 export const ensureActiveOrganization = <
@@ -57,31 +56,59 @@ export const ensureActiveOrganization = <
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
-  params?: ActiveOrganizationParams<TAuthClient>
-) =>
-  queryClient.ensureQueryData(
-    activeOrganizationOptions(authClient, userId, params)
-  )
+  userId?: string,
+  options?: ActiveOrganizationOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.ensureQueryData({
+    ...activeOrganizationOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 export const prefetchActiveOrganization = <
   TAuthClient extends OrganizationAuthClient
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
-  params?: ActiveOrganizationParams<TAuthClient>
-) =>
-  queryClient.prefetchQuery(
-    activeOrganizationOptions(authClient, userId, params)
-  )
+  userId?: string,
+  options?: ActiveOrganizationOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.prefetchQuery({
+    ...activeOrganizationOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 export const fetchActiveOrganization = <
   TAuthClient extends OrganizationAuthClient
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
+  userId?: string,
+  options?: ActiveOrganizationOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.fetchQuery({
+    ...activeOrganizationOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
+export const getActiveOrganization = <
+  TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
+>(
+  queryClient: QueryClient,
+  _authClient?: TAuthClient,
+  userId?: string,
   params?: ActiveOrganizationParams<TAuthClient>
-) =>
-  queryClient.fetchQuery(activeOrganizationOptions(authClient, userId, params))
+) => {
+  const queryKey = organizationQueryKeys.activeOrganization(
+    userId,
+    params?.query
+  )
+  return queryClient.getQueryData<ActiveOrganizationData<TAuthClient>>(queryKey)
+}

@@ -10,20 +10,11 @@ import {
   type UseQueryOptions,
   useQuery
 } from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/client"
 import { useSession } from "../../../../hooks/queries/use-session"
 
 export type UseFullOrganizationOptions<
   TAuthClient extends OrganizationAuthClient
-> = Omit<
-  UseQueryOptions<
-    FullOrganizationData<TAuthClient>,
-    BetterFetchError,
-    FullOrganizationData<TAuthClient>,
-    ReturnType<typeof fullOrganizationOptions<TAuthClient>>["queryKey"]
-  >,
-  "queryKey" | "queryFn"
-> &
+> = Omit<UseQueryOptions<FullOrganizationData<TAuthClient>>, "queryKey"> &
   FullOrganizationParams<TAuthClient>
 
 export function useFullOrganization<TAuthClient extends OrganizationAuthClient>(
@@ -41,9 +32,11 @@ export function useFullOrganization<TAuthClient extends OrganizationAuthClient>(
 
   return useQuery(
     {
-      ...queryOptions,
       ...baseOptions,
-      queryFn: userId ? baseOptions.queryFn : skipToken
+
+      queryFn: userId ? baseOptions.queryFn : skipToken,
+
+      ...queryOptions
     },
     queryClient
   )

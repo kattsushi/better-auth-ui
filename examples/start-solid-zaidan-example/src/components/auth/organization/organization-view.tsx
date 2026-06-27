@@ -60,15 +60,15 @@ export function OrganizationView(props: OrganizationViewProps) {
       member: organizationLocalization.member
     }
   const session = useSession(client)
-  const activeOrganization = useActiveOrganization(client, {
+  const activeOrganization = useActiveOrganization(client, () => ({
     enabled: !local.organization && !local.isPending
-  } as never)
+  }))
   const resolvedOrganization = () =>
     local.organization ?? activeOrganization.data
-  const membersList = useListOrganizationMembers(client, {
+  const membersList = useListOrganizationMembers(client, () => ({
     query: { organizationId: resolvedOrganization()?.id },
     enabled: !!resolvedOrganization()?.id && !local.hideRole
-  } as never)
+  }))
   const membership = () =>
     (membersList.data?.members as OrganizationMember[] | undefined)?.find(
       (member) => member.userId === session.data?.user.id

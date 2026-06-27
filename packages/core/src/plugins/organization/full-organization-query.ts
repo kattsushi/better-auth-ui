@@ -1,5 +1,8 @@
-import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
-import type { BetterFetchError } from "better-auth/client"
+import {
+  type QueryClient,
+  type QueryOptions,
+  skipToken
+} from "@tanstack/query-core"
 import type { InferData } from "../../lib/auth-client"
 import type { OrganizationAuthClient } from "./organization-auth-client"
 import { organizationQueryKeys } from "./organization-query-keys"
@@ -14,33 +17,29 @@ export type FullOrganizationParams<
 
 export type FullOrganizationOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = Omit<
-  ReturnType<typeof fullOrganizationOptions<TAuthClient>>,
-  "queryKey" | "queryFn"
->
+> = Omit<QueryOptions<FullOrganizationData<TAuthClient>>, "queryKey"> &
+  FullOrganizationParams<TAuthClient>
 
 export function fullOrganizationOptions<
   TAuthClient extends OrganizationAuthClient
 >(
   authClient: TAuthClient,
-  userId: string | undefined,
+  userId?: string,
   params?: FullOrganizationParams<TAuthClient>
 ) {
   type TData = FullOrganizationData<TAuthClient>
   const queryKey = organizationQueryKeys.fullDetail(userId, params?.query)
 
-  const options = {
+  return {
     queryKey,
-    queryFn: ({ signal }) =>
-      authClient.organization.getFullOrganization({
-        ...params,
-        fetchOptions: { ...params?.fetchOptions, signal, throw: true }
-      }) as Promise<TData>
-  } as QueryOptions<TData, BetterFetchError, TData, typeof queryKey>
-
-  return options as typeof options & {
-    queryKey: DataTag<typeof queryKey, TData, BetterFetchError>
-  }
+    queryFn: userId
+      ? ({ signal }) =>
+          authClient.organization.getFullOrganization({
+            ...params,
+            fetchOptions: { ...params?.fetchOptions, signal, throw: true }
+          }) as Promise<TData>
+      : skipToken
+  } satisfies QueryOptions
 }
 
 export const ensureFullOrganization = <
@@ -48,28 +47,45 @@ export const ensureFullOrganization = <
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
-  params?: FullOrganizationParams<TAuthClient>
-) =>
-  queryClient.ensureQueryData(
-    fullOrganizationOptions(authClient, userId, params)
-  )
+  userId?: string,
+  options?: FullOrganizationOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.ensureQueryData({
+    ...fullOrganizationOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 export const prefetchFullOrganization = <
   TAuthClient extends OrganizationAuthClient
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
-  params?: FullOrganizationParams<TAuthClient>
-) =>
-  queryClient.prefetchQuery(fullOrganizationOptions(authClient, userId, params))
+  userId?: string,
+  options?: FullOrganizationOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.prefetchQuery({
+    ...fullOrganizationOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 export const fetchFullOrganization = <
   TAuthClient extends OrganizationAuthClient
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
-  params?: FullOrganizationParams<TAuthClient>
-) => queryClient.fetchQuery(fullOrganizationOptions(authClient, userId, params))
+  userId?: string,
+  options?: FullOrganizationOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.fetchQuery({
+    ...fullOrganizationOptions(authClient, userId, { query, fetchOptions }),
+    ...queryOptions
+  })
+}

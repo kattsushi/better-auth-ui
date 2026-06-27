@@ -10,21 +10,12 @@ import {
   type UseQueryOptions,
   useQuery
 } from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/client"
 import { useSession } from "../../../../hooks/queries/use-session"
 import { useActiveOrganization } from "./use-active-organization"
 
 export type UseHasPermissionOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = Omit<
-  UseQueryOptions<
-    HasPermissionData<TAuthClient>,
-    BetterFetchError,
-    HasPermissionData<TAuthClient>,
-    ReturnType<typeof hasPermissionOptions<TAuthClient>>["queryKey"]
-  >,
-  "queryKey" | "queryFn"
-> &
+> = Omit<UseQueryOptions<HasPermissionData<TAuthClient>>, "queryKey"> &
   HasPermissionParams<TAuthClient>
 
 export function useHasPermission<TAuthClient extends OrganizationAuthClient>(
@@ -57,9 +48,11 @@ export function useHasPermission<TAuthClient extends OrganizationAuthClient>(
 
   return useQuery(
     {
-      ...queryOptions,
       ...baseOptions,
-      queryFn: userId && organizationId ? baseOptions.queryFn : skipToken
+
+      queryFn: userId && organizationId ? baseOptions.queryFn : skipToken,
+
+      ...queryOptions
     },
     queryClient
   )

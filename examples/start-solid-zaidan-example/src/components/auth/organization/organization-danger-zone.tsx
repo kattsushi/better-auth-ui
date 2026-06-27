@@ -38,9 +38,9 @@ const fallbackLocalization = {
 
 export function OrganizationDangerZone(props: OrganizationDangerZoneProps) {
   const auth = useAuth<OrganizationAuthClient>()
-  const deletePermission = useHasPermission(auth.authClient, {
+  const deletePermission = useHasPermission(auth.authClient, () => ({
     permissions: { organization: ["delete"] }
-  })
+  }))
   const organizationPluginConfig = () =>
     auth.plugins.find((plugin) => plugin.id === organizationPlugin.id) as
       | {

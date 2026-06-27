@@ -1,5 +1,8 @@
-import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
-import type { BetterFetchError } from "better-auth/client"
+import {
+  type QueryClient,
+  type QueryOptions,
+  skipToken
+} from "@tanstack/query-core"
 import type { InferData } from "../../lib/auth-client"
 import type { OrganizationAuthClient } from "./organization-auth-client"
 import { organizationQueryKeys } from "./organization-query-keys"
@@ -15,32 +18,31 @@ export type ListOrganizationInvitationsParams<
 export type ListOrganizationInvitationsOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
 > = Omit<
-  ReturnType<typeof listOrganizationInvitationsOptions<TAuthClient>>,
-  "queryKey" | "queryFn"
->
+  QueryOptions<ListOrganizationInvitationsData<TAuthClient>>,
+  "queryKey"
+> &
+  ListOrganizationInvitationsParams<TAuthClient>
 
 export function listOrganizationInvitationsOptions<
   TAuthClient extends OrganizationAuthClient
 >(
   authClient: TAuthClient,
-  userId: string | undefined,
+  userId?: string,
   params?: ListOrganizationInvitationsParams<TAuthClient>
 ) {
   type TData = ListOrganizationInvitationsData<TAuthClient>
   const queryKey = organizationQueryKeys.invitations.list(userId, params?.query)
 
-  const options = {
+  return {
     queryKey,
-    queryFn: ({ signal }) =>
-      authClient.organization.listInvitations({
-        ...params,
-        fetchOptions: { ...params?.fetchOptions, signal, throw: true }
-      }) as Promise<TData>
-  } as QueryOptions<TData, BetterFetchError, TData, typeof queryKey>
-
-  return options as typeof options & {
-    queryKey: DataTag<typeof queryKey, TData, BetterFetchError>
-  }
+    queryFn: userId
+      ? ({ signal }) =>
+          authClient.organization.listInvitations({
+            ...params,
+            fetchOptions: { ...params?.fetchOptions, signal, throw: true }
+          }) as Promise<TData>
+      : skipToken
+  } satisfies QueryOptions
 }
 
 export const ensureListOrganizationInvitations = <
@@ -48,33 +50,67 @@ export const ensureListOrganizationInvitations = <
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
-  params?: ListOrganizationInvitationsParams<TAuthClient>
-) =>
-  queryClient.ensureQueryData(
-    listOrganizationInvitationsOptions(authClient, userId, params)
-  )
+  userId?: string,
+  options?: ListOrganizationInvitationsOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.ensureQueryData({
+    ...listOrganizationInvitationsOptions(authClient, userId, {
+      query,
+      fetchOptions
+    }),
+    ...queryOptions
+  })
+}
 
 export const prefetchListOrganizationInvitations = <
   TAuthClient extends OrganizationAuthClient
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
-  params?: ListOrganizationInvitationsParams<TAuthClient>
-) =>
-  queryClient.prefetchQuery(
-    listOrganizationInvitationsOptions(authClient, userId, params)
-  )
+  userId?: string,
+  options?: ListOrganizationInvitationsOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.prefetchQuery({
+    ...listOrganizationInvitationsOptions(authClient, userId, {
+      query,
+      fetchOptions
+    }),
+    ...queryOptions
+  })
+}
 
 export const fetchListOrganizationInvitations = <
   TAuthClient extends OrganizationAuthClient
 >(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  userId: string | undefined,
+  userId?: string,
+  options?: ListOrganizationInvitationsOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.fetchQuery({
+    ...listOrganizationInvitationsOptions(authClient, userId, {
+      query,
+      fetchOptions
+    }),
+    ...queryOptions
+  })
+}
+export const getListOrganizationInvitations = <
+  TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
+>(
+  queryClient: QueryClient,
+  _authClient?: TAuthClient,
+  userId?: string,
   params?: ListOrganizationInvitationsParams<TAuthClient>
-) =>
-  queryClient.fetchQuery(
-    listOrganizationInvitationsOptions(authClient, userId, params)
+) => {
+  const queryKey = organizationQueryKeys.invitations.list(userId, params?.query)
+  return queryClient.getQueryData<ListOrganizationInvitationsData<TAuthClient>>(
+    queryKey
   )
+}

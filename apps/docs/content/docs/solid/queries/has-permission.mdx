@@ -8,9 +8,9 @@ description: Check organization permissions for the current member.
 ```tsx
 import { useHasPermission } from "@better-auth-ui/solid/plugins/organization"
 
-const result = useHasPermission(authClient, {
+const result = useHasPermission(authClient, () => ({
   permissions: { organization: ["update"] }
-})
+}))
 ```
 
 Organization queries require `organizationClient()` on your Better Auth client. Queries that depend on a signed-in user wait for session data before calling Better Auth.

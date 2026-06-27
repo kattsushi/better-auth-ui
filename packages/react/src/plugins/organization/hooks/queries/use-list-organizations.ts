@@ -10,20 +10,11 @@ import {
   type UseQueryOptions,
   useQuery
 } from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/client"
 import { useSession } from "../../../../hooks/queries/use-session"
 
 export type UseListOrganizationsOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = Omit<
-  UseQueryOptions<
-    ListOrganizationsData<TAuthClient>,
-    BetterFetchError,
-    ListOrganizationsData<TAuthClient>,
-    ReturnType<typeof listOrganizationsOptions<TAuthClient>>["queryKey"]
-  >,
-  "queryKey" | "queryFn"
-> &
+> = Omit<UseQueryOptions<ListOrganizationsData<TAuthClient>>, "queryKey"> &
   ListOrganizationsParams<TAuthClient>
 
 export function useListOrganizations<
@@ -36,7 +27,7 @@ export function useListOrganizations<
   const { data: session } = useSession(authClient, undefined, queryClient)
   const userId = session?.user.id
 
-  const { query, fetchOptions, ...queryOptionsRest } = options
+  const { query, fetchOptions, ...queryOptions } = options
   const baseOptions = listOrganizationsOptions(authClient, userId, {
     query,
     fetchOptions
@@ -44,9 +35,11 @@ export function useListOrganizations<
 
   return useQuery(
     {
-      ...queryOptionsRest,
       ...baseOptions,
-      queryFn: userId ? baseOptions.queryFn : skipToken
+
+      queryFn: userId ? baseOptions.queryFn : skipToken,
+
+      ...queryOptions
     },
     queryClient
   )

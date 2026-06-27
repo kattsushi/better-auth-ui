@@ -198,12 +198,12 @@ export function OrganizationMemberRow(props: OrganizationMemberRowProps) {
   const [leaveOpen, setLeaveOpen] = createSignal(false)
   const session = useSession(auth.authClient)
   const user = () => props.member.user
-  const permission = useHasPermission(auth.authClient, {
+  const permission = useHasPermission(auth.authClient, () => ({
     permissions: { member: ["update"] }
-  })
-  const deletePermission = useHasPermission(auth.authClient, {
+  }))
+  const deletePermission = useHasPermission(auth.authClient, () => ({
     permissions: { member: ["delete"] }
-  })
+  }))
   const updateMemberRole = useUpdateMemberRole(auth.authClient, {
     onSuccess: () => toast.success(props.localization.memberRoleUpdated)
   })

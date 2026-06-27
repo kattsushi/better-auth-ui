@@ -6,43 +6,43 @@ import {
 } from "@better-auth-ui/core/plugins/multi-session"
 import {
   createQuery,
-  skipToken,
-  type UseQueryOptions
+  type QueryClient,
+  type QueryOptions,
+  skipToken
 } from "@tanstack/solid-query"
-import type { BetterFetchError } from "better-auth/client"
+import type { Accessor } from "solid-js"
 import { useSession } from "../../../../hooks/queries/use-session"
 
 export type UseListDeviceSessionsOptions<
   TAuthClient extends MultiSessionAuthClient
-> = Omit<
-  UseQueryOptions<
-    ListDeviceSessionsData<TAuthClient>,
-    BetterFetchError,
-    ListDeviceSessionsData<TAuthClient>,
-    ReturnType<typeof listDeviceSessionsOptions<TAuthClient>>["queryKey"]
-  >,
-  "queryKey" | "queryFn" | "initialData"
-> &
-  ListDeviceSessionsParams<TAuthClient>
+> = Accessor<
+  Omit<QueryOptions<ListDeviceSessionsData<TAuthClient>>, "queryKey"> &
+    ListDeviceSessionsParams<TAuthClient>
+>
 
 export function useListDeviceSessions<
   TAuthClient extends MultiSessionAuthClient
 >(
   authClient: TAuthClient,
-  options: UseListDeviceSessionsOptions<TAuthClient> = {}
+  options?: UseListDeviceSessionsOptions<TAuthClient>,
+  queryClient?: Accessor<QueryClient>
 ) {
-  const session = useSession(authClient)
+  const session = useSession(authClient, undefined, queryClient)
 
   return createQuery(() => {
     const userId = session.data?.user.id
-    const { query, fetchOptions, ...queryOptions } = options
-    const { initialData: _initialData, ...baseOptions } =
-      listDeviceSessionsOptions(authClient, userId, { query, fetchOptions })
+    const { query, fetchOptions, initialData, ...queryOptions } =
+      options?.() ?? {}
+    const baseOptions = listDeviceSessionsOptions(authClient, userId, {
+      query,
+      fetchOptions
+    })
 
     return {
-      ...queryOptions,
       ...baseOptions,
-      queryFn: userId ? baseOptions.queryFn : skipToken
+      queryFn: userId ? baseOptions.queryFn : skipToken,
+      ...queryOptions,
+      initialData: initialData as undefined
     }
-  })
+  }, queryClient)
 }

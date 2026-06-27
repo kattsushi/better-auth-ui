@@ -10,19 +10,10 @@ import {
   type UseQueryOptions,
   useQuery
 } from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/client"
 import { useSession } from "../../../../hooks/queries/use-session"
 
 export type UseListPasskeysOptions<TAuthClient extends PasskeyAuthClient> =
-  Omit<
-    UseQueryOptions<
-      ListPasskeysData<TAuthClient>,
-      BetterFetchError,
-      ListPasskeysData<TAuthClient>,
-      ReturnType<typeof listPasskeysOptions<TAuthClient>>["queryKey"]
-    >,
-    "queryKey" | "queryFn"
-  > &
+  Omit<UseQueryOptions<ListPasskeysData<TAuthClient>>, "queryKey"> &
     ListPasskeysParams<TAuthClient>
 
 export function useListPasskeys<TAuthClient extends PasskeyAuthClient>(
@@ -41,9 +32,9 @@ export function useListPasskeys<TAuthClient extends PasskeyAuthClient>(
 
   return useQuery(
     {
-      ...queryOptions,
       ...baseOptions,
-      queryFn: userId ? baseOptions.queryFn : skipToken
+      queryFn: userId ? baseOptions.queryFn : skipToken,
+      ...queryOptions
     },
     queryClient
   )
