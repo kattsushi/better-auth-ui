@@ -12,7 +12,7 @@ import {
 import type { Accessor } from "solid-js"
 
 export type UseSessionOptions<TAuthClient extends AuthClient> = Accessor<
-  Partial<Omit<QueryOptions<SessionData<TAuthClient>>, "queryKey">> &
+  Omit<QueryOptions<SessionData<TAuthClient>>, "queryKey"> &
     SessionParams<TAuthClient>
 >
 
