@@ -1,14 +1,20 @@
 import {
   type AuthClient,
-  type ListSessionsOptions,
+  type ListSessionsData,
   type ListSessionsParams,
   listSessionsOptions
 } from "@better-auth-ui/core"
-import { type QueryClient, useQuery } from "@tanstack/react-query"
+import {
+  type QueryClient,
+  type UseQueryOptions,
+  useQuery
+} from "@tanstack/react-query"
 import { useSession } from "./use-session"
 
-export type UseListSessionsOptions<TAuthClient extends AuthClient> =
-  ListSessionsOptions<TAuthClient> & ListSessionsParams<TAuthClient>
+export type UseListSessionsOptions<TAuthClient extends AuthClient> = Partial<
+  UseQueryOptions<ListSessionsData<TAuthClient>>
+> &
+  ListSessionsParams<TAuthClient>
 
 /**
  * Subscribe to the current user's active sessions via TanStack Query.

@@ -1,23 +1,19 @@
-import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
-import type { BetterFetchError } from "better-auth/client"
+import type { QueryClient, QueryOptions } from "@tanstack/query-core"
 import type { AuthClient, InferData } from "../../lib/auth-client"
 import { authQueryKeys } from "../../lib/auth-query-keys"
 
-export type SessionData<TAuthClient extends AuthClient = AuthClient> =
-  InferData<TAuthClient["getSession"]>
-
-export type Session<TAuthClient extends AuthClient = AuthClient> = NonNullable<
-  SessionData<TAuthClient>
+export type SessionData<TAuthClient extends AuthClient> = InferData<
+  TAuthClient["getSession"]
 >
 
 export type SessionParams<TAuthClient extends AuthClient> = Parameters<
   TAuthClient["getSession"]
 >[0]
 
-export type SessionOptions<TAuthClient extends AuthClient> = Omit<
-  ReturnType<typeof sessionOptions<TAuthClient>>,
-  "queryKey" | "queryFn"
->
+export type SessionOptions<TAuthClient extends AuthClient> = Partial<
+  Omit<QueryOptions<SessionData<TAuthClient>>, "queryKey">
+> &
+  SessionParams<TAuthClient>
 
 /**
  * Query options factory for the current session.
@@ -35,18 +31,14 @@ export function sessionOptions<TAuthClient extends AuthClient>(
   type TData = SessionData<TAuthClient>
   const queryKey = authQueryKeys.session
 
-  const options = {
+  return {
     queryKey,
     queryFn: ({ signal }) =>
       authClient.getSession({
         ...params,
         fetchOptions: { ...params?.fetchOptions, signal, throw: true }
       }) as Promise<TData>
-  } satisfies QueryOptions<TData, BetterFetchError, TData, typeof queryKey>
-
-  return options as typeof options & {
-    queryKey: DataTag<typeof queryKey, TData, BetterFetchError>
-  }
+  } satisfies QueryOptions
 }
 
 /**
@@ -56,13 +48,20 @@ export function sessionOptions<TAuthClient extends AuthClient>(
  *
  * @param queryClient - The TanStack Query client.
  * @param authClient - The Better Auth client.
- * @param params - Parameters forwarded to `authClient.getSession`.
+ * @param options - Params forwarded to `authClient.getSession` and query options.
  */
 export const ensureSession = <TAuthClient extends AuthClient>(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  params?: SessionParams<TAuthClient>
-) => queryClient.ensureQueryData(sessionOptions(authClient, params))
+  options?: SessionOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.ensureQueryData({
+    ...sessionOptions(authClient, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 /**
  * Prefetch the current session into the query cache. Behaves like
@@ -71,13 +70,20 @@ export const ensureSession = <TAuthClient extends AuthClient>(
  *
  * @param queryClient - The TanStack Query client.
  * @param authClient - The Better Auth client.
- * @param params - Parameters forwarded to `authClient.getSession`.
+ * @param options - Params forwarded to `authClient.getSession` and query options.
  */
 export const prefetchSession = <TAuthClient extends AuthClient>(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  params?: SessionParams<TAuthClient>
-) => queryClient.prefetchQuery(sessionOptions(authClient, params))
+  options?: SessionOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.prefetchQuery({
+    ...sessionOptions(authClient, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
 
 /**
  * Fetch and cache the current session, resolving with the data or throwing
@@ -87,10 +93,17 @@ export const prefetchSession = <TAuthClient extends AuthClient>(
  *
  * @param queryClient - The TanStack Query client.
  * @param authClient - The Better Auth client.
- * @param params - Parameters forwarded to `authClient.getSession`.
+ * @param options - Params forwarded to `authClient.getSession` and query options.
  */
 export const fetchSession = <TAuthClient extends AuthClient>(
   queryClient: QueryClient,
   authClient: TAuthClient,
-  params?: SessionParams<TAuthClient>
-) => queryClient.fetchQuery(sessionOptions(authClient, params))
+  options?: SessionOptions<TAuthClient>
+) => {
+  const { fetchOptions, query, ...queryOptions } = options ?? {}
+
+  return queryClient.fetchQuery({
+    ...sessionOptions(authClient, { query, fetchOptions }),
+    ...queryOptions
+  })
+}
