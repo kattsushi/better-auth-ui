@@ -6,29 +6,29 @@ import {
 } from "@better-auth-ui/core"
 import {
   type QueryClient,
-  type UseQueryOptions,
+  type QueryOptions,
   useQuery
 } from "@tanstack/solid-query"
+import type { Accessor } from "solid-js"
 
-export type UseSessionOptions<TAuthClient extends AuthClient> = Partial<
-  UseQueryOptions<SessionData<TAuthClient>>
-> &
-  SessionParams<TAuthClient>
+export type UseSessionOptions<TAuthClient extends AuthClient> = Accessor<
+  Partial<Omit<QueryOptions<SessionData<TAuthClient>>, "queryKey">> &
+    SessionParams<TAuthClient>
+>
 
 export function useSession<TAuthClient extends AuthClient>(
   authClient: TAuthClient,
-  options: UseSessionOptions<TAuthClient> = {},
-  queryClient?: () => QueryClient
+  options?: UseSessionOptions<TAuthClient>,
+  queryClient?: Accessor<QueryClient>
 ) {
-  const { query, fetchOptions, ...queryOptions } = options
-
   return useQuery(() => {
+    const { query, fetchOptions, initialData, ...queryOptions } =
+      options?.() ?? {}
+
     return {
-      ...sessionOptions(authClient, {
-        query,
-        fetchOptions
-      }),
-      ...queryOptions
+      ...sessionOptions(authClient, { query, fetchOptions }),
+      ...queryOptions,
+      initialData: initialData as undefined
     }
   }, queryClient)
 }
