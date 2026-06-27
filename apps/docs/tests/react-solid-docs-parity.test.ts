@@ -220,17 +220,17 @@ describe("React/Solid docs parity", () => {
       [
         "list-device-sessions",
         "listDeviceSessionsOptions",
-        "@better-auth-ui/solid/plugins/multi-session"
+        "@better-auth-ui/core/plugins/multi-session"
       ],
       [
         "list-passkeys",
         "listPasskeysOptions",
-        "@better-auth-ui/solid/plugins/passkey"
+        "@better-auth-ui/core/plugins/passkey"
       ],
       [
         "list-api-keys",
         "listApiKeysOptions",
-        "@better-auth-ui/solid/plugins/api-key"
+        "@better-auth-ui/core/plugins/api-key"
       ]
     ] as const
 
