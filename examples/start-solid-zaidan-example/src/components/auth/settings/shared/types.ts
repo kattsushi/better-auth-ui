@@ -1,9 +1,13 @@
 import type { getProviderName, SettingsView } from "@better-auth-ui/core"
-import type { ApiKeyAuthClient } from "@better-auth-ui/core/plugins/api-key"
+import type {
+  ApiKeyAuthClient,
+  ListApiKeysData
+} from "@better-auth-ui/core/plugins/api-key"
 import type { deleteUserLocalization } from "@better-auth-ui/core/plugins/delete-user"
-import type { MultiSessionAuthClient } from "@better-auth-ui/core/plugins/multi-session"
-import type { ListApiKeysData } from "@better-auth-ui/solid/plugins/api-key"
-import type { ListDeviceSessionsData } from "@better-auth-ui/solid/plugins/multi-session"
+import type {
+  ListDeviceSessionsData,
+  MultiSessionAuthClient
+} from "@better-auth-ui/core/plugins/multi-session"
 import type { Component } from "solid-js"
 
 export type SettingsPanel = {

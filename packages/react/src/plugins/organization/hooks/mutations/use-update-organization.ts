@@ -1,51 +1,14 @@
-import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import {
-  organizationMutationKeys,
-  organizationQueryKeys
+  type OrganizationAuthClient,
+  type UpdateOrganizationOptions,
+  updateOrganizationOptions
 } from "@better-auth-ui/core/plugins/organization"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-import { useActiveOrganization } from "../../queries"
-
-export type UpdateOrganizationParams<
-  TAuthClient extends OrganizationAuthClient
-> = Parameters<TAuthClient["organization"]["update"]>[0]
-
-export type UpdateOrganizationOptions<
-  TAuthClient extends OrganizationAuthClient
-> = Omit<
-  ReturnType<typeof updateOrganizationOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-export function updateOrganizationOptions<
-  TAuthClient extends OrganizationAuthClient
->(authClient: TAuthClient) {
-  const mutationKey = organizationMutationKeys.update
-
-  const mutationFn = (params: UpdateOrganizationParams<TAuthClient>) =>
-    authClient.organization.update({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
+import { useActiveOrganization } from "../queries"
 
 export function useUpdateOrganization<
-  TAuthClient extends OrganizationAuthClient
+  TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
 >(
   authClient: TAuthClient,
   options?: UpdateOrganizationOptions<TAuthClient>,
@@ -62,21 +25,8 @@ export function useUpdateOrganization<
 
   return useMutation(
     {
-      ...updateOrganizationOptions(authClient),
-      ...options,
-      mutationFn: (params: UpdateOrganizationParams<TAuthClient>) =>
-        authClient.organization.update({
-          ...params,
-          organizationId: params?.organizationId ?? activeOrganization?.id,
-          fetchOptions: { ...params?.fetchOptions, throw: true }
-        }),
-      meta: {
-        awaits: [
-          organizationQueryKeys.lists(userId),
-          organizationQueryKeys.fullDetails(userId),
-          organizationQueryKeys.activeOrganizations(userId)
-        ]
-      }
+      ...updateOrganizationOptions(authClient, userId, activeOrganization?.id),
+      ...options
     },
     queryClient
   )

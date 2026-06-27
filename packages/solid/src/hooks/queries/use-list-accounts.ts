@@ -1,44 +1,49 @@
 import {
   type AuthClient,
-  type ListAccountsOptions,
+  type authQueryKeys,
+  type ListAccountsData,
   type ListAccountsParams,
   listAccountsOptions
 } from "@better-auth-ui/core"
-import { useQuery } from "@tanstack/solid-query"
-import { getSessionUserId } from "../../queries/create-user-scoped-query"
+import {
+  type QueryOptions as SolidQueryOptions,
+  useQuery
+} from "@tanstack/solid-query"
+import type { BetterFetchError } from "better-auth/client"
 import { useSession } from "./use-session"
 
 export type UseListAccountsOptions<TAuthClient extends AuthClient> = Omit<
-  ListAccountsOptions<TAuthClient>,
-  "initialData"
+  SolidQueryOptions<
+    ListAccountsData<TAuthClient>,
+    BetterFetchError,
+    ListAccountsData<TAuthClient>,
+    ReturnType<typeof authQueryKeys.listAccounts>
+  >,
+  "initialData" | "queryKey" | "queryFn"
 > &
-  ListAccountsParams<TAuthClient> & {
-    enabled?: boolean | ((query: never) => boolean)
-  }
+  ListAccountsParams<TAuthClient>
 
 export function useListAccounts<TAuthClient extends AuthClient>(
   authClient: TAuthClient,
   options: UseListAccountsOptions<TAuthClient> = {}
 ) {
   const session = useSession(authClient)
-  const userId = () => getSessionUserId(session)
-  const { query, fetchOptions, enabled, ...queryOptions } = options
+  const userId = () => session.data?.user.id
+  const { query, fetchOptions, ...queryOptions } = options
 
   return useQuery(() => {
-    const baseOptions = listAccountsOptions(authClient, userId(), {
-      query,
-      fetchOptions
-    })
+    const { initialData: _initialData, ...baseOptions } = listAccountsOptions(
+      authClient,
+      userId(),
+      {
+        query,
+        fetchOptions
+      }
+    )
 
     return {
-      ...queryOptions,
       ...baseOptions,
-      enabled: (query) =>
-        Boolean(userId()) &&
-        (typeof enabled === "function"
-          ? enabled(query as never)
-          : enabled !== false),
-      initialData: undefined
+      ...queryOptions
     }
   })
 }

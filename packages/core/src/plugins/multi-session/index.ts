@@ -1,3 +1,4 @@
+export * from "./list-device-sessions-query"
 export type * from "./multi-session-auth-client"
 export * from "./multi-session-localization"
 export * from "./multi-session-mutation-keys"

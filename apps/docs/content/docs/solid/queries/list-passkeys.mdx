@@ -21,7 +21,7 @@ import {
   fetchListPasskeys,
   listPasskeysOptions,
   prefetchListPasskeys
-} from "@better-auth-ui/solid/plugins/passkey"
+} from "@better-auth-ui/core/plugins/passkey"
 
 const options = listPasskeysOptions(authClient, userId)
 await ensureListPasskeys(queryClient, authClient, userId)
@@ -32,7 +32,7 @@ const passkeys = await fetchListPasskeys(queryClient, authClient, userId)
 ## Invalidation
 
 ```ts
-import { listPasskeysOptions } from "@better-auth-ui/solid/plugins/passkey"
+import { listPasskeysOptions } from "@better-auth-ui/core/plugins/passkey"
 
 queryClient.invalidateQueries({
   queryKey: listPasskeysOptions(authClient, userId).queryKey
@@ -41,4 +41,4 @@ queryClient.invalidateQueries({
 
 ## Params
 
-<auto-type-table path="../../../../../../packages/solid/src/plugins/passkey/queries/list-passkeys-query.ts" name="ListPasskeysParams" />
+<auto-type-table path="../../../../../../packages/core/src/plugins/passkey/list-passkeys-query.ts" name="ListPasskeysParams" />

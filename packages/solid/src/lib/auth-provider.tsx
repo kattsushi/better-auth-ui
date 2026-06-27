@@ -1,17 +1,13 @@
-import type { AuthClient } from "@better-auth-ui/core"
+import type { AuthClient, AuthConfig, DeepPartial } from "@better-auth-ui/core"
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query"
 import { createContext, type JSX, useContext } from "solid-js"
-import {
-  resolveAuthConfig,
-  type SolidAuthConfig,
-  type SolidAuthConfigInput
-} from "./auth-config"
+import { resolveAuthConfig } from "./auth-config"
 import { FetchOptionsProvider } from "./fetch-options-provider"
 import { MutationInvalidator } from "./mutation-invalidator"
 
-const AuthContext = createContext<SolidAuthConfig>()
+const AuthContext = createContext<AuthConfig>()
 /** Provider-instance scoped config fallback for SSR — replaces the former module-level global. */
-const RenderingAuthConfigContext = createContext<SolidAuthConfig>()
+const RenderingAuthConfigContext = createContext<AuthConfig>()
 
 const fallbackQueryClient = new QueryClient({
   defaultOptions: {
@@ -22,7 +18,8 @@ const fallbackQueryClient = new QueryClient({
 })
 
 export type AuthProviderProps<TAuthClient extends AuthClient = AuthClient> =
-  SolidAuthConfigInput<TAuthClient> & {
+  DeepPartial<Omit<AuthConfig, "authClient">> & {
+    authClient: TAuthClient
     children?: JSX.Element | (() => JSX.Element)
     /** TanStack QueryClient to use for your application's queries. */
     queryClient?: QueryClient
@@ -54,7 +51,7 @@ export function AuthProvider<TAuthClient extends AuthClient = AuthClient>(
 
 export function useAuth<
   TAuthClient extends AuthClient = AuthClient
->(): SolidAuthConfig<TAuthClient> {
+>(): AuthConfig<TAuthClient> {
   const context = useContext(AuthContext)
   const renderingConfig = useContext(RenderingAuthConfigContext)
   const auth = context ?? renderingConfig
@@ -63,5 +60,5 @@ export function useAuth<
     throw new Error("[Better Auth UI] AuthProvider is required")
   }
 
-  return auth as SolidAuthConfig<TAuthClient>
+  return auth as AuthConfig<TAuthClient>
 }

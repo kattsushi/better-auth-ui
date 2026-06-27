@@ -1,6 +1,6 @@
 import { authQueryKeys, parseAdditionalFieldValue } from "@better-auth-ui/core"
+import type { AuthPlugin } from "@better-auth-ui/solid"
 import { useAuth, useFetchOptions, useSignUpEmail } from "@better-auth-ui/solid"
-import type { AuthPlugin } from "@better-auth-ui/solid/plugins"
 import { useQueryClient } from "@tanstack/solid-query"
 import { Link } from "@tanstack/solid-router"
 import { Eye, EyeOff } from "lucide-solid"

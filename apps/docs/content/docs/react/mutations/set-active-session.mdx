@@ -27,7 +27,7 @@ setActive({ sessionToken: deviceSession.session.token })
 ## Options factory
 
 ```tsx
-import { setActiveSessionOptions } from "@better-auth-ui/react/plugins/multi-session"
+import { setActiveSessionOptions } from "@better-auth-ui/core/plugins/multi-session"
 import { useMutation } from "@tanstack/react-query"
 
 const { mutate } = useMutation(setActiveSessionOptions(authClient))
@@ -37,4 +37,4 @@ Note: using the raw factory skips the optimistic session swap — prefer `useSet
 
 ## Params
 
-<auto-type-table path="../../../../../../packages/react/src/plugins/multi-session/hooks/mutations/use-set-active-session.ts" name="SetActiveSessionParams" />
+<auto-type-table path="../../../../../../packages/core/src/plugins/multi-session/set-active-session-mutation.ts" name="SetActiveSessionParams" />

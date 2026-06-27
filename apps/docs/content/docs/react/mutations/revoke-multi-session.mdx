@@ -23,7 +23,7 @@ revokeMultiSession({ sessionToken: deviceSession.session.token })
 ## Options factory
 
 ```tsx
-import { revokeMultiSessionOptions } from "@better-auth-ui/react/plugins/multi-session"
+import { revokeMultiSessionOptions } from "@better-auth-ui/core/plugins/multi-session"
 import { useMutation } from "@tanstack/react-query"
 
 const { mutate } = useMutation(revokeMultiSessionOptions(authClient))
@@ -31,4 +31,4 @@ const { mutate } = useMutation(revokeMultiSessionOptions(authClient))
 
 ## Params
 
-<auto-type-table path="../../../../../../packages/react/src/plugins/multi-session/hooks/mutations/use-revoke-multi-session.ts" name="RevokeMultiSessionParams" />
+<auto-type-table path="../../../../../../packages/core/src/plugins/multi-session/revoke-multi-session-mutation.ts" name="RevokeMultiSessionParams" />

@@ -7,21 +7,11 @@ import {
 } from "@better-auth-ui/core"
 import { mergeAdditionalFields, resolveRedirectTo } from "./auth-utils"
 
-export type SolidAuthConfig<TAuthClient extends AuthClient = AuthClient> = Omit<
-  AuthConfig,
-  "authClient"
-> & {
-  authClient: TAuthClient
-}
-
-export type SolidAuthConfigInput<TAuthClient extends AuthClient = AuthClient> =
-  DeepPartial<Omit<AuthConfig, "authClient">> & {
+export function resolveAuthConfig<TAuthClient extends AuthClient>(
+  config: DeepPartial<Omit<AuthConfig, "authClient">> & {
     authClient: TAuthClient
   }
-
-export function resolveAuthConfig<TAuthClient extends AuthClient>(
-  config: SolidAuthConfigInput<TAuthClient>
-): SolidAuthConfig<TAuthClient> {
+): AuthConfig<TAuthClient> {
   const mergedConfig = deepmerge(defaultAuthConfig, {
     ...config,
     viewPaths: {
@@ -34,7 +24,7 @@ export function resolveAuthConfig<TAuthClient extends AuthClient>(
         ...config.viewPaths?.settings
       }
     }
-  } as SolidAuthConfig<TAuthClient>)
+  } as AuthConfig<TAuthClient>)
 
   mergedConfig.redirectTo = resolveRedirectTo(mergedConfig.redirectTo)
   mergedConfig.additionalFields = mergeAdditionalFields(
@@ -42,5 +32,5 @@ export function resolveAuthConfig<TAuthClient extends AuthClient>(
     mergedConfig.additionalFields
   )
 
-  return mergedConfig as SolidAuthConfig<TAuthClient>
+  return mergedConfig as AuthConfig<TAuthClient>
 }

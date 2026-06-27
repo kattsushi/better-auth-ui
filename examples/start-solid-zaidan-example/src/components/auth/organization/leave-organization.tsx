@@ -1,9 +1,9 @@
 import type {
+  LeaveOrganizationParams,
   OrganizationAuthClient,
   OrganizationLocalization
 } from "@better-auth-ui/core/plugins/organization"
 import { useAuth } from "@better-auth-ui/solid"
-import type { LeaveOrganizationParams } from "@better-auth-ui/solid/plugins/organization"
 import {
   useActiveOrganization,
   useLeaveOrganization

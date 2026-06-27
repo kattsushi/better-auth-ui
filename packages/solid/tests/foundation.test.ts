@@ -1,15 +1,15 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { basePaths, providerNames, viewPaths } from "@better-auth-ui/core"
-import { socialProviderList } from "better-auth/social-providers"
-import { describe, expect, it, vi } from "vitest"
 import {
   authMutationOptions,
   authQueryOptions,
-  createAuthClient,
-  providerIconNames,
-  resolveAuthConfig
-} from "../src"
+  basePaths,
+  providerNames,
+  viewPaths
+} from "@better-auth-ui/core"
+import { socialProviderList } from "better-auth/social-providers"
+import { describe, expect, it, vi } from "vitest"
+import { createAuthClient, providerIconNames, resolveAuthConfig } from "../src"
 
 type PackageJson = {
   name: string
@@ -40,8 +40,8 @@ describe("@better-auth-ui/solid foundation", () => {
     expect(Object.keys(metadata.exports).sort()).toEqual([
       ".",
       "./email",
-      "./plugins",
       "./plugins/api-key",
+      "./plugins/captcha",
       "./plugins/magic-link",
       "./plugins/multi-session",
       "./plugins/organization",
@@ -68,6 +68,19 @@ describe("@better-auth-ui/solid foundation", () => {
 
   it("exposes the Solid Better Auth client factory", () => {
     expect(typeof createAuthClient).toBe("function")
+  })
+
+  it("does not expose core-owned auth option factories from the Solid root", async () => {
+    const solid = await import("../src")
+    const indexSource = readFileSync(
+      resolve(__dirname, "../src/index.ts"),
+      "utf8"
+    )
+
+    expect(solid).not.toHaveProperty("authMutationOptions")
+    expect(solid).not.toHaveProperty("authQueryOptions")
+    expect(indexSource).not.toContain("./mutations/auth-mutation-options")
+    expect(indexSource).not.toContain("./queries/auth-query-options")
   })
 
   it("resolves auth config with React-equivalent defaults", () => {

@@ -23,7 +23,7 @@ import {
   ensureActiveOrganization,
   fetchActiveOrganization,
   prefetchActiveOrganization
-} from "@better-auth-ui/react/plugins/organization"
+} from "@better-auth-ui/core/plugins/organization"
 
 const options = activeOrganizationOptions(authClient, userId)
 await ensureActiveOrganization(queryClient, authClient, userId)
@@ -55,4 +55,4 @@ await ensureActiveOrganization(queryClient, auth, userId, {
 
 ## Params
 
-<auto-type-table path="../../../../../../packages/react/src/plugins/organization/queries/active-organization-query.ts" name="ActiveOrganizationParams" />
+<auto-type-table path="../../../../../../packages/core/src/plugins/organization/active-organization-query.ts" name="ActiveOrganizationParams" />

@@ -1,32 +1,35 @@
 import {
   type AuthClient,
-  type ListSessionsOptions,
+  type authQueryKeys,
+  type ListSessionsData,
   type ListSessionsParams,
   listSessionsOptions
 } from "@better-auth-ui/core"
-import { useQuery } from "@tanstack/solid-query"
-import { getSessionUserId } from "../../queries/create-user-scoped-query"
+import {
+  type QueryOptions as SolidQueryOptions,
+  useQuery
+} from "@tanstack/solid-query"
+import type { BetterFetchError } from "better-auth/client"
 import { useSession } from "./use-session"
 
 export type UseListSessionsOptions<TAuthClient extends AuthClient> = Omit<
-  ListSessionsOptions<TAuthClient>,
-  "enabled" | "initialData"
+  SolidQueryOptions<
+    ListSessionsData<TAuthClient>,
+    BetterFetchError,
+    ListSessionsData<TAuthClient>,
+    ReturnType<typeof authQueryKeys.listSessions>
+  >,
+  "initialData" | "queryKey" | "queryFn"
 > &
-  Partial<NonNullable<ListSessionsParams<TAuthClient>>> & {
-    enabled?: boolean | ((query: never) => boolean)
-  }
+  Partial<NonNullable<ListSessionsParams<TAuthClient>>>
 
 export function useListSessions<TAuthClient extends AuthClient>(
   authClient: TAuthClient,
   options: UseListSessionsOptions<TAuthClient> = {}
 ) {
   const session = useSession(authClient)
-  const userId = () => getSessionUserId(session)
-  const { query, fetchOptions, enabled, ...restOptions } = options
-  const queryOptions = restOptions as Omit<
-    ListSessionsOptions<TAuthClient>,
-    "enabled" | "initialData"
-  >
+  const userId = () => session.data?.user.id
+  const { query, fetchOptions, ...queryOptions } = options
 
   return useQuery(() => {
     const { initialData: _initialData, ...baseOptions } = listSessionsOptions(
@@ -39,13 +42,8 @@ export function useListSessions<TAuthClient extends AuthClient>(
     )
 
     return {
-      ...queryOptions,
       ...baseOptions,
-      enabled: (query) =>
-        Boolean(userId()) &&
-        (typeof enabled === "function"
-          ? enabled(query as never)
-          : enabled !== false)
+      ...queryOptions
     }
   })
 }

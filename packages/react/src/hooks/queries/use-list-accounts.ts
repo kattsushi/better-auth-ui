@@ -4,7 +4,7 @@ import {
   type ListAccountsParams,
   listAccountsOptions
 } from "@better-auth-ui/core"
-import { type QueryClient, skipToken, useQuery } from "@tanstack/react-query"
+import { type QueryClient, useQuery } from "@tanstack/react-query"
 import { useSession } from "./use-session"
 
 export type UseListAccountsOptions<TAuthClient extends AuthClient> =
@@ -31,8 +31,7 @@ export function useListAccounts<TAuthClient extends AuthClient>(
   return useQuery(
     {
       ...queryOptions,
-      ...baseOptions,
-      queryFn: userId ? baseOptions.queryFn : skipToken
+      ...baseOptions
     },
     queryClient
   )

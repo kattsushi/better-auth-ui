@@ -1,52 +1,10 @@
-import { authQueryKeys } from "@better-auth-ui/core"
-import type { MultiSessionAuthClient } from "@better-auth-ui/core/plugins/multi-session"
 import {
-  multiSessionMutationKeys,
-  multiSessionQueryKeys
+  type MultiSessionAuthClient,
+  type SetActiveSessionOptions,
+  setActiveSessionOptions
 } from "@better-auth-ui/core/plugins/multi-session"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-
-export type SetActiveSessionParams<TAuthClient extends MultiSessionAuthClient> =
-  Parameters<TAuthClient["multiSession"]["setActive"]>[0]
-
-export type SetActiveSessionOptions<
-  TAuthClient extends MultiSessionAuthClient
-> = Omit<
-  ReturnType<typeof setActiveSessionOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-/**
- * Mutation options factory for switching the active device session.
- *
- * @param authClient - The Better Auth client with the multi-session plugin.
- */
-export function setActiveSessionOptions<
-  TAuthClient extends MultiSessionAuthClient
->(authClient: TAuthClient) {
-  const mutationKey = multiSessionMutationKeys.setActive
-
-  const mutationFn = (params: SetActiveSessionParams<TAuthClient>) =>
-    authClient.multiSession.setActive({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
 
 /**
  * Create a mutation for switching the active device session.
@@ -67,11 +25,8 @@ export function useSetActiveSession<TAuthClient extends MultiSessionAuthClient>(
 
   return useMutation(
     {
-      ...setActiveSessionOptions(authClient),
-      ...options,
-      meta: {
-        awaits: [authQueryKeys.session, multiSessionQueryKeys.lists(userId)]
-      }
+      ...setActiveSessionOptions(authClient, userId),
+      ...options
     },
     queryClient
   )

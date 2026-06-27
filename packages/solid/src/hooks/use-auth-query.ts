@@ -1,14 +1,40 @@
-import { createQuery, type QueryKey } from "@tanstack/solid-query"
 import {
   type AuthQueryFn,
-  type AuthQueryOptions,
+  type AuthQueryFnData,
+  type AuthQueryKey,
   authQueryOptions
-} from "../queries/auth-query-options"
+} from "@better-auth-ui/core"
+import {
+  type CreateQueryOptions,
+  createQuery,
+  type DataTag,
+  type QueryKey
+} from "@tanstack/solid-query"
+import type { BetterFetchError } from "better-auth/client"
+
+type SolidAuthQueryOptions<
+  TFn extends AuthQueryFn,
+  TPrefix extends QueryKey
+> = Omit<
+  CreateQueryOptions<
+    AuthQueryFnData<TFn>,
+    BetterFetchError,
+    AuthQueryFnData<TFn>,
+    AuthQueryKey<TFn, TPrefix>
+  >,
+  "queryKey"
+> & {
+  queryKey: DataTag<
+    AuthQueryKey<TFn, TPrefix>,
+    AuthQueryFnData<TFn>,
+    BetterFetchError
+  >
+}
 
 type UseAuthQueryOptions<
   TFn extends AuthQueryFn,
   TPrefix extends QueryKey
-> = Omit<AuthQueryOptions<TFn, TPrefix>, "queryKey" | "queryFn"> &
+> = Omit<SolidAuthQueryOptions<TFn, TPrefix>, "queryKey" | "queryFn"> &
   Pick<NonNullable<Parameters<TFn>[0]>, "query" | "fetchOptions">
 
 export function useAuthQuery<
@@ -23,10 +49,10 @@ export function useAuthQuery<
     const { query, fetchOptions, ...queryOptions } = options ?? {}
 
     return {
-      ...authQueryOptions(authFn, queryKey, {
+      ...(authQueryOptions(authFn, queryKey, {
         query,
         fetchOptions
-      } as Parameters<TFn>[0]),
+      } as Parameters<TFn>[0]) as SolidAuthQueryOptions<TFn, TQueryKey>),
       ...queryOptions
     }
   })

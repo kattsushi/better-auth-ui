@@ -23,7 +23,7 @@ import {
   fetchListApiKeys,
   listApiKeysOptions,
   prefetchListApiKeys
-} from "@better-auth-ui/react/plugins/api-key"
+} from "@better-auth-ui/core/plugins/api-key"
 
 const options = listApiKeysOptions(authClient, userId)
 await ensureListApiKeys(queryClient, authClient, userId)
@@ -48,4 +48,4 @@ await ensureListApiKeys(queryClient, auth, userId, {
 
 ## Params
 
-<auto-type-table path="../../../../../../packages/react/src/plugins/api-key/queries/list-api-keys-query.ts" name="ListApiKeysParams" />
+<auto-type-table path="../../../../../../packages/core/src/plugins/api-key/list-api-keys-query.ts" name="ListApiKeysParams" />

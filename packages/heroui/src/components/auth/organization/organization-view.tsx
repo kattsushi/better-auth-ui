@@ -78,7 +78,7 @@ export function OrganizationView({
       {...props}
     >
       <OrganizationLogo
-        organization={resolvedOrganization}
+        organization={resolvedOrganization ?? undefined}
         className={size === "sm" ? "size-5 [&>span]:text-xs" : undefined}
         size={size === "lg" ? "md" : "sm"}
       />

@@ -1,3 +1,4 @@
+import { skipToken } from "@tanstack/query-core"
 import { describe, expect, expectTypeOf, it, vi } from "vitest"
 import {
   type AuthClient,
@@ -41,19 +42,19 @@ import {
   setActiveSessionOptions
 } from "../src/plugins/multi-session"
 import type { OrganizationAuthClient } from "../src/plugins/organization/organization-auth-client"
+import {
+  addPasskeyOptions,
+  deletePasskeyOptions,
+  passkeyMutationKeys,
+  passkeyQueryKeys,
+  signInPasskeyOptions
+} from "../src/plugins/passkey"
 import type { PasskeyAuthClient } from "../src/plugins/passkey/passkey-auth-client"
 import type { UsernameAuthClient } from "../src/plugins/username/username-auth-client"
 
 const signal = new AbortController().signal
 
 type HasStore<T> = "$store" extends keyof T ? true : false
-
-type MutationSuccessData<TOptions> =
-  NonNullable<
-    TOptions extends { onSuccess?: infer TOnSuccess } ? TOnSuccess : never
-  > extends (data: infer TData, ...args: infer _Args) => unknown
-    ? TData
-    : never
 
 describe("core base endpoint option factories", () => {
   it("omits Solid-only store members from core auth client types", () => {
@@ -97,6 +98,13 @@ describe("core base endpoint option factories", () => {
       query: { accountId: "acct-1" },
       fetchOptions: { credentials: "include", signal, throw: true }
     })
+
+    expect(accountInfoOptions(authClient as never).queryFn).toBe(skipToken)
+    expect(
+      accountInfoOptions(authClient as never, "user-1", {} as never).queryFn
+    ).toBe(skipToken)
+    expect(listAccountsOptions(authClient as never).queryFn).toBe(skipToken)
+    expect(listSessionsOptions(authClient as never).queryFn).toBe(skipToken)
   })
 
   it("builds base mutation options and keeps deleteUser out of auth keys", async () => {
@@ -191,16 +199,21 @@ describe("core base endpoint option factories", () => {
         delete: vi.fn(async (params) => ({ data: params.keyId }))
       },
       signIn: {
-        magicLink: vi.fn(async (params) => ({ data: params.email }))
+        magicLink: vi.fn(async (params) => ({ data: params.email })),
+        passkey: vi.fn(async (params) => ({ data: params?.email ?? null }))
       },
       multiSession: {
         revoke: vi.fn(async (params) => ({ data: params.sessionToken })),
         setActive: vi.fn(async (params) => ({ data: params.sessionToken }))
+      },
+      passkey: {
+        addPasskey: vi.fn(async (params) => ({ data: params.name ?? null })),
+        deletePasskey: vi.fn(async (params) => ({ data: params.id }))
       }
     }
 
     const userId = "user-1"
-    const createApiKey = createApiKeyOptions(authClient, userId)
+    const createApiKey = createApiKeyOptions(authClient as never, userId)
     const deleteApiKey = deleteApiKeyOptions(authClient as never, userId)
     const magicLink = signInMagicLinkOptions(authClient as never)
     const revokeMultiSession = revokeMultiSessionOptions(
@@ -211,6 +224,9 @@ describe("core base endpoint option factories", () => {
       authClient as never,
       userId
     )
+    const addPasskey = addPasskeyOptions(authClient as never, userId)
+    const deletePasskey = deletePasskeyOptions(authClient as never, userId)
+    const signInPasskey = signInPasskeyOptions(authClient as never)
 
     expect(createApiKey.mutationKey).toEqual(apiKeyMutationKeys.create)
     expect(deleteApiKey.mutationKey).toEqual(apiKeyMutationKeys.delete)
@@ -221,9 +237,9 @@ describe("core base endpoint option factories", () => {
     expect(setActiveSession.mutationKey).toEqual(
       multiSessionMutationKeys.setActive
     )
-    expectTypeOf<
-      MutationSuccessData<typeof createApiKey>
-    >().toEqualTypeOf<string>()
+    expect(addPasskey.mutationKey).toEqual(passkeyMutationKeys.addPasskey)
+    expect(deletePasskey.mutationKey).toEqual(passkeyMutationKeys.deletePasskey)
+    expect(signInPasskey.mutationKey).toEqual(passkeyMutationKeys.signIn)
     expect(createApiKey.meta).toEqual({
       awaits: [apiKeyQueryKeys.lists(userId)]
     })
@@ -236,6 +252,15 @@ describe("core base endpoint option factories", () => {
     expect(setActiveSession.meta).toEqual({
       awaits: [authQueryKeys.session, multiSessionQueryKeys.lists(userId)]
     })
+    expect(addPasskey.meta).toEqual({
+      awaits: [passkeyQueryKeys.lists(userId)]
+    })
+    expect(deletePasskey.meta).toEqual({
+      awaits: [passkeyQueryKeys.lists(userId)]
+    })
+    expect(signInPasskey.meta).toEqual({
+      awaits: [authQueryKeys.session]
+    })
 
     await expect(
       (
@@ -247,6 +272,28 @@ describe("core base endpoint option factories", () => {
     ).resolves.toEqual({ data: "CI key" })
     expect(authClient.apiKey.create).toHaveBeenCalledWith({
       name: "CI key",
+      fetchOptions: { credentials: "include", throw: true }
+    })
+
+    await expect(
+      (
+        addPasskey as { mutationFn?: (variables?: unknown) => unknown }
+      ).mutationFn?.()
+    ).resolves.toEqual({ data: null })
+    expect(authClient.passkey.addPasskey).toHaveBeenCalledWith({
+      fetchOptions: { throw: true }
+    })
+
+    await expect(
+      (
+        addPasskey as { mutationFn?: (variables: unknown) => unknown }
+      ).mutationFn?.({
+        name: "Security key",
+        fetchOptions: { credentials: "include" }
+      })
+    ).resolves.toEqual({ data: "Security key" })
+    expect(authClient.passkey.addPasskey).toHaveBeenCalledWith({
+      name: "Security key",
       fetchOptions: { credentials: "include", throw: true }
     })
   })

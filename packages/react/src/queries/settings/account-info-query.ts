@@ -4,7 +4,7 @@ import {
   type AuthClient,
   accountInfoOptions
 } from "@better-auth-ui/core"
-import { type QueryClient, skipToken, useQuery } from "@tanstack/react-query"
+import { type QueryClient, useQuery } from "@tanstack/react-query"
 import { useSession } from "../../hooks/queries/use-session"
 
 /**
@@ -58,13 +58,10 @@ export function useAccountInfo<TAuthClient extends AuthClient>(
     fetchOptions
   })
 
-  const canFetch = Boolean(userId && query?.accountId)
-
   return useQuery(
     {
       ...queryOptions,
-      ...baseOptions,
-      queryFn: canFetch ? baseOptions.queryFn : skipToken
+      ...baseOptions
     },
     queryClient
   )

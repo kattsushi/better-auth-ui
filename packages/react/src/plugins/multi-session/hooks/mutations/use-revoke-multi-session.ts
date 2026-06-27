@@ -1,52 +1,10 @@
-import type { MultiSessionAuthClient } from "@better-auth-ui/core/plugins/multi-session"
 import {
-  multiSessionMutationKeys,
-  multiSessionQueryKeys
+  type MultiSessionAuthClient,
+  type RevokeMultiSessionOptions,
+  revokeMultiSessionOptions
 } from "@better-auth-ui/core/plugins/multi-session"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-
-export type RevokeMultiSessionParams<
-  TAuthClient extends MultiSessionAuthClient
-> = Parameters<TAuthClient["multiSession"]["revoke"]>[0]
-
-export type RevokeMultiSessionOptions<
-  TAuthClient extends MultiSessionAuthClient
-> = Omit<
-  ReturnType<typeof revokeMultiSessionOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-/**
- * Mutation options factory for revoking a device session in multi-session mode.
- *
- * @param authClient - The Better Auth client with the multi-session plugin.
- */
-export function revokeMultiSessionOptions<
-  TAuthClient extends MultiSessionAuthClient
->(authClient: TAuthClient) {
-  const mutationKey = multiSessionMutationKeys.revoke
-
-  const mutationFn = (params: RevokeMultiSessionParams<TAuthClient>) =>
-    authClient.multiSession.revoke({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
 
 /**
  * Create a mutation for revoking a device session in multi-session mode.
@@ -69,11 +27,8 @@ export function useRevokeMultiSession<
 
   return useMutation(
     {
-      ...revokeMultiSessionOptions(authClient),
-      ...options,
-      meta: {
-        awaits: [multiSessionQueryKeys.lists(userId)]
-      }
+      ...revokeMultiSessionOptions(authClient, userId),
+      ...options
     },
     queryClient
   )

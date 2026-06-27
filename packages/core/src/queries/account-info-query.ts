@@ -1,4 +1,9 @@
-import type { DataTag, QueryClient, QueryOptions } from "@tanstack/query-core"
+import {
+  type DataTag,
+  type QueryClient,
+  type QueryOptions,
+  skipToken
+} from "@tanstack/query-core"
 import type { BetterFetchError } from "better-auth/client"
 import type { AuthClient, InferData } from "../lib/auth-client"
 import { authQueryKeys } from "../lib/auth-query-keys"
@@ -30,13 +35,17 @@ export function accountInfoOptions<TAuthClient extends AuthClient>(
   type TData = AccountInfoData<TAuthClient>
   const queryKey = authQueryKeys.accountInfo(userId, params?.query)
 
+  const canFetch = Boolean(userId && params?.query?.accountId)
+
   const options = {
     queryKey,
-    queryFn: ({ signal }) =>
-      authClient.accountInfo({
-        ...params,
-        fetchOptions: { ...params?.fetchOptions, signal, throw: true }
-      })
+    queryFn: canFetch
+      ? ({ signal }) =>
+          authClient.accountInfo({
+            ...params,
+            fetchOptions: { ...params?.fetchOptions, signal, throw: true }
+          })
+      : skipToken
   } as QueryOptions<TData, BetterFetchError, TData, typeof queryKey>
 
   return options as typeof options & {

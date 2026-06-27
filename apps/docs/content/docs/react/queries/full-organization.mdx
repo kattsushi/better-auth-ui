@@ -23,7 +23,7 @@ import {
   fetchFullOrganization,
   fullOrganizationOptions,
   prefetchFullOrganization
-} from "@better-auth-ui/react/plugins/organization"
+} from "@better-auth-ui/core/plugins/organization"
 
 const options = fullOrganizationOptions(authClient, userId)
 await ensureFullOrganization(queryClient, authClient, userId)
@@ -55,4 +55,4 @@ await ensureFullOrganization(queryClient, auth, userId, {
 
 ## Params
 
-<auto-type-table path="../../../../../../packages/react/src/plugins/organization/queries/full-organization-query.ts" name="FullOrganizationParams" />
+<auto-type-table path="../../../../../../packages/core/src/plugins/organization/full-organization-query.ts" name="FullOrganizationParams" />

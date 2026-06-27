@@ -1,50 +1,10 @@
-import type { PasskeyAuthClient } from "@better-auth-ui/core/plugins/passkey"
 import {
-  passkeyMutationKeys,
-  passkeyQueryKeys
+  type AddPasskeyOptions,
+  addPasskeyOptions,
+  type PasskeyAuthClient
 } from "@better-auth-ui/core/plugins/passkey"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-
-export type AddPasskeyParams<TAuthClient extends PasskeyAuthClient> =
-  Parameters<TAuthClient["passkey"]["addPasskey"]>[0]
-
-export type AddPasskeyOptions<TAuthClient extends PasskeyAuthClient> = Omit<
-  ReturnType<typeof addPasskeyOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-/**
- * Mutation options factory for registering a new passkey.
- *
- * @param authClient - The Better Auth client with the passkey plugin.
- */
-export function addPasskeyOptions<TAuthClient extends PasskeyAuthClient>(
-  authClient: TAuthClient
-) {
-  const mutationKey = passkeyMutationKeys.addPasskey
-
-  // biome-ignore lint/suspicious/noConfusingVoidType: void allows no-arg mutate
-  const mutationFn = (params?: AddPasskeyParams<TAuthClient> | void) =>
-    authClient.passkey.addPasskey({
-      ...(params ?? {}),
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
 
 /**
  * Create a mutation for registering a new passkey.
@@ -65,11 +25,8 @@ export function useAddPasskey<TAuthClient extends PasskeyAuthClient>(
 
   return useMutation(
     {
-      ...addPasskeyOptions(authClient),
-      ...options,
-      meta: {
-        awaits: [passkeyQueryKeys.lists(userId)]
-      }
+      ...addPasskeyOptions(authClient, userId),
+      ...options
     },
     queryClient
   )

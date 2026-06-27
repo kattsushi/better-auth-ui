@@ -2243,8 +2243,8 @@ describe("Solid registry isolation", () => {
     expect(report.packageExports).toEqual([
       ".",
       "./email",
-      "./plugins",
       "./plugins/api-key",
+      "./plugins/captcha",
       "./plugins/magic-link",
       "./plugins/multi-session",
       "./plugins/organization",
@@ -2699,7 +2699,7 @@ describe("Solid registry isolation", () => {
       .join("\n")
 
     expect(combinedSolidPackageDocs).toContain(
-      "@better-auth-ui/solid` owns provider wiring and base Solid hooks/helpers"
+      "@better-auth-ui/solid` owns provider wiring and Solid hooks"
     )
     expect(combinedSolidPackageDocs).toContain("ensureSession")
     expect(combinedSolidPackageDocs).toContain("prefetchSession")
@@ -2710,7 +2710,9 @@ describe("Solid registry isolation", () => {
     expect(combinedSolidPackageDocs).toContain("createApiKeyOptions")
     expect(combinedSolidPackageDocs).toContain("signInUsernameOptions")
     expect(combinedSolidPackageDocs).toContain("@better-auth-ui/core/server")
-    expect(combinedSolidPackageDocs).toContain("@better-auth-ui/solid/plugins")
+    expect(combinedSolidPackageDocs).toContain(
+      "@better-auth-ui/solid/plugins/api-key"
+    )
 
     for (const { name, content } of solidPackageDocs) {
       expect(
@@ -2970,7 +2972,7 @@ describe("Solid registry isolation", () => {
       expect(
         page,
         `runtime-only plugin ${name} should link Solid runtime`
-      ).toContain("@better-auth-ui/solid/plugins")
+      ).toContain("@better-auth-ui/solid/plugins/captcha")
       expect(
         page,
         `runtime-only plugin ${name} should explain setup`

@@ -9,8 +9,8 @@ export default defineConfig({
       entry: {
         index: "src/index.ts",
         email: "src/email.ts",
-        plugins: "src/plugins.ts",
         "plugins/api-key/index": "src/plugins/api-key/index.ts",
+        "plugins/captcha/index": "src/plugins/captcha/index.ts",
         "plugins/magic-link/index": "src/plugins/magic-link/index.ts",
         "plugins/multi-session/index": "src/plugins/multi-session/index.ts",
         "plugins/organization/index": "src/plugins/organization/index.ts",

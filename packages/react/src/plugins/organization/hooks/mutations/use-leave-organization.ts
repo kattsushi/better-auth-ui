@@ -1,50 +1,13 @@
-import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import {
-  organizationMutationKeys,
-  organizationQueryKeys
+  type LeaveOrganizationOptions,
+  leaveOrganizationOptions,
+  type OrganizationAuthClient
 } from "@better-auth-ui/core/plugins/organization"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
 
-export type LeaveOrganizationParams<
-  TAuthClient extends OrganizationAuthClient
-> = Parameters<TAuthClient["organization"]["leave"]>[0]
-
-export type LeaveOrganizationOptions<
-  TAuthClient extends OrganizationAuthClient
-> = Omit<
-  ReturnType<typeof leaveOrganizationOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-export function leaveOrganizationOptions<
-  TAuthClient extends OrganizationAuthClient
->(authClient: TAuthClient) {
-  const mutationKey = organizationMutationKeys.leave
-
-  const mutationFn = (params: LeaveOrganizationParams<TAuthClient>) =>
-    authClient.organization.leave({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
-
 export function useLeaveOrganization<
-  TAuthClient extends OrganizationAuthClient
+  TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
 >(
   authClient: TAuthClient,
   options?: LeaveOrganizationOptions<TAuthClient>,
@@ -55,18 +18,8 @@ export function useLeaveOrganization<
 
   return useMutation(
     {
-      ...leaveOrganizationOptions(authClient),
-      ...options,
-      meta: {
-        awaits: [
-          organizationQueryKeys.members.all(userId),
-          organizationQueryKeys.fullDetails(userId)
-        ],
-        invalidates: [
-          organizationQueryKeys.lists(userId),
-          organizationQueryKeys.activeOrganizations(userId)
-        ]
-      }
+      ...leaveOrganizationOptions(authClient, userId),
+      ...options
     },
     queryClient
   )

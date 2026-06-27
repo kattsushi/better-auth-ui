@@ -1,52 +1,10 @@
 import {
   type ApiKeyAuthClient,
-  apiKeyMutationKeys,
-  apiKeyQueryKeys
+  type DeleteApiKeyOptions,
+  deleteApiKeyOptions
 } from "@better-auth-ui/core/plugins/api-key"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-
-export type DeleteApiKeyParams<
-  TAuthClient extends ApiKeyAuthClient = ApiKeyAuthClient
-> = Parameters<TAuthClient["apiKey"]["delete"]>[0]
-
-export type DeleteApiKeyOptions<
-  TAuthClient extends ApiKeyAuthClient = ApiKeyAuthClient
-> = Omit<
-  ReturnType<typeof deleteApiKeyOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-/**
- * Mutation options factory for deleting an API key.
- *
- * @param authClient - The Better Auth client with the API key plugin.
- */
-export function deleteApiKeyOptions<TAuthClient extends ApiKeyAuthClient>(
-  authClient: TAuthClient
-) {
-  const mutationKey = apiKeyMutationKeys.delete
-
-  const mutationFn = (params: DeleteApiKeyParams<TAuthClient>) =>
-    authClient.apiKey.delete({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
 
 /**
  * Create a mutation for deleting an API key.
@@ -67,11 +25,8 @@ export function useDeleteApiKey<TAuthClient extends ApiKeyAuthClient>(
 
   return useMutation(
     {
-      ...deleteApiKeyOptions(authClient),
-      ...options,
-      meta: {
-        awaits: [apiKeyQueryKeys.lists(userId)]
-      }
+      ...deleteApiKeyOptions(authClient, userId),
+      ...options
     },
     queryClient
   )

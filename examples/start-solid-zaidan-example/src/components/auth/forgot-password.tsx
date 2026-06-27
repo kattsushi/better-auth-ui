@@ -1,9 +1,9 @@
+import type { AuthPlugin } from "@better-auth-ui/solid"
 import {
   useAuth,
   useFetchOptions,
   useRequestPasswordReset
 } from "@better-auth-ui/solid"
-import type { AuthPlugin } from "@better-auth-ui/solid/plugins"
 import { Link } from "@tanstack/solid-router"
 import { createSignal, Show } from "solid-js"
 import { Button } from "@/components/ui/button"

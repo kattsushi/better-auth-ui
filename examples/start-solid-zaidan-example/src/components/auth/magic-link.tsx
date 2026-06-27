@@ -4,8 +4,8 @@ import {
   type MagicLinkLocalization,
   magicLinkLocalization
 } from "@better-auth-ui/core/plugins/magic-link"
+import type { AuthPlugin } from "@better-auth-ui/solid"
 import { useAuth } from "@better-auth-ui/solid"
-import type { AuthPlugin } from "@better-auth-ui/solid/plugins"
 import { useSignInMagicLink } from "@better-auth-ui/solid/plugins/magic-link"
 import { Link } from "@tanstack/solid-router"
 import { type Component, createSignal, For, Show } from "solid-js"

@@ -2946,14 +2946,14 @@ describe("Solid auth route component selection", () => {
     const activeOrganizationQuery = readFileSync(
       resolve(
         __dirname,
-        "../../../packages/solid/src/plugins/organization/queries/active-organization-query.ts"
+        "../../../packages/solid/src/plugins/organization/hooks/queries/use-active-organization.ts"
       ),
       "utf8"
     )
     const listMembersQuery = readFileSync(
       resolve(
         __dirname,
-        "../../../packages/solid/src/plugins/organization/queries/list-members-query.ts"
+        "../../../packages/solid/src/plugins/organization/hooks/queries/use-list-members.ts"
       ),
       "utf8"
     )

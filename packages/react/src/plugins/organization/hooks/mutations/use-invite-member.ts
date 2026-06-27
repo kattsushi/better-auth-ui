@@ -1,46 +1,11 @@
-import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import {
-  organizationMutationKeys,
-  organizationQueryKeys
+  type InviteMemberOptions,
+  inviteMemberOptions,
+  type OrganizationAuthClient
 } from "@better-auth-ui/core/plugins/organization"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-import { useActiveOrganization } from "../../queries"
-
-export type InviteMemberParams<TAuthClient extends OrganizationAuthClient> =
-  Parameters<TAuthClient["organization"]["inviteMember"]>[0]
-
-export type InviteMemberOptions<TAuthClient extends OrganizationAuthClient> =
-  Omit<
-    ReturnType<typeof inviteMemberOptions<TAuthClient>>,
-    "mutationKey" | "mutationFn" | "meta"
-  >
-
-export function inviteMemberOptions<TAuthClient extends OrganizationAuthClient>(
-  authClient: TAuthClient
-) {
-  const mutationKey = organizationMutationKeys.inviteMember
-
-  const mutationFn = (params: InviteMemberParams<TAuthClient>) =>
-    authClient.organization.inviteMember({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
+import { useActiveOrganization } from "../queries"
 
 export function useInviteMember<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
@@ -60,20 +25,8 @@ export function useInviteMember<
 
   return useMutation(
     {
-      ...inviteMemberOptions(authClient),
-      ...options,
-      mutationFn: (params: InviteMemberParams<TAuthClient>) =>
-        authClient.organization.inviteMember({
-          ...params,
-          organizationId: params?.organizationId ?? activeOrganization?.id,
-          fetchOptions: { ...params?.fetchOptions, throw: true }
-        }),
-      meta: {
-        awaits: [
-          organizationQueryKeys.invitations.all(userId),
-          organizationQueryKeys.fullDetails(userId)
-        ]
-      }
+      ...inviteMemberOptions(authClient, userId, activeOrganization?.id),
+      ...options
     },
     queryClient
   )

@@ -1,32 +1,35 @@
 import {
-  type AccountInfoOptions,
+  type AccountInfoData,
   type AccountInfoParams,
   type AuthClient,
-  accountInfoOptions
+  accountInfoOptions,
+  type authQueryKeys
 } from "@better-auth-ui/core"
-import { useQuery } from "@tanstack/solid-query"
-import { getSessionUserId } from "../../queries/create-user-scoped-query"
+import {
+  type QueryOptions as SolidQueryOptions,
+  useQuery
+} from "@tanstack/solid-query"
+import type { BetterFetchError } from "better-auth/client"
 import { useSession } from "./use-session"
 
 export type UseAccountInfoOptions<TAuthClient extends AuthClient> = Omit<
-  AccountInfoOptions<TAuthClient>,
-  "enabled" | "initialData"
+  SolidQueryOptions<
+    AccountInfoData<TAuthClient>,
+    BetterFetchError,
+    AccountInfoData<TAuthClient>,
+    ReturnType<typeof authQueryKeys.accountInfo>
+  >,
+  "initialData" | "queryKey" | "queryFn"
 > &
-  Partial<NonNullable<AccountInfoParams<TAuthClient>>> & {
-    enabled?: boolean | ((query: never) => boolean)
-  }
+  Partial<NonNullable<AccountInfoParams<TAuthClient>>>
 
 export function useAccountInfo<TAuthClient extends AuthClient>(
   authClient: TAuthClient,
   options: UseAccountInfoOptions<TAuthClient> = {}
 ) {
   const session = useSession(authClient)
-  const userId = () => getSessionUserId(session)
-  const { query, fetchOptions, enabled, ...restOptions } = options
-  const queryOptions = restOptions as Omit<
-    AccountInfoOptions<TAuthClient>,
-    "enabled" | "initialData"
-  >
+  const userId = () => session.data?.user.id
+  const { query, fetchOptions, ...queryOptions } = options
 
   return useQuery(() => {
     const { initialData: _initialData, ...baseOptions } = accountInfoOptions(
@@ -39,13 +42,8 @@ export function useAccountInfo<TAuthClient extends AuthClient>(
     )
 
     return {
-      ...queryOptions,
       ...baseOptions,
-      enabled: (queryState) =>
-        Boolean(userId() && query?.accountId) &&
-        (typeof enabled === "function"
-          ? enabled(queryState as never)
-          : enabled !== false)
+      ...queryOptions
     }
   })
 }

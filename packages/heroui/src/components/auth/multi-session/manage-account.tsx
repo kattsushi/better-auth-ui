@@ -1,7 +1,9 @@
-import type { MultiSessionAuthClient } from "@better-auth-ui/core/plugins/multi-session"
+import type {
+  ListDeviceSession,
+  MultiSessionAuthClient
+} from "@better-auth-ui/core/plugins/multi-session"
 import { useAuth, useAuthPlugin, useUser } from "@better-auth-ui/react"
 import {
-  type ListDeviceSession,
   useRevokeMultiSession,
   useSetActiveSession
 } from "@better-auth-ui/react/plugins/multi-session"

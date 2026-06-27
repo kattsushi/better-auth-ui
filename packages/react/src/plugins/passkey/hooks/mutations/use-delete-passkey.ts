@@ -1,49 +1,10 @@
-import type { PasskeyAuthClient } from "@better-auth-ui/core/plugins/passkey"
 import {
-  passkeyMutationKeys,
-  passkeyQueryKeys
+  type DeletePasskeyOptions,
+  deletePasskeyOptions,
+  type PasskeyAuthClient
 } from "@better-auth-ui/core/plugins/passkey"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-
-export type DeletePasskeyParams<TAuthClient extends PasskeyAuthClient> =
-  Parameters<TAuthClient["passkey"]["deletePasskey"]>[0]
-
-export type DeletePasskeyOptions<TAuthClient extends PasskeyAuthClient> = Omit<
-  ReturnType<typeof deletePasskeyOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-/**
- * Mutation options factory for deleting a passkey.
- *
- * @param authClient - The Better Auth client.
- */
-export function deletePasskeyOptions<TAuthClient extends PasskeyAuthClient>(
-  authClient: TAuthClient
-) {
-  const mutationKey = passkeyMutationKeys.deletePasskey
-
-  const mutationFn = (params: DeletePasskeyParams<TAuthClient>) =>
-    authClient.passkey.deletePasskey({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
 
 /**
  * Create a mutation for deleting a passkey.
@@ -64,11 +25,8 @@ export function useDeletePasskey<TAuthClient extends PasskeyAuthClient>(
 
   return useMutation(
     {
-      ...deletePasskeyOptions(authClient),
-      ...options,
-      meta: {
-        awaits: [passkeyQueryKeys.lists(userId)]
-      }
+      ...deletePasskeyOptions(authClient, userId),
+      ...options
     },
     queryClient
   )

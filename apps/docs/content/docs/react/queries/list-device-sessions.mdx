@@ -28,7 +28,7 @@ const { data: deviceSessions } = useListDeviceSessions(authClient, {
 ## Options factory
 
 ```tsx
-import { listDeviceSessionsOptions } from "@better-auth-ui/react/plugins/multi-session"
+import { listDeviceSessionsOptions } from "@better-auth-ui/core/plugins/multi-session"
 import { useQuery } from "@tanstack/react-query"
 
 const { data: deviceSessions } = useQuery(
@@ -39,7 +39,7 @@ const { data: deviceSessions } = useQuery(
 ## Invalidation
 
 ```ts
-import { listDeviceSessionsOptions } from "@better-auth-ui/react/plugins/multi-session"
+import { listDeviceSessionsOptions } from "@better-auth-ui/core/plugins/multi-session"
 
 queryClient.invalidateQueries({
   queryKey: listDeviceSessionsOptions(authClient, userId).queryKey
@@ -48,4 +48,4 @@ queryClient.invalidateQueries({
 
 ## Params
 
-<auto-type-table path="../../../../../../packages/react/src/plugins/multi-session/queries/list-device-sessions-query.ts" name="ListDeviceSessionsParams" />
+<auto-type-table path="../../../../../../packages/core/src/plugins/multi-session/list-device-sessions-query.ts" name="ListDeviceSessionsParams" />

@@ -34,7 +34,7 @@ Common side effects mirror the React docs:
 
 - `signInEmailOptions` / `signInUsernameOptions` / `signInPasskeyOptions` / `signUpEmailOptions` — reset the session query so the new session is refetched. (`signInSocialOptions` and `signInMagicLinkOptions` redirect instead, so they leave the cache alone.)
 - `signOutOptions` — remove every `["auth", ...]` query.
-- `updateUserMutation` — update the current user's profile fields and refresh cached session data.
+- `useUpdateUser` — update the current user's profile fields and refresh cached session data.
 - `setActiveSessionOptions` — refetch session/device-session queries after the active session changes.
 - `changeEmailOptions` — refetch the session.
 - `addPasskeyOptions` / `deletePasskeyOptions` — refetch the passkey list.
@@ -130,7 +130,7 @@ For endpoints that already have a key in `authMutationKeys`, prefer it over an i
 ### Settings
 
 <Cards>
-  <Card title="updateUserMutation" href="/docs/solid/mutations/update-user" />
+  <Card title="useUpdateUser" href="/docs/solid/mutations/update-user" />
   <Card title="changeEmailOptions" href="/docs/solid/mutations/change-email" />
   <Card title="changePasswordOptions" href="/docs/solid/mutations/change-password" />
   <Card title="deleteUserOptions" href="/docs/solid/mutations/delete-user" />

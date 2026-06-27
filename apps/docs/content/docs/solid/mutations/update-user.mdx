@@ -1,14 +1,14 @@
 ---
-title: updateUserMutation
+title: useUpdateUser
 description: Update the current user's profile fields.
 ---
 
 ## Usage
 
 ```tsx
-import { updateUserMutation } from "@better-auth-ui/solid"
+import { useUpdateUser } from "@better-auth-ui/solid"
 
-const updateUser = updateUserMutation(authClient)
+const updateUser = useUpdateUser(authClient)
 
 updateUser.mutate({ name: "Alice" })
 ```

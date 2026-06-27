@@ -24,15 +24,15 @@
       "types": "./dist/email.d.ts",
       "import": "./dist/email.js"
     },
-    "./plugins": {
-      "src": "./src/plugins.ts",
-      "types": "./dist/plugins.d.ts",
-      "import": "./dist/plugins.js"
-    },
     "./plugins/api-key": {
       "src": "./src/plugins/api-key/index.ts",
       "types": "./dist/plugins/api-key/index.d.ts",
       "import": "./dist/plugins/api-key/index.js"
+    },
+    "./plugins/captcha": {
+      "src": "./src/plugins/captcha/index.ts",
+      "types": "./dist/plugins/captcha/index.d.ts",
+      "import": "./dist/plugins/captcha/index.js"
     },
     "./plugins/magic-link": {
       "src": "./src/plugins/magic-link/index.ts",

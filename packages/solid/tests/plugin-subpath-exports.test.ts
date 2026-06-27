@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import * as apiKey from "../src/plugins/api-key"
+import * as captcha from "../src/plugins/captcha"
 import * as magicLink from "../src/plugins/magic-link"
 import * as multiSession from "../src/plugins/multi-session"
 import * as organization from "../src/plugins/organization"
@@ -21,6 +22,7 @@ describe("Solid plugin subpath exports", () => {
     expect(multiSession).toHaveProperty("useSetActiveSession")
     expect(multiSession).toHaveProperty("useListDeviceSessions")
 
+    expect(captcha).toHaveProperty("captchaPlugin")
     expect(magicLink).toHaveProperty("useSignInMagicLink")
     expect(username).toHaveProperty("useIsUsernameAvailable")
     expect(username).toHaveProperty("useSignInUsername")
@@ -29,6 +31,28 @@ describe("Solid plugin subpath exports", () => {
     expect(organization).toHaveProperty("useCancelInvitation")
     expect(organization).toHaveProperty("useActiveOrganization")
     expect(organization).toHaveProperty("useListOrganizations")
+  })
+
+  it("keeps core-owned mutation factories out of framework plugin entrypoints", () => {
+    expect(apiKey).not.toHaveProperty("createApiKeyOptions")
+    expect(apiKey).not.toHaveProperty("deleteApiKeyOptions")
+    expect(magicLink).not.toHaveProperty("signInMagicLinkOptions")
+    expect(multiSession).not.toHaveProperty("revokeMultiSessionOptions")
+    expect(multiSession).not.toHaveProperty("setActiveSessionOptions")
+    expect(passkey).not.toHaveProperty("addPasskeyOptions")
+    expect(passkey).not.toHaveProperty("deletePasskeyOptions")
+    expect(passkey).not.toHaveProperty("signInPasskeyOptions")
+    expect(username).not.toHaveProperty("signInUsernameOptions")
+    expect(username).not.toHaveProperty("isUsernameAvailableOptions")
+    expect(organization).not.toHaveProperty("createOrganizationOptions")
+    expect(organization).not.toHaveProperty("setActiveOrganizationOptions")
+    expect(apiKey).not.toHaveProperty("listApiKeysOptions")
+    expect(multiSession).not.toHaveProperty("listDeviceSessionsOptions")
+    expect(passkey).not.toHaveProperty("listPasskeysOptions")
+    expect(organization).not.toHaveProperty("activeOrganizationOptions")
+    expect(organization).not.toHaveProperty("listOrganizationsOptions")
+    expect(organization).not.toHaveProperty("hasPermissionOptions")
+    expect(organization).not.toHaveProperty("metadata")
   })
 
   it("does not publish plugin-specific APIs from the root entrypoint", async () => {

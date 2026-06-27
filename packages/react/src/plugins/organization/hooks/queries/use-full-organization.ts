@@ -1,0 +1,50 @@
+import {
+  type FullOrganizationData,
+  type FullOrganizationParams,
+  fullOrganizationOptions,
+  type OrganizationAuthClient
+} from "@better-auth-ui/core/plugins/organization"
+import {
+  type QueryClient,
+  skipToken,
+  type UseQueryOptions,
+  useQuery
+} from "@tanstack/react-query"
+import type { BetterFetchError } from "better-auth/client"
+import { useSession } from "../../../../hooks/queries/use-session"
+
+export type UseFullOrganizationOptions<
+  TAuthClient extends OrganizationAuthClient
+> = Omit<
+  UseQueryOptions<
+    FullOrganizationData<TAuthClient>,
+    BetterFetchError,
+    FullOrganizationData<TAuthClient>,
+    ReturnType<typeof fullOrganizationOptions<TAuthClient>>["queryKey"]
+  >,
+  "queryKey" | "queryFn"
+> &
+  FullOrganizationParams<TAuthClient>
+
+export function useFullOrganization<TAuthClient extends OrganizationAuthClient>(
+  authClient: TAuthClient,
+  options: UseFullOrganizationOptions<TAuthClient> = {},
+  queryClient?: QueryClient
+) {
+  const { data: session } = useSession(authClient, undefined, queryClient)
+  const userId = session?.user.id
+  const { query, fetchOptions, ...queryOptions } = options
+  const baseOptions = fullOrganizationOptions(authClient, userId, {
+    query,
+    fetchOptions
+  })
+
+  return useQuery(
+    {
+      ...queryOptions,
+      ...baseOptions,
+      queryFn: userId ? baseOptions.queryFn : skipToken
+    },
+    queryClient
+  )
+}

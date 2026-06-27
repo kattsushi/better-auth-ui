@@ -1,51 +1,23 @@
-import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import {
-  organizationMutationKeys,
-  organizationQueryKeys
+  type OrganizationAuthClient,
+  organizationQueryKeys,
+  type SetActiveOrganizationOptions,
+  type SetActiveOrganizationParams,
+  setActiveOrganizationOptions
 } from "@better-auth-ui/core/plugins/organization"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-import { useListOrganizations } from "../../queries"
+import { useListOrganizations } from "../queries"
 
-export type SetActiveOrganizationParams<
+type SetActiveOrganizationVariables<
   TAuthClient extends OrganizationAuthClient
-> = Parameters<TAuthClient["organization"]["setActive"]>[0]
-
-export type SetActiveOrganizationOptions<
-  TAuthClient extends OrganizationAuthClient
-> = Omit<
-  ReturnType<typeof setActiveOrganizationOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-export function setActiveOrganizationOptions<
-  TAuthClient extends OrganizationAuthClient
->(authClient: TAuthClient) {
-  const mutationKey = organizationMutationKeys.setActive
-
-  const mutationFn = (params: SetActiveOrganizationParams<TAuthClient>) =>
-    authClient.organization.setActive({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
+> = SetActiveOrganizationParams<TAuthClient> & {
+  organizationId?: string | null
+  organizationSlug?: string
 }
 
 export function useSetActiveOrganization<
-  TAuthClient extends OrganizationAuthClient
+  TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
 >(
   authClient: TAuthClient,
   options?: SetActiveOrganizationOptions<TAuthClient>,
@@ -61,9 +33,12 @@ export function useSetActiveOrganization<
 
   return useMutation(
     {
-      ...setActiveOrganizationOptions(authClient),
+      ...setActiveOrganizationOptions(authClient, userId),
       ...options,
-      onMutate: async (variables, context) => {
+      onMutate: async (
+        variables: SetActiveOrganizationVariables<TAuthClient>,
+        context
+      ) => {
         // Cancel any outgoing refetches across every slug-partitioned
         // active-organization cache entry so they don't overwrite our
         // optimistic update.

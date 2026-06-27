@@ -26,7 +26,8 @@ import {
   apiKeyMutationKeys,
   apiKeyQueryKeys,
   createApiKeyOptions,
-  deleteApiKeyOptions
+  deleteApiKeyOptions,
+  listApiKeysOptions
 } from "@better-auth-ui/core/plugins/api-key"
 import { deleteUserMutationKeys } from "@better-auth-ui/core/plugins/delete-user"
 import {
@@ -34,42 +35,36 @@ import {
   signInMagicLinkOptions
 } from "@better-auth-ui/core/plugins/magic-link"
 import {
+  listDeviceSessionsOptions,
   multiSessionMutationKeys,
   multiSessionQueryKeys,
   revokeMultiSessionOptions,
   setActiveSessionOptions
 } from "@better-auth-ui/core/plugins/multi-session"
 import {
-  organizationMutationKeys,
-  organizationQueryKeys
-} from "@better-auth-ui/core/plugins/organization"
-import {
-  passkeyMutationKeys,
-  passkeyQueryKeys
-} from "@better-auth-ui/core/plugins/passkey"
-import { usernameMutationKeys } from "@better-auth-ui/core/plugins/username"
-import { afterEach, describe, expect, it, vi } from "vitest"
-import { resolveAuthConfig } from "../src"
-import { listApiKeysOptions } from "../src/plugins/api-key"
-import { listDeviceSessionsOptions } from "../src/plugins/multi-session"
-import {
   createOrganizationMeta,
   createOrganizationOptions,
   hasPermissionOptions,
   listOrganizationMembersOptions,
-  listOrganizationsOptions
-} from "../src/plugins/organization"
+  listOrganizationsOptions,
+  organizationMutationKeys,
+  organizationQueryKeys
+} from "@better-auth-ui/core/plugins/organization"
 import {
   addPasskeyOptions,
   deletePasskeyOptions,
   listPasskeysOptions,
+  passkeyMutationKeys,
+  passkeyQueryKeys,
   signInPasskeyOptions
-} from "../src/plugins/passkey"
+} from "@better-auth-ui/core/plugins/passkey"
 import {
   isUsernameAvailableOptions,
-  signInUsernameOptions
-} from "../src/plugins/username"
-import { getSessionUserId } from "../src/queries/create-user-scoped-query"
+  signInUsernameOptions,
+  usernameMutationKeys
+} from "@better-auth-ui/core/plugins/username"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { resolveAuthConfig } from "../src"
 
 const signal = new AbortController().signal
 
@@ -150,12 +145,7 @@ describe("Solid auth behavior parity", () => {
     })
   })
 
-  it("derives user-scoped query IDs from one existing session query result", () => {
-    expect(
-      getSessionUserId({ data: { user: { id: "user-1" } } } as never)
-    ).toBe("user-1")
-    expect(getSessionUserId({ data: null } as never)).toBeUndefined()
-
+  it("keeps user-scoped base query wrappers thin around core readiness", () => {
     const listAccountsQuery = readFileSync(
       resolve(__dirname, "../src/hooks/queries/use-list-accounts.ts"),
       "utf8"
@@ -164,11 +154,14 @@ describe("Solid auth behavior parity", () => {
     expect(listAccountsQuery).toContain(
       "const session = useSession(authClient)"
     )
-    expect(listAccountsQuery).toContain("getSessionUserId(session)")
+    expect(listAccountsQuery).toContain("session.data?.user.id")
     expect(listAccountsQuery).toContain("return useQuery(() =>")
-    expect(listAccountsQuery).toContain("listAccountsOptions(authClient")
+    expect(listAccountsQuery).toContain("listAccountsOptions(")
+    expect(listAccountsQuery).toContain("authClient,")
     expect(listAccountsQuery).not.toContain("createUserScopedQuery(")
-    expect(listAccountsQuery).not.toContain("getUserId(authClient)")
+    expect(listAccountsQuery).not.toContain("getSessionUserId")
+    expect(listAccountsQuery).not.toContain("enabled: (queryState)")
+    expect(listAccountsQuery).not.toContain("query: never")
 
     const accountInfoQuery = readFileSync(
       resolve(__dirname, "../src/hooks/queries/use-account-info.ts"),
@@ -179,13 +172,15 @@ describe("Solid auth behavior parity", () => {
       "utf8"
     )
 
-    expect(accountInfoQuery).toContain("Boolean(userId() && query?.accountId)")
-    expect(accountInfoQuery).toContain("enabled(queryState as never)")
+    expect(accountInfoQuery).toContain("session.data?.user.id")
+    expect(accountInfoQuery).not.toContain("getSessionUserId")
+    expect(accountInfoQuery).not.toContain("enabled: (queryState)")
+    expect(accountInfoQuery).not.toContain("query: never")
     expect(accountInfoQuery).not.toContain("initialData: undefined")
-    expect(listAccountsQuery).toContain("Boolean(userId())")
-    expect(listAccountsQuery).toContain("enabled(query as never)")
-    expect(listSessionsQuery).toContain("Boolean(userId())")
-    expect(listSessionsQuery).toContain("enabled(query as never)")
+    expect(listSessionsQuery).toContain("session.data?.user.id")
+    expect(listSessionsQuery).not.toContain("getSessionUserId")
+    expect(listSessionsQuery).not.toContain("enabled: (queryState)")
+    expect(listSessionsQuery).not.toContain("query: never")
     expect(listSessionsQuery).not.toContain("initialData: undefined")
   })
 
@@ -195,19 +190,19 @@ describe("Solid auth behavior parity", () => {
       "../src/hooks/queries/use-list-accounts.ts",
       "../src/hooks/queries/use-list-sessions.ts",
       "../src/hooks/mutations/use-request-password-reset.ts",
-      "../src/mutations/auth/reset-password-mutation.ts",
+      "../src/hooks/mutations/use-reset-password.ts",
       "../src/hooks/mutations/use-send-verification-email.ts",
-      "../src/mutations/auth/sign-in-email-mutation.ts",
-      "../src/mutations/auth/sign-in-social-mutation.ts",
-      "../src/mutations/auth/sign-out-mutation.ts",
-      "../src/mutations/auth/sign-up-email-mutation.ts",
-      "../src/mutations/settings/change-email-mutation.ts",
-      "../src/mutations/settings/change-password-mutation.ts",
-      "../src/mutations/settings/delete-user-mutation.ts",
-      "../src/mutations/settings/link-social-mutation.ts",
-      "../src/mutations/settings/revoke-session-mutation.ts",
-      "../src/mutations/settings/unlink-account-mutation.ts",
-      "../src/mutations/settings/update-user-mutation.ts"
+      "../src/hooks/mutations/use-sign-in-email.ts",
+      "../src/hooks/mutations/use-sign-in-social.ts",
+      "../src/hooks/mutations/use-sign-out.ts",
+      "../src/hooks/mutations/use-sign-up-email.ts",
+      "../src/hooks/mutations/use-change-email.ts",
+      "../src/hooks/mutations/use-change-password.ts",
+      "../src/hooks/mutations/use-delete-user.ts",
+      "../src/hooks/mutations/use-link-social.ts",
+      "../src/hooks/mutations/use-revoke-session.ts",
+      "../src/hooks/mutations/use-unlink-account.ts",
+      "../src/hooks/mutations/use-update-user.ts"
     ]
 
     for (const file of baseFiles) {

@@ -22,13 +22,13 @@
       "types": "./dist/email.d.ts",
       "import": "./dist/email.js"
     },
-    "./plugins": {
-      "types": "./dist/plugins.d.ts",
-      "import": "./dist/plugins.js"
-    },
     "./plugins/api-key": {
       "types": "./dist/plugins/api-key/index.d.ts",
       "import": "./dist/plugins/api-key/index.js"
+    },
+    "./plugins/captcha": {
+      "types": "./dist/plugins/captcha/index.d.ts",
+      "import": "./dist/plugins/captcha/index.js"
     },
     "./plugins/magic-link": {
       "types": "./dist/plugins/magic-link/index.d.ts",

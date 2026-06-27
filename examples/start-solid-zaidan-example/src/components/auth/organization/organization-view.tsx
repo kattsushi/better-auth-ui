@@ -96,7 +96,7 @@ export function OrganizationView(props: OrganizationViewProps) {
         {...others}
       >
         <OrganizationLogo
-          organization={resolvedOrganization()}
+          organization={resolvedOrganization() ?? undefined}
           class={local.size === "sm" ? "size-5" : undefined}
           size={local.size === "lg" ? "md" : "sm"}
         />

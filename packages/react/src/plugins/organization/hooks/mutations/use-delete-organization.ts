@@ -1,50 +1,13 @@
-import type { OrganizationAuthClient } from "@better-auth-ui/core/plugins/organization"
 import {
-  organizationMutationKeys,
-  organizationQueryKeys
+  type DeleteOrganizationOptions,
+  deleteOrganizationOptions,
+  type OrganizationAuthClient
 } from "@better-auth-ui/core/plugins/organization"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
 
-export type DeleteOrganizationParams<
-  TAuthClient extends OrganizationAuthClient
-> = Parameters<TAuthClient["organization"]["delete"]>[0]
-
-export type DeleteOrganizationOptions<
-  TAuthClient extends OrganizationAuthClient
-> = Omit<
-  ReturnType<typeof deleteOrganizationOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-export function deleteOrganizationOptions<
-  TAuthClient extends OrganizationAuthClient
->(authClient: TAuthClient) {
-  const mutationKey = organizationMutationKeys.delete
-
-  const mutationFn = (params: DeleteOrganizationParams<TAuthClient>) =>
-    authClient.organization.delete({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
-
 export function useDeleteOrganization<
-  TAuthClient extends OrganizationAuthClient
+  TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
 >(
   authClient: TAuthClient,
   options?: DeleteOrganizationOptions<TAuthClient>,
@@ -55,15 +18,8 @@ export function useDeleteOrganization<
 
   return useMutation(
     {
-      ...deleteOrganizationOptions(authClient),
-      ...options,
-      meta: {
-        awaits: [organizationQueryKeys.lists(userId)],
-        invalidates: [
-          organizationQueryKeys.fullDetails(userId),
-          organizationQueryKeys.activeOrganizations(userId)
-        ]
-      }
+      ...deleteOrganizationOptions(authClient, userId),
+      ...options
     },
     queryClient
   )

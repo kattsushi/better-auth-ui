@@ -1,9 +1,9 @@
 import type {
+  InviteMemberParams,
   OrganizationAuthClient,
   OrganizationLocalization
 } from "@better-auth-ui/core/plugins/organization"
 import { useAuth } from "@better-auth-ui/solid"
-import type { InviteMemberParams } from "@better-auth-ui/solid/plugins/organization"
 import {
   useActiveOrganization,
   useInviteMember

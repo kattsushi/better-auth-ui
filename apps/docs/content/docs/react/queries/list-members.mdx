@@ -23,7 +23,7 @@ import {
   fetchListOrganizationMembers,
   listOrganizationMembersOptions,
   prefetchListOrganizationMembers
-} from "@better-auth-ui/react/plugins/organization"
+} from "@better-auth-ui/core/plugins/organization"
 
 const options = listOrganizationMembersOptions(authClient, userId)
 await ensureListOrganizationMembers(queryClient, authClient, userId)
@@ -55,4 +55,4 @@ await ensureListOrganizationMembers(queryClient, auth, userId, {
 
 ## Params
 
-<auto-type-table path="../../../../../../packages/react/src/plugins/organization/queries/list-members-query.ts" name="ListOrganizationMembersParams" />
+<auto-type-table path="../../../../../../packages/core/src/plugins/organization/list-members-query.ts" name="ListOrganizationMembersParams" />

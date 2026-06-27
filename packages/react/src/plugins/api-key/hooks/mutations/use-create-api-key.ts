@@ -1,52 +1,10 @@
 import {
   type ApiKeyAuthClient,
-  apiKeyMutationKeys,
-  apiKeyQueryKeys
+  type CreateApiKeyOptions,
+  createApiKeyOptions
 } from "@better-auth-ui/core/plugins/api-key"
-import {
-  mutationOptions,
-  type QueryClient,
-  useMutation
-} from "@tanstack/react-query"
-import type { BetterFetchError } from "better-auth/react"
+import { type QueryClient, useMutation } from "@tanstack/react-query"
 import { useSession } from "../../../../hooks/queries/use-session"
-
-export type CreateApiKeyParams<
-  TAuthClient extends ApiKeyAuthClient = ApiKeyAuthClient
-> = Parameters<TAuthClient["apiKey"]["create"]>[0]
-
-export type CreateApiKeyOptions<
-  TAuthClient extends ApiKeyAuthClient = ApiKeyAuthClient
-> = Omit<
-  ReturnType<typeof createApiKeyOptions<TAuthClient>>,
-  "mutationKey" | "mutationFn" | "meta"
->
-
-/**
- * Mutation options factory for creating an API key.
- *
- * @param authClient - The Better Auth client with the API key plugin.
- */
-export function createApiKeyOptions<TAuthClient extends ApiKeyAuthClient>(
-  authClient: TAuthClient
-) {
-  const mutationKey = apiKeyMutationKeys.create
-
-  const mutationFn = (params: CreateApiKeyParams<TAuthClient>) =>
-    authClient.apiKey.create({
-      ...params,
-      fetchOptions: { ...params?.fetchOptions, throw: true }
-    })
-
-  return mutationOptions<
-    Awaited<ReturnType<typeof mutationFn>>,
-    BetterFetchError,
-    Parameters<typeof mutationFn>[0]
-  >({
-    mutationKey,
-    mutationFn
-  })
-}
 
 /**
  * Create a mutation for creating an API key.
@@ -67,11 +25,8 @@ export function useCreateApiKey<TAuthClient extends ApiKeyAuthClient>(
 
   return useMutation(
     {
-      ...createApiKeyOptions(authClient),
-      ...options,
-      meta: {
-        awaits: [apiKeyQueryKeys.lists(userId)]
-      }
+      ...createApiKeyOptions(authClient, userId),
+      ...options
     },
     queryClient
   )
