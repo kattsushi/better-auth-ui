@@ -1,10 +1,5 @@
 import type { MutationOptions } from "@tanstack/query-core"
 import type { BetterFetchError } from "better-auth/client"
-import {
-  type AuthMutationFnData,
-  type AuthMutationFnVariables,
-  authMutationOptions
-} from "../../lib/auth-mutation-options"
 import type { OrganizationAuthClient } from "./organization-auth-client"
 import { organizationMutationKeys } from "./organization-mutation-keys"
 import { organizationQueryKeys } from "./organization-query-keys"
@@ -13,7 +8,7 @@ export type RejectInvitationFn<TAuthClient extends OrganizationAuthClient> =
   TAuthClient["organization"]["rejectInvitation"]
 
 export type RejectInvitationParams<TAuthClient extends OrganizationAuthClient> =
-  AuthMutationFnVariables<RejectInvitationFn<TAuthClient>>
+  Parameters<RejectInvitationFn<TAuthClient>>[0]
 
 export type RejectInvitationOptions<
   TAuthClient extends OrganizationAuthClient
@@ -29,15 +24,21 @@ export const rejectInvitationMeta = (userId: string | undefined) => ({
 export function rejectInvitationOptions<
   TAuthClient extends OrganizationAuthClient
 >(authClient: TAuthClient, userId?: string) {
+  const mutationKey = organizationMutationKeys.rejectInvitation
+
+  const mutationFn = (params: RejectInvitationParams<TAuthClient>) =>
+    authClient.organization.rejectInvitation({
+      ...params,
+      fetchOptions: { ...params?.fetchOptions, throw: true }
+    })
+
   return {
-    ...authMutationOptions(
-      authClient.organization.rejectInvitation,
-      organizationMutationKeys.rejectInvitation
-    ),
+    mutationKey,
+    mutationFn,
     meta: rejectInvitationMeta(userId)
   } as MutationOptions<
-    AuthMutationFnData<RejectInvitationFn<TAuthClient>>,
+    Awaited<ReturnType<typeof mutationFn>>,
     BetterFetchError,
-    AuthMutationFnVariables<RejectInvitationFn<TAuthClient>>
+    Parameters<typeof mutationFn>[0]
   >
 }

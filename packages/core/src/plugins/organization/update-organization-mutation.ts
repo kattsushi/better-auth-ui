@@ -1,11 +1,5 @@
 import type { MutationOptions } from "@tanstack/query-core"
 import type { BetterFetchError } from "better-auth/client"
-import {
-  type AuthMutationFn,
-  type AuthMutationFnData,
-  type AuthMutationFnVariables,
-  authMutationOptions
-} from "../../lib/auth-mutation-options"
 import type { OrganizationAuthClient } from "./organization-auth-client"
 import { organizationMutationKeys } from "./organization-mutation-keys"
 import { organizationQueryKeys } from "./organization-query-keys"
@@ -16,7 +10,7 @@ export type UpdateOrganizationFn<
 
 export type UpdateOrganizationParams<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = AuthMutationFnVariables<UpdateOrganizationFn<TAuthClient>>
+> = Parameters<UpdateOrganizationFn<TAuthClient>>[0]
 
 export type UpdateOrganizationOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
@@ -36,30 +30,28 @@ export const updateOrganizationMeta = (userId: string | undefined) => ({
 export function updateOrganizationOptions<
   TAuthClient extends OrganizationAuthClient
 >(authClient: TAuthClient, userId?: string, organizationId?: string) {
-  const baseOptions = authMutationOptions(
-    authClient.organization.update,
-    organizationMutationKeys.update
-  )
+  const mutationKey = organizationMutationKeys.update
+
+  const mutationFn = (params: UpdateOrganizationParams<TAuthClient>) => {
+    const input = params as UpdateOrganizationParams<TAuthClient> & {
+      fetchOptions?: Record<string, unknown>
+      organizationId?: string
+    }
+
+    return authClient.organization.update({
+      ...params,
+      organizationId: input.organizationId ?? organizationId,
+      fetchOptions: { ...input.fetchOptions, throw: true }
+    } as UpdateOrganizationParams<TAuthClient>)
+  }
 
   return {
-    ...baseOptions,
-    mutationFn: (params: UpdateOrganizationParams<TAuthClient>) => {
-      const input = params as UpdateOrganizationParams<TAuthClient> & {
-        fetchOptions?: Record<string, unknown>
-        organizationId?: string
-      }
-      const mutation = authClient.organization.update as AuthMutationFn
-
-      return mutation({
-        ...params,
-        organizationId: input.organizationId ?? organizationId,
-        fetchOptions: { ...input.fetchOptions, throw: true }
-      })
-    },
+    mutationKey,
+    mutationFn,
     meta: updateOrganizationMeta(userId)
-  } as unknown as MutationOptions<
-    AuthMutationFnData<UpdateOrganizationFn<TAuthClient>>,
+  } as MutationOptions<
+    Awaited<ReturnType<typeof mutationFn>>,
     BetterFetchError,
-    AuthMutationFnVariables<UpdateOrganizationFn<TAuthClient>>
+    Parameters<typeof mutationFn>[0]
   >
 }

@@ -1,10 +1,5 @@
 import type { MutationOptions } from "@tanstack/query-core"
 import type { BetterFetchError } from "better-auth/client"
-import {
-  type AuthMutationFnData,
-  type AuthMutationFnVariables,
-  authMutationOptions
-} from "../../lib/auth-mutation-options"
 import type { OrganizationAuthClient } from "./organization-auth-client"
 import { organizationMutationKeys } from "./organization-mutation-keys"
 
@@ -12,7 +7,7 @@ export type CheckSlugFn<TAuthClient extends OrganizationAuthClient> =
   TAuthClient["organization"]["checkSlug"]
 
 export type CheckSlugParams<TAuthClient extends OrganizationAuthClient> =
-  AuthMutationFnVariables<CheckSlugFn<TAuthClient>>
+  Parameters<CheckSlugFn<TAuthClient>>[0]
 
 export type CheckOrganizationSlugParams<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
@@ -35,13 +30,21 @@ export type CheckOrganizationSlugOptions<
 export function checkSlugOptions<TAuthClient extends OrganizationAuthClient>(
   authClient: TAuthClient
 ) {
-  return authMutationOptions(
-    authClient.organization.checkSlug,
-    organizationMutationKeys.checkSlug
-  ) as MutationOptions<
-    AuthMutationFnData<CheckSlugFn<TAuthClient>>,
+  const mutationKey = organizationMutationKeys.checkSlug
+
+  const mutationFn = (params: CheckSlugParams<TAuthClient>) =>
+    authClient.organization.checkSlug({
+      ...params,
+      fetchOptions: { ...params?.fetchOptions, throw: true }
+    })
+
+  return {
+    mutationKey,
+    mutationFn
+  } as MutationOptions<
+    Awaited<ReturnType<typeof mutationFn>>,
     BetterFetchError,
-    AuthMutationFnVariables<CheckSlugFn<TAuthClient>>
+    Parameters<typeof mutationFn>[0]
   >
 }
 

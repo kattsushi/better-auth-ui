@@ -1,10 +1,5 @@
 import type { MutationOptions } from "@tanstack/query-core"
 import type { BetterFetchError } from "better-auth/client"
-import {
-  type AuthMutationFnData,
-  type AuthMutationFnVariables,
-  authMutationOptions
-} from "../../lib/auth-mutation-options"
 import type { OrganizationAuthClient } from "./organization-auth-client"
 import { organizationMutationKeys } from "./organization-mutation-keys"
 import { organizationQueryKeys } from "./organization-query-keys"
@@ -15,7 +10,7 @@ export type DeleteOrganizationFn<
 
 export type DeleteOrganizationParams<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = AuthMutationFnVariables<DeleteOrganizationFn<TAuthClient>>
+> = Parameters<DeleteOrganizationFn<TAuthClient>>[0]
 
 export type DeleteOrganizationOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
@@ -35,15 +30,21 @@ export const deleteOrganizationMeta = (userId: string | undefined) => ({
 export function deleteOrganizationOptions<
   TAuthClient extends OrganizationAuthClient
 >(authClient: TAuthClient, userId?: string) {
+  const mutationKey = organizationMutationKeys.delete
+
+  const mutationFn = (params: DeleteOrganizationParams<TAuthClient>) =>
+    authClient.organization.delete({
+      ...params,
+      fetchOptions: { ...params?.fetchOptions, throw: true }
+    })
+
   return {
-    ...authMutationOptions(
-      authClient.organization.delete,
-      organizationMutationKeys.delete
-    ),
+    mutationKey,
+    mutationFn,
     meta: deleteOrganizationMeta(userId)
   } as MutationOptions<
-    AuthMutationFnData<DeleteOrganizationFn<TAuthClient>>,
+    Awaited<ReturnType<typeof mutationFn>>,
     BetterFetchError,
-    AuthMutationFnVariables<DeleteOrganizationFn<TAuthClient>>
+    Parameters<typeof mutationFn>[0]
   >
 }

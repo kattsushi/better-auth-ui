@@ -1,10 +1,5 @@
 import type { MutationOptions } from "@tanstack/query-core"
 import type { BetterFetchError } from "better-auth/client"
-import {
-  type AuthMutationFnData,
-  type AuthMutationFnVariables,
-  authMutationOptions
-} from "../../lib/auth-mutation-options"
 import type { OrganizationAuthClient } from "./organization-auth-client"
 import { organizationMutationKeys } from "./organization-mutation-keys"
 import { organizationQueryKeys } from "./organization-query-keys"
@@ -15,7 +10,7 @@ export type CreateOrganizationFn<
 
 export type CreateOrganizationParams<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = AuthMutationFnVariables<CreateOrganizationFn<TAuthClient>>
+> = Parameters<CreateOrganizationFn<TAuthClient>>[0]
 
 export type CreateOrganizationOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
@@ -35,15 +30,21 @@ export const createOrganizationMeta = (userId: string | undefined) => ({
 export function createOrganizationOptions<
   TAuthClient extends OrganizationAuthClient
 >(authClient: TAuthClient, userId?: string) {
+  const mutationKey = organizationMutationKeys.create
+
+  const mutationFn = (params: CreateOrganizationParams<TAuthClient>) =>
+    authClient.organization.create({
+      ...params,
+      fetchOptions: { ...params?.fetchOptions, throw: true }
+    })
+
   return {
-    ...authMutationOptions(
-      authClient.organization.create,
-      organizationMutationKeys.create
-    ),
+    mutationKey,
+    mutationFn,
     meta: createOrganizationMeta(userId)
   } as MutationOptions<
-    AuthMutationFnData<CreateOrganizationFn<TAuthClient>>,
+    Awaited<ReturnType<typeof mutationFn>>,
     BetterFetchError,
-    AuthMutationFnVariables<CreateOrganizationFn<TAuthClient>>
+    Parameters<typeof mutationFn>[0]
   >
 }

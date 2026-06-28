@@ -1,11 +1,5 @@
 import type { MutationOptions } from "@tanstack/query-core"
 import type { BetterFetchError } from "better-auth/client"
-import {
-  type AuthMutationFn,
-  type AuthMutationFnData,
-  type AuthMutationFnVariables,
-  authMutationOptions
-} from "../../lib/auth-mutation-options"
 import type { OrganizationAuthClient } from "./organization-auth-client"
 import { organizationMutationKeys } from "./organization-mutation-keys"
 import { organizationQueryKeys } from "./organization-query-keys"
@@ -16,7 +10,7 @@ export type InviteMemberFn<
 
 export type InviteMemberParams<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
-> = AuthMutationFnVariables<InviteMemberFn<TAuthClient>>
+> = Parameters<InviteMemberFn<TAuthClient>>[0]
 
 export type InviteMemberOptions<
   TAuthClient extends OrganizationAuthClient = OrganizationAuthClient
@@ -37,32 +31,28 @@ export function inviteMemberOptions<TAuthClient extends OrganizationAuthClient>(
   userId?: string,
   organizationId?: string
 ) {
-  const baseOptions = authMutationOptions(
-    authClient.organization.inviteMember,
-    organizationMutationKeys.inviteMember
-  )
+  const mutationKey = organizationMutationKeys.inviteMember
+
+  const mutationFn = (params: InviteMemberParams<TAuthClient>) => {
+    const input = params as InviteMemberParams<TAuthClient> & {
+      fetchOptions?: Record<string, unknown>
+      organizationId?: string
+    }
+
+    return authClient.organization.inviteMember({
+      ...params,
+      organizationId: input.organizationId ?? organizationId,
+      fetchOptions: { ...input.fetchOptions, throw: true }
+    } as InviteMemberParams<TAuthClient>)
+  }
 
   return {
-    ...baseOptions,
-    mutationFn: (params: InviteMemberParams<TAuthClient>) => {
-      const input = params as InviteMemberParams<TAuthClient> & {
-        fetchOptions?: Record<string, unknown>
-        organizationId?: string
-      }
-
-      const inviteMember = authClient.organization
-        .inviteMember as AuthMutationFn
-
-      return inviteMember({
-        ...params,
-        organizationId: input.organizationId ?? organizationId,
-        fetchOptions: { ...input.fetchOptions, throw: true }
-      } as InviteMemberParams<TAuthClient>)
-    },
+    mutationKey,
+    mutationFn,
     meta: inviteMemberMeta(userId)
-  } as unknown as MutationOptions<
-    AuthMutationFnData<InviteMemberFn<TAuthClient>>,
+  } as MutationOptions<
+    Awaited<ReturnType<typeof mutationFn>>,
     BetterFetchError,
-    AuthMutationFnVariables<InviteMemberFn<TAuthClient>>
+    Parameters<typeof mutationFn>[0]
   >
 }
