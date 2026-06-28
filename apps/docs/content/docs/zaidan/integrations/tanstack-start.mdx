@@ -149,16 +149,17 @@ Use it in two situations:
 2. **On its own** for statically prerendered or purely client-rendered routes (SSG output, SPA routes, marketing pages), where server-side session access isn't available.
 
 ```tsx title="routes/dashboard.tsx"
-import { useAuth, useAuthenticate } from "@better-auth-ui/solid"
+import { useAuthenticate } from "@better-auth-ui/solid"
 import { createFileRoute, A } from "@tanstack/solid-router"
 import { Show } from "solid-js"
+
+import { authClient } from "@/lib/auth-client"
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard
 })
 
 function Dashboard() {
-  const { authClient } = useAuth()
   const session = useAuthenticate(authClient)
 
   return (
