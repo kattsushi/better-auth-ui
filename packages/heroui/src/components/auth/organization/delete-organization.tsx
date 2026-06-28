@@ -67,7 +67,7 @@ export function DeleteOrganization() {
           <DeleteOrganizationDialog
             isOpen={confirmOpen}
             onOpenChange={setConfirmOpen}
-            organization={activeOrganization ?? undefined}
+            organization={activeOrganization}
           />
         )}
       </AlertDialog>

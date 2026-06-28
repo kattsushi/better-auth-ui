@@ -47,7 +47,7 @@ export function LeaveOrganization() {
           <LeaveOrganizationDialog
             isOpen={confirmOpen}
             onOpenChange={setConfirmOpen}
-            organization={activeOrganization ?? undefined}
+            organization={activeOrganization}
           />
         )}
       </AlertDialog>

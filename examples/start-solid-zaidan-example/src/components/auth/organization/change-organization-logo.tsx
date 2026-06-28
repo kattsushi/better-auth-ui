@@ -143,7 +143,7 @@ export function ChangeOrganizationLogo(props: ChangeOrganizationLogoProps) {
           >
             <OrganizationLogo
               isPending={activeOrganization.isPending}
-              organization={activeOrganization.data ?? undefined}
+              organization={activeOrganization.data}
               size="lg"
             />
           </Button>

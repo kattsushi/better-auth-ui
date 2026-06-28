@@ -16,7 +16,7 @@ export type ResetPasswordProps = {
 const tokenFromLocation = () => {
   if (typeof window === "undefined") return undefined
 
-  return new URLSearchParams(window.location.search).get("token") ?? undefined
+  return new URLSearchParams(window.location.search).get("token")
 }
 
 export function ResetPassword(props: ResetPasswordProps) {

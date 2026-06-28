@@ -35,7 +35,7 @@ export type OrganizationViewProps = ComponentProps<"div"> & {
   size?: OrganizationLogoSize
   hideRole?: boolean
   hideSlug?: boolean
-  organization?: Partial<Organization>
+  organization?: Partial<Organization> | null
 }
 
 export function OrganizationView(props: OrganizationViewProps) {
@@ -96,7 +96,7 @@ export function OrganizationView(props: OrganizationViewProps) {
         {...others}
       >
         <OrganizationLogo
-          organization={resolvedOrganization() ?? undefined}
+          organization={resolvedOrganization()}
           class={local.size === "sm" ? "size-5" : undefined}
           size={local.size === "lg" ? "md" : "sm"}
         />

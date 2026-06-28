@@ -67,7 +67,7 @@ export function DeleteOrganization() {
         <DeleteOrganizationDialog
           open={confirmOpen}
           onOpenChange={setConfirmOpen}
-          organization={activeOrganization ?? undefined}
+          organization={activeOrganization}
         />
       )}
     </div>

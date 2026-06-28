@@ -149,7 +149,7 @@ export function OrganizationSwitcher({
               <OrganizationView
                 hideRole
                 hideSlug={hideSlug}
-                organization={activeOrganization ?? undefined}
+                organization={activeOrganization}
               />
 
               {!hideSettings && (

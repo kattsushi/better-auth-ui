@@ -254,7 +254,7 @@ export function OrganizationMembers({
                     key={member.id}
                     member={member}
                     isOwner={isOwner}
-                    organization={activeOrganization ?? undefined}
+                    organization={activeOrganization}
                   />
                 ))
               )}
