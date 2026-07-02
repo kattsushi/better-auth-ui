@@ -39,18 +39,22 @@ export function useListOrganizationMembers<
 ) {
   const { data: session } = useSession(authClient, undefined, queryClient)
   const userId = session?.user.id
+
   const { query, fetchOptions, ...queryOptions } = options
+
   const { data: activeOrganization } = useActiveOrganization(
     authClient,
     undefined,
     queryClient
   )
-  const organizationId = query?.organizationId ?? activeOrganization?.id
 
   return useQuery(
     {
       ...listOrganizationMembersOptions(authClient, userId, {
-        query: { ...query, organizationId },
+        query: {
+          ...query,
+          organizationId: query?.organizationId ?? activeOrganization?.id
+        },
         fetchOptions
       }),
       ...queryOptions
