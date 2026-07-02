@@ -2982,7 +2982,8 @@ describe("Solid auth route component selection", () => {
     expect(organizationApiKeys).toContain(
       "organizationId={activeOrganization.data?.id}"
     )
-    expect(activeOrganizationQuery).toContain("slug === null")
+    expect(activeOrganizationQuery).toContain("resolveActiveOrganizationQuery")
+    expect(coreActiveOrganizationQuery).toContain("organizationSlug === null")
     expect(coreActiveOrganizationQuery).toContain("async () => null")
     expect(listMembersQuery).toContain("activeOrganization.data?.id")
   })
