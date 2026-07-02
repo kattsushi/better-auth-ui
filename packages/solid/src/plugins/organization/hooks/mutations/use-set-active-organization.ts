@@ -44,8 +44,7 @@ export function useSetActiveOrganization<
 ) {
   const session = useSession(authClient, undefined, queryClient)
   const mutationQueryClient = useQueryClient(queryClient?.())
-  const userId = () =>
-    (session.data as { user?: { id?: string } } | undefined)?.user?.id
+  const userId = () => session.data?.user.id
   const organizationsQuery = useListOrganizations(
     authClient,
     undefined,

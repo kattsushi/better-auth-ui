@@ -16,7 +16,7 @@ export type SignInUsernameOptions<TAuthClient extends UsernameAuthClient> =
 /**
  * Mutation options factory for username/password sign-in.
  *
- * @param authClient - The Better Auth username client.
+ * @param authClient - The Better Auth client.
  */
 export function signInUsernameOptions<TAuthClient extends UsernameAuthClient>(
   authClient: TAuthClient

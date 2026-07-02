@@ -18,7 +18,7 @@ export type IsUsernameAvailableOptions<TAuthClient extends UsernameAuthClient> =
  * Modeled as a mutation because callers typically trigger the check on
  * user action (debounced input, form submit) rather than on mount.
  *
- * @param authClient - The Better Auth username client.
+ * @param authClient - The Better Auth client.
  */
 export function isUsernameAvailableOptions<
   TAuthClient extends UsernameAuthClient

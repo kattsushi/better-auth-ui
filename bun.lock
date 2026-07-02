@@ -12,7 +12,6 @@
         "@swc/core": "~1.15.43",
         "@swc/helpers": "~0.5.23",
         "@vitejs/plugin-react": "^6.0.3",
-        "kysely": "0.28.17",
         "lefthook": "^2.1.8",
         "nx": "23.0.1",
         "typescript": "^6.0.3",
