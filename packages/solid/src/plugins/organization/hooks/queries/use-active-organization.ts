@@ -2,7 +2,8 @@ import {
   type ActiveOrganizationData,
   type ActiveOrganizationParams,
   activeOrganizationOptions,
-  type OrganizationAuthClient
+  type OrganizationAuthClient,
+  resolveActiveOrganizationQuery
 } from "@better-auth-ui/core/plugins/organization"
 import {
   type QueryClient,
@@ -34,16 +35,10 @@ export function useActiveOrganization<
     const userId = session.data?.user.id
     const { query, fetchOptions, initialData, ...queryOptions } =
       options?.() ?? {}
-    const effectiveQuery =
-      slug === null
-        ? { organizationSlug: null }
-        : slug
-          ? { organizationSlug: slug }
-          : query
 
     return {
       ...activeOrganizationOptions(authClient, userId, {
-        query: effectiveQuery,
+        query: resolveActiveOrganizationQuery(query, slug),
         fetchOptions
       } as ActiveOrganizationParams<TAuthClient>),
       ...queryOptions,

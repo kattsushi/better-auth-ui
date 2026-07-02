@@ -26,6 +26,39 @@ export type ActiveOrganizationOptions<
 > = Omit<QueryOptions<ActiveOrganizationData<TAuthClient>>, "queryKey"> &
   ActiveOrganizationParams<TAuthClient>
 
+type ActiveOrganizationQuery<TAuthClient extends OrganizationAuthClient> =
+  NonNullable<ActiveOrganizationParams<TAuthClient>> extends {
+    query?: infer TQuery
+  }
+    ? TQuery
+    : never
+
+/**
+ * Resolve the active organization query from explicit options and plugin state.
+ *
+ * Plugin organization slug state takes precedence over caller-provided query
+ * options. A `null` slug is preserved as the no-active-organization sentinel.
+ *
+ * @param query - Caller-provided organization query options.
+ * @param organizationSlug - Organization slug from framework plugin state.
+ */
+export function resolveActiveOrganizationQuery<
+  TAuthClient extends OrganizationAuthClient
+>(
+  query: ActiveOrganizationQuery<TAuthClient> | undefined,
+  organizationSlug?: string | null
+) {
+  if (organizationSlug === null) {
+    return { organizationSlug: null } as ActiveOrganizationQuery<TAuthClient>
+  }
+
+  if (organizationSlug) {
+    return { organizationSlug } as ActiveOrganizationQuery<TAuthClient>
+  }
+
+  return query
+}
+
 /**
  * Query options factory for the current user's active organization.
  *
